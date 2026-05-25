@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Florecer v2</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#151520;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;padding:24px;gap:24px}
+.side-info{color:#ffffff25;font-size:11px;letter-spacing:.06em;text-transform:uppercase;line-height:2;text-align:center;max-width:120px}
+.phone-frame{width:390px;height:844px;background:#0d0d0d;border-radius:54px;padding:12px;box-shadow:0 0 0 1px #2a2a2a,0 40px 100px #00000090,inset 0 0 0 1px #1e1e1e;position:relative;flex-shrink:0}
+.phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:36px;background:#0d0d0d;border-radius:0 0 22px 22px;z-index:20}
+.phone-frame::after{content:'';position:absolute;top:15px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:#1c1c1c;border-radius:50%;z-index:21;box-shadow:-32px 0 0 #1c1c1c}
+.phone-screen{width:100%;height:100%;background:#fafafa;border-radius:44px;overflow:hidden;position:relative}
+
+/* Screens */
+.screen{position:absolute;inset:0;display:none;flex-direction:column;background:#fafafa;animation:fadeUp .2s ease}
+.screen.active{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* Status bar */
+.status{display:flex;justify-content:space-between;padding:16px 24px 4px;font-size:12px;font-weight:500;color:#222;flex-shrink:0}
+.status-center{text-align:center;font-size:13px;font-weight:600;color:#222}
+
+/* Scroll */
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{display:none}
+.pad{padding:16px 20px}
+
+/* Bottom nav */
+.bnav{display:flex;border-top:1px solid #eeeeee;background:#fff;padding:6px 0 22px;flex-shrink:0}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 2px}
+.bni-icon{font-size:22px}
+.bni-lbl{font-size:9px;color:#bbb;font-weight:500;letter-spacing:.02em}
+.bni.active .bni-lbl{color:#7c6ff7}
+
+/* Typography */
+h1{font-size:22px;font-weight:600;color:#1a1a1a;margin-bottom:2px}
+h2{font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:12px}
+.sub{font-size:13px;color:#999;margin-bottom:20px}
+.section-lbl{font-size:11px;font-weight:600;color:#bbb;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 10px}
+
+/* Buttons */
+.btn{width:100%;padding:15px;border:none;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn-p{background:#7c6ff7;color:#fff}
+.btn-p:active{opacity:.85}
+.btn-s{background:#fff;color:#7c6ff7;border:1.5px solid #7c6ff7}
+.btn-g{background:#f0f0f0;color:#555;margin-top:8px}
+.btn-sm{padding:9px 18px;font-size:13px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
+.btn-sm-p{background:#7c6ff7;color:#fff}
+.btn-sm-s{background:#f0f0f0;color:#555}
+.btn-link{background:none;border:none;color:#7c6ff7;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;padding:6px 0}
+
+/* Input */
+.inp{width:100%;padding:13px;border:1.5px solid #eee;border-radius:12px;font-size:14px;font-family:'DM Sans',sans-serif;color:#1a1a1a;outline:none;background:#fff;transition:border-color .15s}
+.inp:focus{border-color:#7c6ff7}
+.inp-lbl{font-size:12px;font-weight:500;color:#666;margin-bottom:5px;display:block}
+.inp-group{margin-bottom:14px}
+textarea.inp{resize:none;min-height:76px}
+
+/* Cards */
+.card{background:#fff;border:1px solid #f0f0f0;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px #0000000a}
+.card-title{font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:3px}
+.card-sub{font-size:11px;color:#bbb;margin-bottom:12px}
+
+/* Mood */
+.mood-row{display:flex;gap:5px}
+.mood-btn{flex:1;padding:10px 2px;border:1.5px solid #eee;border-radius:12px;text-align:center;cursor:pointer;background:#fff;transition:all .15s}
+.mood-btn:hover{border-color:#c5c1f9}
+.mood-btn.sel{border-color:#7c6ff7;background:#f2f0fe}
+.mood-em{font-size:22px;display:block;margin-bottom:3px}
+.mood-lbl{font-size:9px;color:#bbb;font-weight:500}
+.mood-btn.sel .mood-lbl{color:#5a4fd6}
+
+/* Scale */
+.scale-row{display:flex;flex-wrap:wrap;gap:5px}
+.sc-btn{padding:6px 10px;border:1.5px solid #eee;border-radius:8px;font-size:12px;cursor:pointer;background:#fff;color:#666;font-family:'DM Sans',sans-serif;transition:all .15s}
+.sc-btn.sel{background:#e8fdf3;border-color:#4ecb8d;color:#1a6b44;font-weight:600}
+
+/* Tags */
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{padding:6px 12px;border:1.5px solid #eee;border-radius:20px;font-size:11px;cursor:pointer;color:#666;background:#fff;transition:all .15s;font-family:'DM Sans',sans-serif}
+.tag.sel{background:#fff8ec;border-color:#f5a623;color:#7a4f00;font-weight:500}
+
+/* Metrics */
+.metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+.metric{background:#fff;border:1px solid #f0f0f0;border-radius:14px;padding:12px 10px;box-shadow:0 1px 3px #0000000a}
+.metric-n{font-size:22px;font-weight:700;color:#1a1a1a}
+.metric-l{font-size:10px;color:#bbb;margin-top:1px}
+
+/* Week bars */
+.week-bars{display:flex;gap:4px;align-items:flex-end;height:56px;margin-bottom:5px}
+.wbar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%}
+.wbar{width:100%;background:#d8d5f9;border-radius:4px 4px 0 0;min-height:4px;transition:height .4s}
+.wbar.today{background:#7c6ff7}
+.wbar.empty{background:#f0f0f0}
+.wday{font-size:9px;color:#ccc}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600}
+.bg-green{background:#e8fdf3;color:#1a6b44}
+.bg-yellow{background:#fff8ec;color:#7a4f00}
+.bg-red{background:#fef0ee;color:#8b2e1a}
+.bg-purple{background:#f0effe;color:#5a4fd6}
+.bg-blue{background:#eef6ff;color:#1a5ba6}
+
+/* Log list */
+.log-item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #f5f5f5}
+.log-em{font-size:26px}
+.log-info{flex:1;min-width:0}
+.log-date{font-size:13px;font-weight:600;color:#1a1a1a}
+.log-tags{font-size:11px;color:#bbb;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.log-bdgs{display:flex;gap:4px;flex-shrink:0}
+
+/* Pixels calendar */
+.pixels-grid{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px}
+.pixel{width:20px;height:20px;border-radius:4px;cursor:pointer;transition:transform .1s}
+.pixel:hover{transform:scale(1.2)}
+.px-legend{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.px-dot{width:12px;height:12px;border-radius:3px}
+.px-lbl{font-size:10px;color:#bbb}
+
+/* Habit tracker */
+.habit-item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #f5f5f5}
+.habit-check{width:24px;height:24px;border:2px solid #ddd;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0}
+.habit-check.done{background:#7c6ff7;border-color:#7c6ff7;color:#fff}
+.habit-name{font-size:14px;color:#1a1a1a;flex:1}
+.habit-streak{font-size:11px;color:#f5a623;font-weight:600}
+.habit-add{display:flex;gap:8px;margin-top:10px}
+
+/* Breathing */
+.breath-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;flex:1}
+.breath-circle-wrap{position:relative;width:200px;height:200px;margin-bottom:24px}
+.breath-ring{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,#a09df7,#7c6ff7);opacity:.15;transition:transform 4s ease-in-out}
+.breath-ring-2{position:absolute;inset:10px;border-radius:50%;background:radial-gradient(circle,#b5b2f9,#8a84f5);opacity:.2;transition:transform 4s ease-in-out}
+.breath-inner{position:absolute;inset:30px;border-radius:50%;background:linear-gradient(135deg,#7c6ff7,#5a4fd6);display:flex;align-items:center;justify-content:center;flex-direction:column;box-shadow:0 8px 32px #7c6ff740;transition:transform 4s ease-in-out}
+.breath-text{color:#fff;font-size:16px;font-weight:600;text-align:center}
+.breath-count{color:#ffffff90;font-size:13px;margin-top:4px}
+.breath-instr{font-size:18px;font-weight:600;color:#1a1a1a;margin-bottom:6px;text-align:center}
+.breath-sub{font-size:13px;color:#bbb;margin-bottom:24px;text-align:center}
+.breath-tabs{display:flex;gap:8px;margin-bottom:24px;width:100%}
+.breath-tab{flex:1;padding:10px;border:1.5px solid #eee;border-radius:10px;text-align:center;cursor:pointer;font-size:12px;font-weight:500;color:#888;background:#fff;font-family:'DM Sans',sans-serif;transition:all .15s}
+.breath-tab.active{border-color:#7c6ff7;background:#f2f0fe;color:#5a4fd6}
+.breath-cycles{font-size:13px;color:#bbb;text-align:center;margin-top:12px}
+
+/* SOS */
+.sos-btn{background:linear-gradient(135deg,#ff4757,#c0392b);color:#fff;border:none;border-radius:50%;width:72px;height:72px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px #ff475740;transition:transform .15s;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex-shrink:0}
+.sos-btn:active{transform:scale(.95)}
+.sos-technique{background:#fff;border:1px solid #f0f0f0;border-radius:14px;padding:14px;margin-bottom:10px}
+.sos-title{font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:6px}
+.sos-desc{font-size:12px;color:#888;line-height:1.6}
+
+/* Modal empático pós-registro */
+.empathy-overlay{position:absolute;inset:0;background:#00000055;z-index:200;display:flex;align-items:flex-end;animation:fadeOv .2s ease}
+@keyframes fadeOv{from{opacity:0}to{opacity:1}}
+.empathy-sheet{background:#fff;border-radius:28px 28px 0 0;padding:28px 24px 40px;width:100%;animation:slideUp3 .3s ease}
+@keyframes slideUp3{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.emp-emoji{font-size:52px;text-align:center;display:block;margin-bottom:14px}
+.emp-title{font-size:19px;font-weight:600;color:#1a1a1a;text-align:center;margin-bottom:10px;line-height:1.35}
+.emp-text{font-size:14px;color:#666;text-align:center;line-height:1.75;margin-bottom:18px}
+.emp-tip{background:#f8f7ff;border-radius:12px;padding:13px 14px;margin-bottom:20px;font-size:13px;color:#555;line-height:1.6;border-left:3px solid #7c6ff7}
+.emp-tip-lbl{font-size:10px;font-weight:700;color:#7c6ff7;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+
+/* Mood hint */
+.mood-hint{padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.55;margin-top:10px;transition:all .2s}
+
+/* Checkin card */
+.checkin-card{background:linear-gradient(135deg,#f2f0fe,#e9e6fd);border-radius:16px;padding:16px;margin-bottom:14px}
+
+/* Celebration */
+.celebration{background:linear-gradient(135deg,#fff8ec,#fef3d0);border-radius:14px;padding:14px;margin-bottom:12px;border:1px solid #f5e4a0;display:flex;align-items:center;gap:12px}
+
+/* Gratitude */
+.grat-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #f5f5f5}
+.grat-num{width:24px;height:24px;background:#f0effe;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#7c6ff7;flex-shrink:0;margin-top:1px}
+.grat-text{font-size:13px;color:#1a1a1a;line-height:1.5;flex:1}
+
+/* Onboarding */
+.ob-icon{width:68px;height:68px;background:#f2f0fe;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 16px}
+.ob-step{display:flex;gap:12px;background:#fff;padding:14px;border-radius:14px;margin-bottom:10px;border:1px solid #f0f0f0}
+.ob-num{width:26px;height:26px;background:#7c6ff7;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px}
+.ob-title{font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:2px}
+.ob-desc{font-size:12px;color:#999;line-height:1.5}
+
+/* Plan */
+.plan-hdr{padding:14px 16px;background:#f8f8f8;display:flex;justify-content:space-between;align-items:center}
+.plan-body{padding:16px}
+.feat{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.feat-ck{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0}
+.feat-ck.ok{background:#e8fdf3;color:#1a6b44}
+.feat-ck.no{background:#f5f5f5;color:#ccc}
+.feat-txt{font-size:12px;color:#444}
+.feat-txt.dim{color:#ccc}
+
+/* Privacy badge */
+.privacy-banner{background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:14px;padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
+.privacy-icon{font-size:24px}
+.privacy-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:2px}
+.privacy-sub{font-size:11px;color:#ffffff70}
+
+/* Tab bar for top */
+.top-tabs{display:flex;background:#f0f0f0;border-radius:12px;padding:3px;margin-bottom:14px}
+.top-tab{flex:1;padding:8px;text-align:center;border:none;background:none;border-radius:10px;font-size:12px;font-weight:500;color:#999;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.top-tab.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 4px #0000001a}
+
+/* Insight cards */
+.ins-card{border-radius:14px;padding:14px;margin-bottom:10px}
+.ins-tag{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:7px;text-transform:uppercase;letter-spacing:.06em}
+.ins-text{font-size:13px;color:#333;line-height:1.6}
+
+/* Time of day selector */
+.time-row{display:flex;gap:6px;margin-bottom:4px}
+.time-btn{flex:1;padding:8px 4px;border:1.5px solid #eee;border-radius:10px;text-align:center;cursor:pointer;background:#fff;font-family:'DM Sans',sans-serif;transition:all .15s}
+.time-btn.sel{border-color:#7c6ff7;background:#f2f0fe}
+.time-em{font-size:18px;display:block}
+.time-lbl{font-size:10px;color:#bbb;margin-top:2px;font-weight:500}
+.time-btn.sel .time-lbl{color:#5a4fd6}
+
+/* Summary strip */
+.summary-strip{background:linear-gradient(135deg,#7c6ff7,#5a4fd6);border-radius:16px;padding:16px;margin-bottom:16px;color:#fff}
+.summary-strip h3{font-size:15px;font-weight:600;margin-bottom:2px}
+.summary-strip p{font-size:12px;opacity:.8}
+
+/* Floating SOS */
+.fab-sos{position:absolute;bottom:90px;right:16px;z-index:100}
+</style>
+</head>
+<body>
+
+<div class="side-info">Florecer<br>v2.0<br><br>↑↓ scroll<br>dentro<br>do app</div>
+
+<div class="phone-frame">
+  <div class="phone-screen" id="app">
+
+    <!-- ══════════════════════════════ ONBOARDING ══ -->
+    <div class="screen active" id="s-onboard">
+      <div class="status"><span>9:41</span><span>100%</span></div>
+      <div class="scroll pad">
+        <div style="text-align:center;margin:8px 0 24px">
+          <div class="ob-icon">🌱</div>
+          <h1 style="font-family:'DM Serif Display';font-size:26px">Florecer</h1>
+          <p class="sub" style="line-height:1.6">Um espaço seguro para você<br>ser honesto sobre como está se sentindo.</p>
+        </div>
+        <div class="privacy-banner">
+          <div class="privacy-icon">🔒</div>
+          <div>
+            <div class="privacy-title">Seus dados ficam só no seu celular</div>
+            <div class="privacy-sub">Sem conta obrigatória. Sem coleta de dados.</div>
+          </div>
+        </div>
+        <div class="ob-step"><div class="ob-num">1</div><div><div class="ob-title">📝 Diário de humor</div><div class="ob-desc">Registre como se sente até 3x por dia — manhã, tarde e noite.</div></div></div>
+        <div class="ob-step"><div class="ob-num">2</div><div><div class="ob-title">🎯 Rastreie seus hábitos</div><div class="ob-desc">Crie hábitos diários e veja sua sequência crescer.</div></div></div>
+        <div class="ob-step"><div class="ob-num">3</div><div><div class="ob-title">🫁 Respire e acalme</div><div class="ob-desc">Exercícios de respiração guiados para momentos de ansiedade.</div></div></div>
+        <div class="ob-step"><div class="ob-num">4</div><div><div class="ob-title">🟣 Ano em Pixels</div><div class="ob-desc">Veja um ano inteiro do seu humor numa tela só.</div></div></div>
+        <div style="margin-top:20px">
+          <button class="btn btn-p" onclick="goTo('home')">Quero cuidar da minha mente</button>
+          <div style="text-align:center;margin-top:12px;font-size:12px;color:#bbb;line-height:1.6">Sem julgamentos · Sem comparações<br>Só você e seus sentimentos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ HOME ══ -->
+    <div class="screen" id="s-home">
+      <div class="status"><span>9:41</span><span>100%</span></div>
+      <div class="scroll pad">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+          <div>
+            <h1 id="home-hi">Olá! 👋</h1>
+            <p class="sub" style="margin-bottom:0" id="home-date"></p>
+          </div>
+          <button class="sos-btn" onclick="goTo('sos')"><span style="font-size:18px">🆘</span><span style="font-size:9px">SOS</span></button>
+        </div>
+        <div class="metrics" id="home-metrics"></div>
+        <div class="section-lbl">Esta semana</div>
+        <div class="card" style="padding:14px">
+          <div class="week-bars" id="home-bars"></div>
+          <div style="display:flex;gap:4px" id="home-days"></div>
+        </div>
+        <div id="home-action"></div>
+        <div class="section-lbl">Hábitos de hoje</div>
+        <div class="card" id="home-habits-preview"></div>
+        <div class="section-lbl">Gratidão de hoje</div>
+        <div class="card" id="home-grat-preview"></div>
+      </div>
+      <div class="bnav">
+        <div class="bni active" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
+        <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
+        <div class="bni" onclick="goTo('breath')"><span class="bni-icon">🫁</span><span class="bni-lbl">Respirar</span></div>
+        <div class="bni" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
+        <div class="bni" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ LOG ══ -->
+    <div class="screen" id="s-log">
+      <div class="status"><span>9:41</span><span class="status-center">Registro do dia</span><span></span></div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 16px 4px;flex-shrink:0">
+        <button onclick="goTo('home')" style="background:none;border:none;font-size:22px;cursor:pointer;padding:0">‹</button>
+        <span style="font-size:15px;font-weight:600;color:#1a1a1a">Como você está?</span>
+      </div>
+      <div style="padding:4px 20px 10px;font-size:12px;color:#bbb;flex-shrink:0">Sem julgamentos aqui. Só você e seus sentimentos.</div>
+      <div class="scroll pad" style="padding-top:8px">
+        <div class="card">
+          <div class="card-title">Momento do dia</div>
+          <div class="card-sub">Você pode registrar até 3x por dia</div>
+          <div class="time-row" id="time-row">
+            <div class="time-btn sel" onclick="selTime(this,'Manhã')"><span class="time-em">🌅</span><span class="time-lbl">Manhã</span></div>
+            <div class="time-btn" onclick="selTime(this,'Tarde')"><span class="time-em">☀️</span><span class="time-lbl">Tarde</span></div>
+            <div class="time-btn" onclick="selTime(this,'Noite')"><span class="time-em">🌙</span><span class="time-lbl">Noite</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Humor geral</div>
+          <div class="card-sub">Como você está se sentindo?</div>
+          <div class="mood-row" id="mood-row">
+            <div class="mood-btn" onclick="selMood(1)"><span class="mood-em">😞</span><span class="mood-lbl">Péssimo</span></div>
+            <div class="mood-btn" onclick="selMood(2)"><span class="mood-em">😕</span><span class="mood-lbl">Mal</span></div>
+            <div class="mood-btn" onclick="selMood(3)"><span class="mood-em">😐</span><span class="mood-lbl">Ok</span></div>
+            <div class="mood-btn" onclick="selMood(4)"><span class="mood-em">🙂</span><span class="mood-lbl">Bem</span></div>
+            <div class="mood-btn" onclick="selMood(5)"><span class="mood-em">😄</span><span class="mood-lbl">Ótimo</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Ansiedade agora</div>
+          <div class="card-sub">0 = bem tranquilo · 10 = muito intenso. Não tem resposta errada.</div>
+          <div class="scale-row" id="anx-row">
+            <button class="sc-btn" onclick="selSc('anx',0,this)">0</button><button class="sc-btn" onclick="selSc('anx',1,this)">1</button><button class="sc-btn" onclick="selSc('anx',2,this)">2</button><button class="sc-btn" onclick="selSc('anx',3,this)">3</button><button class="sc-btn" onclick="selSc('anx',4,this)">4</button><button class="sc-btn" onclick="selSc('anx',5,this)">5</button><button class="sc-btn" onclick="selSc('anx',6,this)">6</button><button class="sc-btn" onclick="selSc('anx',7,this)">7</button><button class="sc-btn" onclick="selSc('anx',8,this)">8</button><button class="sc-btn" onclick="selSc('anx',9,this)">9</button><button class="sc-btn" onclick="selSc('anx',10,this)">10</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Sono ontem à noite</div>
+          <div class="scale-row" id="sleep-row">
+            <button class="sc-btn" onclick="selSc('sleep','Péssimo',this)">Péssimo</button>
+            <button class="sc-btn" onclick="selSc('sleep','Ruim',this)">Ruim</button>
+            <button class="sc-btn" onclick="selSc('sleep','Ok',this)">Ok</button>
+            <button class="sc-btn" onclick="selSc('sleep','Bom',this)">Bom</button>
+            <button class="sc-btn" onclick="selSc('sleep','Ótimo',this)">Ótimo</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">O que aconteceu?</div>
+          <div class="card-sub">Selecione os gatilhos do dia</div>
+          <div class="tags" id="tags-row">
+            <span class="tag" onclick="togTag(this)">Trabalho estressante</span>
+            <span class="tag" onclick="togTag(this)">Briga ou conflito</span>
+            <span class="tag" onclick="togTag(this)">Exercício físico</span>
+            <span class="tag" onclick="togTag(this)">Pouco sono</span>
+            <span class="tag" onclick="togTag(this)">Alimentação ruim</span>
+            <span class="tag" onclick="togTag(this)">Tempo com amigos</span>
+            <span class="tag" onclick="togTag(this)">Notícias ruins</span>
+            <span class="tag" onclick="togTag(this)">Solidão</span>
+            <span class="tag" onclick="togTag(this)">Meditação</span>
+            <span class="tag" onclick="togTag(this)">Natureza</span>
+            <span class="tag" onclick="togTag(this)">Família</span>
+            <span class="tag" onclick="togTag(this)">Lazer</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Quer desabafar? ✍️</div>
+          <div class="card-sub">Escreva o que quiser — ou nada. Esse espaço é só seu.</div>
+          <textarea class="inp" id="log-note" placeholder="O que está passando pela sua cabeça? O que aconteceu hoje? Como seu corpo está se sentindo?"></textarea>
+        </div>
+        <button class="btn btn-p" onclick="saveLog()" style="margin-bottom:8px">Salvar meu registro ✓</button>
+        <div style="text-align:center;font-size:11px;color:#ccc;margin-bottom:24px">Registrar é um ato de cuidado com você mesmo 🌱</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ BREATHING ══ -->
+    <div class="screen" id="s-breath">
+      <div class="status"><span>9:41</span><span>100%</span></div>
+      <div style="padding:8px 16px 4px;display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <button onclick="goTo('home')" style="background:none;border:none;font-size:22px;cursor:pointer">‹</button>
+        <span style="font-size:15px;font-weight:600">Respiração guiada</span>
+      </div>
+      <div class="breath-container">
+        <div class="breath-tabs">
+          <button class="breath-tab active" onclick="selBreath('478',this)">4-7-8</button>
+          <button class="breath-tab" onclick="selBreath('box',this)">Box</button>
+          <button class="breath-tab" onclick="selBreath('calm',this)">Acalmar</button>
+        </div>
+        <div class="breath-circle-wrap" id="breath-wrap">
+          <div class="breath-ring" id="b-ring1"></div>
+          <div class="breath-ring-2" id="b-ring2"></div>
+          <div class="breath-inner" id="b-inner">
+            <span class="breath-text" id="b-text">Toque para<br>começar</span>
+            <span class="breath-count" id="b-count"></span>
+          </div>
+        </div>
+        <div class="breath-instr" id="b-instr">Respire com calma</div>
+        <div class="breath-sub" id="b-sub">Escolha uma técnica e toque no círculo</div>
+        <button class="btn btn-p" id="b-btn" onclick="toggleBreath()" style="width:160px;margin:0 auto">▶ Iniciar</button>
+        <div class="breath-cycles" id="b-cycles"></div>
+      </div>
+      <div class="bnav">
+        <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
+        <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
+        <div class="bni active" onclick="goTo('breath')"><span class="bni-icon">🫁</span><span class="bni-lbl">Respirar</span></div>
+        <div class="bni" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
+        <div class="bni" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ HISTORY ══ -->
+    <div class="screen" id="s-history">
+      <div class="status"><span>9:41</span><span>100%</span></div>
+      <div style="padding:12px 20px 0;flex-shrink:0">
+        <h1>Histórico</h1>
+        <div class="top-tabs" style="margin-top:12px">
+          <button class="top-tab active" id="ht-logs" onclick="histTab('logs')">Registros</button>
+          <button class="top-tab" id="ht-pixels" onclick="histTab('pixels')">Ano em Pixels</button>
+          <button class="top-tab" id="ht-stats" onclick="histTab('stats')">Estatísticas</button>
+        </div>
+      </div>
+      <div class="scroll pad" style="padding-top:4px" id="history-body"></div>
+      <div class="bnav">
+        <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
+        <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
+        <div class="bni" onclick="goTo('breath')"><span class="bni-icon">🫁</span><span class="bni-lbl">Respirar</span></div>
+        <div class="bni active" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
+        <div class="bni" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ MORE ══ -->
+    <div class="screen" id="s-more">
+      <div class="status"><span>9:41</span><span>100%</span></div>
+      <div class="scroll pad">
+        <h1>Ferramentas</h1>
+        <p class="sub">Tudo para cuidar de você</p>
+        <div class="top-tabs">
+          <button class="top-tab active" id="mt-habits" onclick="moreTab('habits')">Hábitos</button>
+          <button class="top-tab" id="mt-gratitude" onclick="moreTab('gratitude')">Gratidão</button>
+          <button class="top-tab" id="mt-insights" onclick="moreTab('insights')">Insights</button>
+          <button class="top-tab" id="mt-premium" onclick="moreTab('premium')">Premium</button>
+        </div>
+        <div id="more-body"></div>
+      </div>
+      <div class="bnav">
+        <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
+        <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
+        <div class="bni" onclick="goTo('breath')"><span class="bni-icon">🫁</span><span class="bni-lbl">Respirar</span></div>
+        <div class="bni" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
+        <div class="bni active" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ SOS ══ -->
+    <div class="screen" id="s-sos">
+      <div class="status"><span>9:41</span><span>100%</span></div>
+      <div style="padding:8px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <button onclick="goTo('home')" style="background:none;border:none;font-size:22px;cursor:pointer">‹</button>
+        <span style="font-size:15px;font-weight:600;color:#1a1a1a">Momento difícil</span>
+      </div>
+      <div class="scroll pad" style="padding-top:4px">
+
+        <div style="background:linear-gradient(135deg,#fff0f0,#ffe8e8);border-radius:16px;padding:18px;margin-bottom:16px;border:1px solid #fdd">
+          <div style="font-size:22px;margin-bottom:8px">🤍</div>
+          <div style="font-size:15px;font-weight:600;color:#c0392b;margin-bottom:6px">O que você está sentindo é real.</div>
+          <div style="font-size:13px;color:#888;line-height:1.7">Não é fraqueza. Não é frescura. Não é exagero.<br>Você não precisa justificar o que sente para ninguém — nem para si mesmo.</div>
+        </div>
+
+        <div style="background:#f8f7ff;border-radius:14px;padding:14px;margin-bottom:16px;border-left:3px solid #7c6ff7">
+          <div style="font-size:12px;font-weight:600;color:#7c6ff7;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">Antes de qualquer técnica</div>
+          <div style="font-size:13px;color:#555;line-height:1.65">Coloque a mão no peito. Sinta seu coração batendo. Você está aqui, agora, e isso é suficiente.</div>
+        </div>
+
+        <div class="sos-technique">
+          <div class="sos-title">🫁 Respiração 4-7-8</div>
+          <div class="sos-desc">Inspire por 4s → Segure por 7s → Expire por 8s.<br>Repita 3 vezes. Ativa o sistema nervoso parassimpático — seu corpo sabe como acalmar, às vezes só precisa de um convite.</div>
+          <button class="btn btn-p" style="margin-top:10px;padding:10px;font-size:13px" onclick="goTo('breath')">Ir para respiração guiada →</button>
+        </div>
+
+        <div class="sos-technique">
+          <div class="sos-title">👁️ Técnica 5-4-3-2-1 (Grounding)</div>
+          <div class="sos-desc">Quando a cabeça está longe, os sentidos trazem você de volta ao presente. Nomeie:<br><br>
+            <b>5</b> coisas que você <b>vê</b><br>
+            <b>4</b> que você pode <b>tocar</b><br>
+            <b>3</b> que você <b>ouve</b><br>
+            <b>2</b> que você <b>cheira</b><br>
+            <b>1</b> que você <b>saboreia</b>
+          </div>
+        </div>
+
+        <div class="sos-technique">
+          <div class="sos-title">❄️ Temperatura fria</div>
+          <div class="sos-desc">Coloque o rosto em água fria por 30 segundos, segure gelo nas mãos, ou tome um banho gelado rapidinho. Isso ativa o reflexo de mergulho — uma resposta natural do seu corpo que diminui a frequência cardíaca em segundos.</div>
+        </div>
+
+        <div class="sos-technique">
+          <div class="sos-title">🤲 Relaxamento muscular progressivo</div>
+          <div class="sos-desc">Aperte os punhos com força por 5 segundos, depois solte completamente. Suba pelo corpo: panturrilha → coxa → barriga → ombros. A tensão intencional seguida de alívio engana o sistema nervoso de um jeito bom.</div>
+        </div>
+
+        <div class="sos-technique" style="background:#fef0ee;border-color:#fdd">
+          <div class="sos-title" style="color:#c0392b">📞 Você não precisa passar por isso sozinho</div>
+          <div class="sos-desc">
+            <b>CVV — Centro de Valorização da Vida</b><br>
+            <span style="font-size:20px;font-weight:700;color:#c0392b">188</span> · 24 horas · gratuito<br><br>
+            Não é só para situações extremas. É para qualquer momento em que você precisar de alguém que escute — sem julgamento, sem comparar, sem minimizar.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- phone-screen -->
+</div><!-- phone-frame -->
+
+<div class="side-info">
+  Navegue<br>pelas telas<br><br>
+  🏠 Início<br>
+  ✏️ Registrar<br>
+  🫁 Respirar<br>
+  📅 Histórico<br>
+  ☰ Mais<br><br>
+  🆘 SOS<br>no Início
+</div>
+
+<script>
+// ═══════════ STATE ═══════════
+const S = {
+  logs: JSON.parse(localStorage.getItem('fl_logs') || '[]'),
+  habits: JSON.parse(localStorage.getItem('fl_habits') || JSON.stringify([
+    {id:1,name:'Beber 2L de água',icon:'💧',streak:0},
+    {id:2,name:'Exercício físico',icon:'🏃',streak:0},
+    {id:3,name:'Meditação',icon:'🧘',streak:0},
+  ])),
+  gratitude: JSON.parse(localStorage.getItem('fl_grat') || '[]'),
+  habitDone: JSON.parse(localStorage.getItem('fl_hdone') || '{}'),
+  logForm: {mood:null,anx:null,sleep:null,triggers:[],note:'',time:'Manhã'},
+  breath: {type:'478',running:false,phase:0,count:0,timer:null,cyclesDone:0},
+  histTab: 'logs',
+  moreTab: 'habits',
+};
+
+const MOODS = {1:'😞',2:'😕',3:'😐',4:'🙂',5:'😄'};
+const DAYS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const MOOD_COLORS = {0:'#f0f0f0',1:'#ffd6d6',2:'#ffedc0',3:'#fff9c4',4:'#c8f0c8',5:'#a8e6cf'};
+
+function save() {
+  localStorage.setItem('fl_logs', JSON.stringify(S.logs));
+  localStorage.setItem('fl_habits', JSON.stringify(S.habits));
+  localStorage.setItem('fl_grat', JSON.stringify(S.gratitude));
+  localStorage.setItem('fl_hdone', JSON.stringify(S.habitDone));
+}
+
+// ═══════════ NAVIGATION ═══════════
+function goTo(screen) {
+  stopBreath();
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('s-' + screen).classList.add('active');
+  if (screen === 'home') renderHome();
+  if (screen === 'log') resetLog();
+  if (screen === 'history') renderHistory();
+  if (screen === 'more') renderMore();
+}
+
+// ═══════════ HOME ═══════════
+function renderHome() {
+  const today = new Date().toDateString();
+  const todayLogs = S.logs.filter(l => new Date(l.date).toDateString() === today);
+  const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+  const weekLogs = S.logs.filter(l => new Date(l.date) >= weekAgo);
+
+  // greeting contextual baseado no humor recente
+  const last3 = S.logs.slice(-3);
+  const recentAvg = last3.length ? last3.reduce((s,l)=>s+l.mood,0)/last3.length : 3;
+  const h2 = new Date().getHours();
+  const greetBase = h2 < 12 ? 'Bom dia' : h2 < 18 ? 'Boa tarde' : 'Boa noite';
+  let greetSuffix = '';
+  if (last3.length > 0) {
+    if (recentAvg <= 2) greetSuffix = ' — que bom que você voltou 🤍';
+    else if (recentAvg >= 4.5) greetSuffix = ' — você está arrasando! ✨';
+    else if (recentAvg >= 4) greetSuffix = ' — parece que você está bem 🌻';
+    else greetSuffix = ' 👋';
+  } else {
+    greetSuffix = ' — bem-vindo! 🌱';
+  }
+  document.getElementById('home-hi').textContent = greetBase + greetSuffix;
+  document.getElementById('home-date').textContent = new Date().toLocaleDateString('pt-BR', {weekday:'long',day:'numeric',month:'long'});
+
+  // streak
+  let streak = 0;
+  const t = new Date(); t.setHours(0,0,0,0);
+  const days = [...new Set(S.logs.map(l => new Date(l.date).toDateString()))].sort((a,b)=>new Date(b)-new Date(a));
+  for (let i = 0; i < days.length; i++) {
+    const exp = new Date(t); exp.setDate(t.getDate()-i);
+    if (new Date(days[i]).toDateString()===exp.toDateString()) streak++;
+    else break;
+  }
+
+  const avg = weekLogs.length ? (weekLogs.reduce((s,l)=>s+l.mood,0)/weekLogs.length).toFixed(1) : '--';
+
+  document.getElementById('home-metrics').innerHTML = `
+    <div class="metric"><div class="metric-n">${streak}</div><div class="metric-l">dias seguidos</div></div>
+    <div class="metric"><div class="metric-n">${avg}</div><div class="metric-l">humor médio</div></div>
+    <div class="metric"><div class="metric-n">${S.logs.length}</div><div class="metric-l">registros total</div></div>
+  `;
+
+  // week bars
+  let bars='', dayls='';
+  for (let i=6;i>=0;i--) {
+    const d=new Date();d.setDate(d.getDate()-i);d.setHours(0,0,0,0);
+    const dl=S.logs.filter(l=>new Date(l.date).toDateString()===d.toDateString());
+    const m=dl.length?(dl.reduce((s,l)=>s+l.mood,0)/dl.length):0;
+    const h=m?(m/5)*100:0;
+    const cls=i===0?'today':m===0?'empty':'';
+    bars+=`<div class="wbar-wrap"><div class="wbar ${cls}" style="height:${h||8}%"></div></div>`;
+    dayls+=`<div class="wday" style="flex:1;text-align:center">${DAYS[d.getDay()][0]}</div>`;
+  }
+  document.getElementById('home-bars').innerHTML=bars;
+  document.getElementById('home-days').innerHTML=dayls;
+
+  // action
+  const loggedToday = todayLogs.length > 0;
+  const times = todayLogs.map(l=>l.time);
+  let actionHtml = '';
+  if (todayLogs.length >= 3) {
+    actionHtml = `<div style="background:#e8fdf3;border-radius:14px;padding:14px;text-align:center;color:#1a6b44;font-weight:500">✅ Todos os registros de hoje feitos!</div>`;
+  } else if (loggedToday) {
+    const pending = ['Manhã','Tarde','Noite'].filter(t=>!times.includes(t));
+    actionHtml = `<div style="background:#f2f0fe;border-radius:14px;padding:14px">
+      <div style="font-size:13px;font-weight:600;color:#5a4fd6;margin-bottom:8px">✅ ${times.join(', ')} registrados</div>
+      <div style="font-size:12px;color:#888;margin-bottom:10px">Falta: ${pending.join(', ')}</div>
+      <button class="btn btn-p" onclick="goTo('log')" style="padding:11px">Registrar ${pending[0]}</button>
+    </div>`;
+  } else {
+    actionHtml = `<button class="btn btn-p" onclick="goTo('log')">✏️ Fazer registro do dia</button>`;
+  }
+  document.getElementById('home-action').innerHTML = actionHtml;
+
+  // habits preview
+  const todayKey = new Date().toDateString();
+  const doneToday = S.habitDone[todayKey] || [];
+  const habHtml = S.habits.slice(0,3).map(h=>`
+    <div class="habit-item">
+      <div class="habit-check ${doneToday.includes(h.id)?'done':''}" onclick="toggleHabit(${h.id})">${doneToday.includes(h.id)?'✓':''}</div>
+      <span style="font-size:16px">${h.icon}</span>
+      <span class="habit-name" style="font-size:13px">${h.name}</span>
+      <span class="habit-streak">${h.streak>0?'🔥'+h.streak:''}</span>
+    </div>
+  `).join('') + `<div style="text-align:center;margin-top:8px"><button class="btn-link" onclick="moreTab('habits');goTo('more')">Ver todos os hábitos →</button></div>`;
+  document.getElementById('home-habits-preview').innerHTML = habHtml;
+
+  // gratitude preview
+  const todayGrat = S.gratitude.filter(g => new Date(g.date).toDateString() === today);
+  let gratHtml;
+  if (todayGrat.length) {
+    gratHtml = todayGrat.slice(0,2).map((g,i)=>`
+      <div class="grat-item"><div class="grat-num">${i+1}</div><div class="grat-text">${g.text}</div></div>
+    `).join('') + `<button class="btn-link" onclick="moreTab('gratitude');goTo('more')" style="margin-top:6px">Ver mais →</button>`;
+  } else {
+    gratHtml = `<div style="text-align:center;padding:8px 0">
+      <div style="font-size:24px;margin-bottom:6px">🙏</div>
+      <div style="font-size:13px;color:#bbb;margin-bottom:10px">O que te fez bem hoje?</div>
+      <button class="btn btn-p" style="padding:10px" onclick="moreTab('gratitude');goTo('more')">Escrever gratidão</button>
+    </div>`;
+  }
+  document.getElementById('home-grat-preview').innerHTML = gratHtml;
+}
+
+// ═══════════ LOG FORM ═══════════
+function resetLog() {
+  S.logForm = {mood:null,anx:null,sleep:null,triggers:[],note:'',time:'Manhã'};
+  document.querySelectorAll('#mood-row .mood-btn').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('#anx-row .sc-btn').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('#sleep-row .sc-btn').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('#tags-row .tag').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('#time-row .time-btn').forEach(b=>b.classList.remove('sel'));
+  document.querySelector('#time-row .time-btn').classList.add('sel');
+  if (document.getElementById('log-note')) document.getElementById('log-note').value='';
+}
+function selTime(el,v) {
+  S.logForm.time=v;
+  document.querySelectorAll('#time-row .time-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+const MOOD_HINTS = {
+  1: {text:'Faz sentido você se sentir assim. Não precisa estar bem o tempo todo.', bg:'#fef0ee', color:'#8b2e1a'},
+  2: {text:'Dias difíceis acontecem. Você está sendo honesto com você mesmo — isso é corajoso.', bg:'#fff8ec', color:'#7a4f00'},
+  3: {text:'Nem ótimo, nem ruim. Às vezes é exatamente assim — e tudo bem.', bg:'#f5f5f5', color:'#555'},
+  4: {text:'Que bom! Aproveite esse dia com leveza.', bg:'#e8fdf3', color:'#1a6b44'},
+  5: {text:'Incrível! Que esse sentimento dure bastante.', bg:'#f2f0fe', color:'#5a4fd6'},
+};
+
+function selMood(v) {
+  S.logForm.mood=v;
+  document.querySelectorAll('#mood-row .mood-btn').forEach((b,i)=>b.classList.toggle('sel',i+1===v));
+  // mostra hint empático
+  let hint = document.getElementById('mood-hint');
+  if (!hint) {
+    hint = document.createElement('div');
+    hint.id = 'mood-hint';
+    hint.className = 'mood-hint';
+    document.getElementById('mood-row').after(hint);
+  }
+  const h = MOOD_HINTS[v];
+  hint.style.background = h.bg;
+  hint.style.color = h.color;
+  hint.textContent = h.text;
+  hint.style.display = 'block';
+}
+function selSc(type,v,el) {
+  S.logForm[type]=v;
+  const row=document.getElementById(type+'-row');
+  row.querySelectorAll('.sc-btn').forEach(b=>b.classList.toggle('sel',b.textContent==v));
+}
+function togTag(el) {
+  el.classList.toggle('sel');
+  const t=el.textContent;
+  if(el.classList.contains('sel')) S.logForm.triggers.push(t);
+  else S.logForm.triggers=S.logForm.triggers.filter(x=>x!==t);
+}
+function saveLog() {
+  if (!S.logForm.mood || S.logForm.anx===null || !S.logForm.sleep) {
+    alert('Preencha humor, ansiedade e sono para continuar.'); return;
+  }
+  S.logs.push({
+    id:Date.now(), date:new Date().toISOString(),
+    mood:S.logForm.mood, anxiety:S.logForm.anx,
+    sleep:S.logForm.sleep, triggers:[...S.logForm.triggers],
+    note:document.getElementById('log-note').value,
+    time:S.logForm.time
+  });
+  save();
+  showEmpathy(S.logForm.mood, S.logForm.anx, S.logForm.triggers);
+}
+
+// ═══════════ EMPATHY RESPONSES ═══════════
+const EMPATHY = {
+  1: {
+    emoji:'🤍',
+    title:'Obrigado por compartilhar isso.',
+    text:'Dias pesados existem, e você não precisa fingir que está bem. O que você está sentindo é válido — completamente.',
+    tip:'Se quiser, respire um pouco com a gente. O botão de respiração guiada pode ajudar a aliviar esse peso agora.'
+  },
+  2: {
+    emoji:'🫂',
+    title:'Registrar já é um ato de cuidado com você mesmo.',
+    text:'Nem sempre é fácil parar e olhar para dentro. Você fez isso hoje, e isso importa.',
+    tip:'Quando não estamos bem, às vezes o simples ajuda. Uma caminhada curta, água gelada, ou só sentar em silêncio por 5 minutos.'
+  },
+  3: {
+    emoji:'🌿',
+    title:'Um dia neutro também tem valor.',
+    text:'Não precisamos estar radiantes o tempo todo. Estar ok é suficiente — e reconhecer isso já é autoconhecimento.',
+    tip:'Quer transformar esse dia em algo um pouco melhor? Escrever uma coisa pela qual é grato pode mudar sua perspectiva.'
+  },
+  4: {
+    emoji:'🌻',
+    title:'Que bom que você está bem!',
+    text:'Isso merece ser notado. Guarde esse sentimento — nos dias difíceis, lembramos que dias assim existem.',
+    tip:'Aproveite essa energia. É um ótimo dia para cuidar de um hábito que você quer cultivar.'
+  },
+  5: {
+    emoji:'✨',
+    title:'Que dia maravilhoso!',
+    text:'Ótimo te ver assim. Esse tipo de dia é exatamente o que fazemos registros para lembrar — nos dias mais difíceis.',
+    tip:'Anote o que fez esse dia ser especial. Amanhã, você pode querer repetir.'
+  }
+};
+
+const ANXIETY_EXTRA = {
+  high: '\n\nSeu nível de ansiedade está alto agora. Isso é pesado de carregar. O botão SOS tem técnicas que ajudam em minutos — sem julgamento.',
+  medium: '\n\nUm pouco de ansiedade é normal. Se quiser, o exercício de respiração guiada pode ajudar a baixar esse nível.'
+};
+
+function showEmpathy(mood, anxiety, triggers) {
+  const e = EMPATHY[mood] || EMPATHY[3];
+  let text = e.text;
+  if (anxiety >= 7) text += ANXIETY_EXTRA.high;
+  else if (anxiety >= 5) text += ANXIETY_EXTRA.medium;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'empathy-overlay';
+  overlay.id = 'empathy-overlay';
+  overlay.innerHTML = `
+    <div class="empathy-sheet">
+      <span class="emp-emoji">${e.emoji}</span>
+      <div class="emp-title">${e.title}</div>
+      <div class="emp-text">${text.replace(/\n\n/g,'<br><br>')}</div>
+      <div class="emp-tip">
+        <div class="emp-tip-lbl">💡 Uma sugestão gentil</div>
+        ${e.tip}
+      </div>
+      <button class="btn btn-p" onclick="closeEmpathy()">Entendi, obrigado 🙏</button>
+      ${anxiety >= 6 ? `<button class="btn" style="background:#fef0ee;color:#c0392b;margin-top:8px" onclick="closeEmpathy();goTo('sos')">Preciso de ajuda agora</button>` : ''}
+    </div>
+  `;
+  document.getElementById('app').appendChild(overlay);
+}
+
+function closeEmpathy() {
+  const el = document.getElementById('empathy-overlay');
+  if (el) el.remove();
+  goTo('home');
+}
+
+// ═══════════ HABITS ═══════════
+function toggleHabit(id) {
+  const key = new Date().toDateString();
+  if (!S.habitDone[key]) S.habitDone[key] = [];
+  if (S.habitDone[key].includes(id)) {
+    S.habitDone[key] = S.habitDone[key].filter(x=>x!==id);
+    const h = S.habits.find(h=>h.id===id);
+    if (h && h.streak>0) h.streak--;
+  } else {
+    S.habitDone[key].push(id);
+    const h = S.habits.find(h=>h.id===id);
+    if (h) h.streak++;
+  }
+  save(); renderHome();
+  if (document.getElementById('s-more').classList.contains('active')) renderMore();
+}
+
+// ═══════════ BREATHING ═══════════
+const BREATH_TYPES = {
+  '478': {name:'4-7-8',phases:[{l:'Inspire',d:4,c:'#7c6ff7'},{l:'Segure',d:7,c:'#f5a623'},{l:'Expire',d:8,c:'#4ecb8d'}],desc:'Reduz ansiedade rapidamente'},
+  'box':  {name:'Box',phases:[{l:'Inspire',d:4,c:'#7c6ff7'},{l:'Segure',d:4,c:'#f5a623'},{l:'Expire',d:4,c:'#4ecb8d'},{l:'Segure',d:4,c:'#ff6b6b'}],desc:'Foco e concentração'},
+  'calm': {name:'Acalmar',phases:[{l:'Inspire',d:4,c:'#7c6ff7'},{l:'Expire',d:6,c:'#4ecb8d'}],desc:'Simples e relaxante'},
+};
+let breathPhase=0, breathTimer=null, breathCount=0, breathRunning=false, breathType='478', breathCycles=0;
+
+function selBreath(type, el) {
+  stopBreath();
+  breathType=type;
+  document.querySelectorAll('.breath-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const bt=BREATH_TYPES[type];
+  document.getElementById('b-instr').textContent=bt.name+' — '+bt.desc;
+  document.getElementById('b-sub').textContent='Toque em Iniciar para começar';
+  document.getElementById('b-text').innerHTML='Pronto?';
+  document.getElementById('b-count').textContent='';
+  document.getElementById('b-cycles').textContent='';
+}
+
+function toggleBreath() {
+  if (breathRunning) { stopBreath(); return; }
+  breathRunning=true; breathPhase=0; breathCount=0; breathCycles=0;
+  document.getElementById('b-btn').textContent='⏹ Parar';
+  runBreathPhase();
+}
+
+function stopBreath() {
+  breathRunning=false;
+  clearInterval(breathTimer);
+  document.getElementById('b-btn').textContent='▶ Iniciar';
+  document.getElementById('b-inner').style.transform='scale(1)';
+  document.getElementById('b-text').innerHTML='Toque para<br>começar';
+  document.getElementById('b-count').textContent='';
+}
+
+function runBreathPhase() {
+  if (!breathRunning) return;
+  const bt=BREATH_TYPES[breathType];
+  const phase=bt.phases[breathPhase % bt.phases.length];
+  breathCount=phase.d;
+
+  document.getElementById('b-text').textContent=phase.l;
+  document.getElementById('b-count').textContent=breathCount+'s';
+  document.getElementById('b-instr').textContent=phase.l+'...';
+
+  // animate circle
+  const inner=document.getElementById('b-inner');
+  if (phase.l==='Inspire') inner.style.transform='scale(1.25)';
+  else if (phase.l==='Expire') inner.style.transform='scale(0.85)';
+  else inner.style.transform='scale(1.1)';
+  inner.style.transition=`transform ${phase.d}s ease-in-out`;
+  inner.style.background=`linear-gradient(135deg,${phase.c},${phase.c}cc)`;
+
+  clearInterval(breathTimer);
+  breathTimer=setInterval(()=>{
+    breathCount--;
+    document.getElementById('b-count').textContent=breathCount+'s';
+    if (breathCount<=0) {
+      clearInterval(breathTimer);
+      breathPhase++;
+      if (breathPhase % bt.phases.length === 0) {
+        breathCycles++;
+        document.getElementById('b-cycles').textContent=`Ciclos completos: ${breathCycles}`;
+      }
+      if (breathRunning) runBreathPhase();
+    }
+  }, 1000);
+}
+
+// ═══════════ HISTORY ═══════════
+let histCurrentTab='logs';
+function histTab(tab) {
+  histCurrentTab=tab;
+  ['logs','pixels','stats'].forEach(t=>{
+    document.getElementById('ht-'+t)?.classList.toggle('active',t===tab);
+  });
+  renderHistory();
+}
+
+function renderHistory() {
+  const body=document.getElementById('history-body');
+  if (histCurrentTab==='logs') {
+    const logs=[...S.logs].reverse();
+    if(!logs.length){body.innerHTML='<div style="text-align:center;color:#bbb;padding:40px 0;font-size:14px">Nenhum registro ainda.<br>Comece hoje! ✨</div>';return;}
+    body.innerHTML=logs.map(l=>{
+      const mc=l.mood>=4?'bg-green':l.mood===3?'bg-yellow':'bg-red';
+      const ac=l.anxiety<=3?'bg-green':l.anxiety<=6?'bg-yellow':'bg-red';
+      const d=new Date(l.date).toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'});
+      const time=l.time?`<span class="badge bg-purple" style="margin-left:4px">${l.time}</span>`:'';
+      return `<div class="log-item">
+        <span class="log-em">${MOODS[l.mood]}</span>
+        <div class="log-info">
+          <div class="log-date">${d} ${time}</div>
+          <div class="log-tags">${l.triggers?.join(' · ')||'Sem gatilhos'}</div>
+        </div>
+        <div class="log-bdgs">
+          <span class="badge ${mc}">${l.mood}/5</span>
+          <span class="badge ${ac}">A${l.anxiety}</span>
+        </div>
+      </div>`;
+    }).join('');
+
+  } else if (histCurrentTab==='pixels') {
+    // Year in pixels
+    const now=new Date();
+    const startOfYear=new Date(now.getFullYear(),0,1);
+    let html=`<div style="margin-bottom:12px"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px">📆 Ano em Pixels — ${now.getFullYear()}</div><div style="font-size:11px;color:#bbb;margin-bottom:10px">Cada quadrado = 1 dia. Toque para ver.</div></div>`;
+    html+=`<div class="pixels-grid">`;
+    const months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    let curMonth=-1;
+    for(let d=new Date(startOfYear);d<=now;d.setDate(d.getDate()+1)){
+      const m=d.getMonth();
+      if(m!==curMonth){curMonth=m;html+=`<div style="width:100%;font-size:9px;color:#bbb;margin:4px 0 2px;letter-spacing:.04em">${months[m]}</div>`;}
+      const ds=d.toDateString();
+      const dl=S.logs.filter(l=>new Date(l.date).toDateString()===ds);
+      const avgM=dl.length?(dl.reduce((s,l)=>s+l.mood,0)/dl.length):0;
+      const col=MOOD_COLORS[Math.round(avgM)];
+      const title=dl.length?`${MOODS[Math.round(avgM)]} Humor ${avgM.toFixed(1)}`:'Sem registro';
+      html+=`<div class="pixel" style="background:${col}" title="${title}" onclick="alert('${d.toLocaleDateString('pt-BR')}: ${title}')"></div>`;
+    }
+    html+=`</div>`;
+    html+=`<div class="px-legend">
+      <div style="display:flex;align-items:center;gap:4px"><div class="px-dot" style="background:#f0f0f0"></div><span class="px-lbl">Sem registro</span></div>
+      <div style="display:flex;align-items:center;gap:4px"><div class="px-dot" style="background:#ffd6d6"></div><span class="px-lbl">Péssimo</span></div>
+      <div style="display:flex;align-items:center;gap:4px"><div class="px-dot" style="background:#fff9c4"></div><span class="px-lbl">Ok</span></div>
+      <div style="display:flex;align-items:center;gap:4px"><div class="px-dot" style="background:#a8e6cf"></div><span class="px-lbl">Ótimo</span></div>
+    </div>`;
+    body.innerHTML=html;
+
+  } else if (histCurrentTab==='stats') {
+    if(S.logs.length<3){body.innerHTML='<div style="text-align:center;color:#bbb;padding:40px 0;font-size:14px">Faça pelo menos 3 registros<br>para ver estatísticas.</div>';return;}
+    const avg=(S.logs.reduce((s,l)=>s+l.mood,0)/S.logs.length).toFixed(1);
+    const avgA=(S.logs.reduce((s,l)=>s+l.anxiety,0)/S.logs.length).toFixed(1);
+    const allT=S.logs.flatMap(l=>l.triggers||[]);
+    const tCount={};allT.forEach(t=>tCount[t]=(tCount[t]||0)+1);
+    const topT=Object.entries(tCount).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    const bestDay=DAYS[parseInt(Object.entries(
+      S.logs.reduce((acc,l)=>{const d=new Date(l.date).getDay();acc[d]=(acc[d]||[]);acc[d].push(l.mood);return acc;},{}))
+      .map(([d,ms])=>[d,ms.reduce((a,b)=>a+b,0)/ms.length]).sort((a,b)=>b[1]-a[1])[0][0])];
+
+    body.innerHTML=`
+      <div class="card"><div class="card-title">📊 Resumo geral</div>
+        <div style="display:flex;gap:12px;margin-top:8px">
+          <div style="flex:1;text-align:center"><div style="font-size:24px;font-weight:700">${avg}/5</div><div style="font-size:11px;color:#bbb">Humor médio</div></div>
+          <div style="flex:1;text-align:center"><div style="font-size:24px;font-weight:700">${avgA}/10</div><div style="font-size:11px;color:#bbb">Ansiedade média</div></div>
+          <div style="flex:1;text-align:center"><div style="font-size:24px;font-weight:700">${S.logs.length}</div><div style="font-size:11px;color:#bbb">Total registros</div></div>
+        </div>
+      </div>
+      <div class="card"><div class="card-title">📅 Melhor dia da semana</div>
+        <div style="font-size:22px;font-weight:700;color:#7c6ff7;margin-top:6px">${bestDay}</div>
+        <div style="font-size:12px;color:#bbb;margin-top:2px">Seu humor costuma ser melhor neste dia</div>
+      </div>
+      ${topT.length?`<div class="card"><div class="card-title">⚡ Gatilhos mais frequentes</div>
+        ${topT.map(([t,c],i)=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f5f5f5">
+          <div style="width:24px;height:24px;background:#f2f0fe;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#7c6ff7">${i+1}</div>
+          <span style="font-size:13px;flex:1">${t}</span>
+          <span class="badge bg-purple">${c}x</span>
+        </div>`).join('')}
+      </div>`:''}
+    `;
+  }
+}
+
+// ═══════════ MORE ═══════════
+let moreCurrentTab='habits';
+function moreTab(tab) {
+  moreCurrentTab=tab;
+  ['habits','gratitude','insights','premium'].forEach(t=>{
+    document.getElementById('mt-'+t)?.classList.toggle('active',t===tab);
+  });
+  renderMore();
+}
+
+function renderMore() {
+  const body=document.getElementById('more-body');
+  const today=new Date().toDateString();
+  const doneToday=S.habitDone[today]||[];
+
+  if (moreCurrentTab==='habits') {
+    const habList=S.habits.map(h=>`
+      <div class="habit-item">
+        <div class="habit-check ${doneToday.includes(h.id)?'done':''}" onclick="toggleHabit(${h.id})">${doneToday.includes(h.id)?'✓':''}</div>
+        <span style="font-size:18px">${h.icon}</span>
+        <div style="flex:1"><div class="habit-name">${h.name}</div><div style="font-size:11px;color:#bbb">Sequência: ${h.streak} dias</div></div>
+        <span class="habit-streak">${h.streak>0?'🔥'+h.streak:''}</span>
+      </div>
+    `).join('');
+
+    body.innerHTML=`
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:12px">Hábitos de hoje — ${doneToday.length}/${S.habits.length}</div>
+        <div style="background:#f0f0f0;border-radius:8px;height:8px;margin-bottom:14px">
+          <div style="background:#7c6ff7;height:8px;border-radius:8px;width:${S.habits.length?(doneToday.length/S.habits.length*100):0}%;transition:width .4s"></div>
+        </div>
+        ${habList}
+      </div>
+      <div class="card">
+        <div class="card-title">➕ Adicionar hábito</div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <input class="inp" id="new-habit-name" placeholder="Nome do hábito" style="flex:1">
+          <input class="inp" id="new-habit-icon" placeholder="🎯" style="width:52px;text-align:center">
+          <button class="btn-sm btn-sm-p" onclick="addHabit()">+</button>
+        </div>
+      </div>
+    `;
+
+  } else if (moreCurrentTab==='gratitude') {
+    const todayGrat=S.gratitude.filter(g=>new Date(g.date).toDateString()===today);
+    const oldGrat=S.gratitude.filter(g=>new Date(g.date).toDateString()!==today).slice(-6).reverse();
+
+    body.innerHTML=`
+      <div class="card">
+        <div class="card-title">🙏 Gratidão de hoje</div>
+        <div class="card-sub">Pelo que você é grato hoje?</div>
+        <div id="grat-today-list">
+          ${todayGrat.map((g,i)=>`<div class="grat-item"><div class="grat-num">${i+1}</div><div class="grat-text">${g.text}</div></div>`).join('')}
+        </div>
+        ${todayGrat.length<5?`<div style="display:flex;gap:8px;margin-top:10px">
+          <input class="inp" id="grat-inp" placeholder="Escreva algo pelo que é grato..." style="flex:1">
+          <button class="btn-sm btn-sm-p" onclick="addGrat()">+</button>
+        </div>`:'<div style="font-size:12px;color:#bbb;margin-top:8px;text-align:center">Máximo de 5 por dia ✓</div>'}
+      </div>
+      ${oldGrat.length?`<div class="card">
+        <div class="card-title">📚 Gratidões anteriores</div>
+        ${oldGrat.map(g=>`<div class="grat-item">
+          <div class="grat-num" style="background:#f5f5f5;color:#bbb">🙏</div>
+          <div class="grat-text">${g.text}<div style="font-size:10px;color:#ccc;margin-top:2px">${new Date(g.date).toLocaleDateString('pt-BR')}</div></div>
+        </div>`).join('')}
+      </div>`:''}
+    `;
+
+  } else if (moreCurrentTab==='insights') {
+    if(S.logs.length<3){
+      body.innerHTML=`<div style="text-align:center;padding:40px 0">
+        <div style="font-size:36px;margin-bottom:12px">📊</div>
+        <div style="font-size:14px;color:#999">Faça pelo menos 3 registros<br>para ver seus insights.</div>
+        <button class="btn btn-p" style="margin-top:16px" onclick="goTo('log')">Fazer registro agora</button>
+      </div>`;
+      return;
+    }
+    const logs=S.logs;
+    const avgM=(logs.reduce((s,l)=>s+l.mood,0)/logs.length).toFixed(1);
+    const avgA=(logs.reduce((s,l)=>s+l.anxiety,0)/logs.length).toFixed(1);
+    const goodSleep=logs.filter(l=>['Bom','Ótimo'].includes(l.sleep));
+    const goodSleepMood=goodSleep.length?(goodSleep.reduce((s,l)=>s+l.mood,0)/goodSleep.length).toFixed(1):null;
+    const allT=logs.flatMap(l=>l.triggers||[]);
+    const tCount={};allT.forEach(t=>tCount[t]=(tCount[t]||0)+1);
+    const topT=Object.entries(tCount).sort((a,b)=>b[1]-a[1])[0];
+    const friendLogs=logs.filter(l=>l.triggers?.includes('Tempo com amigos'));
+    const friendMood=friendLogs.length?(friendLogs.reduce((s,l)=>s+l.mood,0)/friendLogs.length).toFixed(1):null;
+
+    let html=`<div class="card" style="background:linear-gradient(135deg,#f2f0fe,#fff)">
+      <div style="font-size:11px;color:#9d9adc;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Resumo</div>
+      <div style="display:flex;gap:12px">
+        <div style="flex:1"><div style="font-size:22px;font-weight:700;color:#7c6ff7">${avgM}/5</div><div style="font-size:10px;color:#bbb">humor médio</div></div>
+        <div style="flex:1"><div style="font-size:22px;font-weight:700;color:#ff6b6b">${avgA}/10</div><div style="font-size:10px;color:#bbb">ansiedade</div></div>
+        <div style="flex:1"><div style="font-size:22px;font-weight:700;color:#4ecb8d">${logs.length}</div><div style="font-size:10px;color:#bbb">registros</div></div>
+      </div>
+    </div>`;
+
+    if(goodSleepMood) html+=`<div class="ins-card" style="background:#f2f0fe">
+      <div class="ins-tag" style="background:#e0dcfe;color:#5a4fd6">Padrão identificado</div>
+      <div class="ins-text">Seu humor chega a <strong>${goodSleepMood}/5</strong> nos dias com boa qualidade de sono — acima da sua média. Dormir bem é um investimento real na sua saúde mental.</div>
+    </div>`;
+
+    if(topT) html+=`<div class="ins-card" style="background:#fef0ee">
+      <div class="ins-tag" style="background:#fde0dc;color:#c0392b">Gatilho frequente</div>
+      <div class="ins-text">"<strong>${topT[0]}</strong>" aparece em <strong>${topT[1]}</strong> registros seus. Prestar atenção nesse padrão pode ajudar a antecipar dias difíceis.</div>
+    </div>`;
+
+    if(friendMood && parseFloat(friendMood)>parseFloat(avgM)) html+=`<div class="ins-card" style="background:#e8fdf3">
+      <div class="ins-tag" style="background:#c3f0da;color:#1a6b44">Ponto positivo</div>
+      <div class="ins-text">Tempo com amigos eleva seu humor para <strong>${friendMood}/5</strong>. Conexão social é uma das melhores ferramentas naturais contra ansiedade.</div>
+    </div>`;
+
+    html+=`<div class="ins-card" style="background:#fff8ec">
+      <div class="ins-tag" style="background:#fef0c0;color:#7a4f00">Dica</div>
+      <div class="ins-text">Continue registrando manhã, tarde e noite para descobrir em que parte do dia você se sente melhor ou pior.</div>
+    </div>`;
+
+    body.innerHTML=html;
+
+  } else if (moreCurrentTab==='premium') {
+    body.innerHTML=`
+      <div class="privacy-banner" style="margin-bottom:16px">
+        <div class="privacy-icon">🔒</div>
+        <div><div class="privacy-title">100% privado por padrão</div><div class="privacy-sub">Seus dados ficam só no seu dispositivo</div></div>
+      </div>
+      <div style="border:1.5px solid #eee;border-radius:16px;overflow:hidden;margin-bottom:12px">
+        <div class="plan-hdr"><span style="font-weight:600">Plano gratuito</span><span class="badge bg-green">Seu plano atual</span></div>
+        <div class="plan-body">
+          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Registros ilimitados</span></div>
+          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Gráfico semanal</span></div>
+          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Hábitos (até 3)</span></div>
+          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Respiração guiada</span></div>
+          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Botão SOS</span></div>
+          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Gratidão (até 5/dia)</span></div>
+          <div class="feat"><div class="feat-ck no">×</div><span class="feat-txt dim">Ano em Pixels completo</span></div>
+          <div class="feat"><div class="feat-ck no">×</div><span class="feat-txt dim">Hábitos ilimitados</span></div>
+          <div class="feat"><div class="feat-ck no">×</div><span class="feat-txt dim">Exportar PDF mensal</span></div>
+          <div class="feat"><div class="feat-ck no">×</div><span class="feat-txt dim">Temas e personalização</span></div>
+          <div class="feat"><div class="feat-ck no">×</div><span class="feat-txt dim">Lembretes avançados</span></div>
+        </div>
+      </div>
+      <div style="border:1.5px solid #7c6ff7;border-radius:16px;overflow:hidden">
+        <div class="plan-hdr" style="background:linear-gradient(135deg,#7c6ff7,#5a4fd6)">
+          <span style="font-weight:600;color:#fff">Premium</span>
+          <span style="background:#ffffff25;color:#fff;padding:3px 10px;border-radius:20px;font-size:10px">Mais popular</span>
+        </div>
+        <div class="plan-body">
+          <div style="font-size:24px;font-weight:700;color:#1a1a1a">R$ 19,90<span style="font-size:13px;font-weight:400;color:#bbb">/mês</span></div>
+          <div style="font-size:11px;color:#7c6ff7;margin-bottom:14px">ou R$ 149/ano — economize 38%</div>
+          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Tudo do plano grátis</span></div>
+          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Hábitos ilimitados</span></div>
+          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Ano em Pixels completo</span></div>
+          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Exportar PDF mensal</span></div>
+          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Temas: escuro, rosa, verde</span></div>
+          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Lembretes personalizados</span></div>
+          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Backup na nuvem</span></div>
+          <button class="btn btn-p" style="margin-top:14px">Começar 7 dias grátis</button>
+          <button class="btn btn-s" style="margin-top:8px">Plano anual — R$ 149</button>
+          <div style="text-align:center;font-size:10px;color:#ccc;margin-top:8px">Cancele quando quiser</div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function addHabit() {
+  const name=document.getElementById('new-habit-name')?.value?.trim();
+  const icon=document.getElementById('new-habit-icon')?.value?.trim()||'🎯';
+  if(!name) return;
+  S.habits.push({id:Date.now(),name,icon,streak:0});
+  save(); renderMore();
+}
+
+function addGrat() {
+  const text=document.getElementById('grat-inp')?.value?.trim();
+  if(!text) return;
+  S.gratitude.push({id:Date.now(),date:new Date().toISOString(),text});
+  save(); renderMore(); renderHome();
+}
+
+// ═══════════ INIT ═══════════
+window.onload = () => {
+  // seed some sample data for demo
+  if (!S.logs.length) {
+    const now=new Date();
+    for(let i=6;i>=1;i--){
+      const d=new Date(now);d.setDate(d.getDate()-i);
+      const m=[3,4,2,5,4,3][6-i]||3;
+      S.logs.push({id:Date.now()-i*1000,date:d.toISOString(),mood:m,anxiety:[4,2,7,1,3,5][6-i]||3,sleep:'Bom',triggers:['Trabalho estressante'],note:'',time:'Manhã'});
+    }
+    S.gratitude.push({id:1,date:new Date(now.setDate(now.getDate()-1)).toISOString(),text:'Tive uma boa conversa com um amigo'});
+    save();
+  }
+};
+</script>
+</body>
+</html>
