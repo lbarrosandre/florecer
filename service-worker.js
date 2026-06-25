@@ -1,56 +1,45 @@
-const CACHE_NAME = 'florecer-v1';
+const CACHE_NAME = 'florecer-v2';
+const BASE = '/florecer';
 const ASSETS = [
-  '/florecer/',
-  '/florecer/index.html',
-  '/florecer/manifest.json',
-  '/florecer/icon-192.png',
-  '/florecer/icon-512.png',
-  'https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap'
+  BASE + '/',
+  BASE + '/index.html',
+  BASE + '/manifest.json',
+  BASE + '/icon-192.png',
+  BASE + '/icon-512.png',
 ];
 
-// Instalar e fazer cache dos assets
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(ASSETS).catch(err => console.log('Cache parcial:', err));
-    })
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(ASSETS).catch(err => console.warn('Cache parcial:', err)))
+      .then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
-// Ativar e limpar caches antigos
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
+    caches.keys()
+      .then(keys => Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      ))
+      .then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Estratégia: Network first, fallback para cache
 self.addEventListener('fetch', (e) => {
-  // Ignorar Firebase e Google APIs (sempre online)
-  if (e.request.url.includes('firebase') ||
-      e.request.url.includes('googleapis') ||
-      e.request.url.includes('gstatic') ||
-      e.request.url.includes('firebaseapp')) {
-    return;
-  }
+  const url = e.request.url;
+  if (url.includes('firebase') || url.includes('googleapis') ||
+      url.includes('gstatic') || url.includes('google.com')) return;
 
   e.respondWith(
     fetch(e.request)
-      .then(response => {
-        // Salvar cópia no cache
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
-        return response;
+      .then(res => {
+        const clone = res.clone();
+        caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+        return res;
       })
-      .catch(() => {
-        // Sem internet: usar cache
-        return caches.match(e.request).then(cached => {
-          return cached || caches.match('/florecer/index.html');
-        });
-      })
+      .catch(() => caches.match(e.request)
+        .then(cached => cached || caches.match(BASE + '/index.html'))
+      )
   );
 });

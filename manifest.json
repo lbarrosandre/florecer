@@ -2,10 +2,10 @@
   "name": "Florecer — Diário de Bem-Estar",
   "short_name": "Florecer",
   "description": "Cuide da sua mente, um dia de cada vez.",
-  "start_url": "/florecer/",
+  "start_url": "/florecer/index.html",
   "scope": "/florecer/",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "background_color": "#0d3d2e",
   "theme_color": "#0d3d2e",
   "lang": "pt-BR",
@@ -14,22 +14,27 @@
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  "screenshots": [
+      "purpose": "any"
+    },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "form_factor": "narrow"
+      "purpose": "maskable"
     }
   ],
-  "categories": ["health", "lifestyle", "medical"]
+  "categories": ["health", "lifestyle"],
+  "prefer_related_applications": false
 }
