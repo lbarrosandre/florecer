@@ -282,24 +282,24 @@ textarea.inp{resize:none;min-height:76px}
 @keyframes floatC{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-24px) scale(1.08)}}
 .cover-leaves{position:absolute;font-size:200px;opacity:.04;bottom:-30px;right:-30px;transform:rotate(-15deg);pointer-events:none}
 .cover-content{position:relative;z-index:1;display:flex;flex-direction:column;height:100%}
-.cover-top{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:0 32px 24px;min-height:0}
-.cover-logo{width:min(180px, 45vw);height:min(180px, 45vw);object-fit:contain;border-radius:36px;box-shadow:0 24px 80px #00000050;animation:logoIn .8s ease}
+.cover-top{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:0 28px 20px;min-height:0}
+.cover-logo{width:min(200px, 52vw);height:min(200px, 52vw);object-fit:contain;border-radius:36px;box-shadow:0 24px 80px #00000050;animation:logoIn .8s ease}
 @keyframes logoIn{from{opacity:0;transform:translateY(-24px) scale(.85)}to{opacity:1;transform:translateY(0) scale(1)}}
-.cover-tagline{color:#ffffffdd;font-size:clamp(16px,4.5vw,22px);text-align:center;margin-top:20px;line-height:1.6;font-weight:300;letter-spacing:.01em;animation:fadeInUp .8s ease .3s both;max-width:280px}
+.cover-tagline{color:#ffffffdd;font-size:clamp(20px,5.5vw,26px);text-align:center;margin-top:20px;line-height:1.6;font-weight:300;letter-spacing:.01em;animation:fadeInUp .8s ease .3s both;max-width:280px}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.cover-card{background:#fff;border-radius:32px 32px 0 0;padding:28px 24px 16px;animation:slideUpCard .5s ease .1s both;flex-shrink:0}
+.cover-card{background:#fff;border-radius:32px 32px 0 0;padding:32px 28px 16px;animation:slideUpCard .5s ease .1s both;flex-shrink:0}
 @keyframes slideUpCard{from{opacity:0;transform:translateY(60px)}to{opacity:1;transform:translateY(0)}}
 .cover-tabs{display:flex;background:#f0f0f0;border-radius:14px;padding:4px;margin-bottom:20px}
-.cover-tab{flex:1;padding:12px;border:none;background:none;border-radius:11px;font-size:clamp(14px,4vw,16px);font-weight:500;color:#aaa;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.cover-tab{flex:1;padding:14px;border:none;background:none;border-radius:11px;font-size:clamp(16px,4.5vw,18px);font-weight:500;color:#aaa;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
 .cover-tab.active{background:#fff;color:#1a1a1a;box-shadow:0 2px 8px #0000001a;font-weight:600}
 .cover-inp-wrap{display:flex;align-items:center;gap:12px;background:#f8f8f8;border:1.5px solid #eee;border-radius:16px;padding:4px 16px;transition:border-color .15s;margin-bottom:12px}
 .cover-inp-wrap:focus-within{border-color:#2a7d63;background:#fff}
-.cover-inp-icon{font-size:18px;flex-shrink:0}
-.cover-inp{flex:1;padding:14px 0;border:none;background:none;font-size:clamp(15px,4vw,17px);font-family:'DM Sans',sans-serif;color:#1a1a1a;outline:none}
+.cover-inp-icon{font-size:22px;flex-shrink:0}
+.cover-inp{flex:1;padding:16px 0;border:none;background:none;font-size:clamp(16px,4.5vw,18px);font-family:'DM Sans',sans-serif;color:#1a1a1a;outline:none}
 .cover-inp::placeholder{color:#ccc}
-.cover-btn-main{width:100%;padding:17px;background:linear-gradient(135deg,#2a7d63,#1a5c42);color:#fff;border:none;border-radius:16px;font-size:clamp(15px,4.5vw,17px);font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 6px 24px #2a7d6345;transition:all .15s;margin-bottom:14px}
+.cover-btn-main{width:100%;padding:19px;background:linear-gradient(135deg,#2a7d63,#1a5c42);color:#fff;border:none;border-radius:16px;font-size:clamp(17px,5vw,20px);font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 6px 24px #2a7d6345;transition:all .15s;margin-bottom:14px}
 .cover-btn-main:active{transform:scale(.97);opacity:.9}
-.cover-btn-google{width:100%;padding:15px;background:#fff;color:#333;border:1.5px solid #e0e0e0;border-radius:16px;font-size:clamp(14px,4vw,16px);font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:12px;transition:all .15s;margin-bottom:4px;box-shadow:0 2px 8px #00000010}
+.cover-btn-google{width:100%;padding:17px;background:#fff;color:#333;border:1.5px solid #e0e0e0;border-radius:16px;font-size:clamp(16px,4.5vw,18px);font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:12px;transition:all .15s;margin-bottom:4px;box-shadow:0 2px 8px #00000010}
 .cover-btn-google:active{background:#f5f5f5}
 .cover-link{background:none;border:none;color:#2a7d63;font-size:clamp(12px,3.5vw,14px);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
 .cover-divider{display:flex;align-items:center;gap:12px;margin-bottom:14px}
@@ -1004,6 +1004,12 @@ function save() {
 
 // ═══════════ NAVIGATION ═══════════
 function goTo(screen) {
+  // Bloquear acesso às telas internas sem autenticação
+  const protectedScreens = ['home','log','breath','history','more','sos'];
+  if (protectedScreens.includes(screen) && !S.user) {
+    console.warn('Acesso bloqueado: usuário não autenticado');
+    return;
+  }
   stopBreath();
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('s-' + screen).classList.add('active');
@@ -1322,12 +1328,14 @@ function coverTab(mode) {
 }
 
 function doCoverLogin() {
+  if (!window.doRegister || !window.doLogin) {
+    showCoverError('Aguarde o app carregar completamente...');
+    return;
+  }
   if (coverMode === 'register') {
-    if (window.doRegister) window.doRegister();
-    else { S.user = { name: document.getElementById('cover-name')?.value || 'Você', email: document.getElementById('cover-email')?.value }; goTo('home'); }
+    window.doRegister();
   } else {
-    if (window.doLogin) window.doLogin();
-    else { S.user = { name: document.getElementById('cover-email')?.value?.split('@')[0] || 'Você', email: document.getElementById('cover-email')?.value }; goTo('home'); }
+    window.doLogin();
   }
 }
 const EMPATHY = {
