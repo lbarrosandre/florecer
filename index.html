@@ -274,46 +274,47 @@ textarea.inp{resize:none;min-height:76px}
 .fab-sos{position:absolute;bottom:90px;right:16px;z-index:100}
 
 /* ══ COVER SCREEN ══ */
-.cover-bg{position:absolute;inset:0;background:linear-gradient(160deg,#0d3d2e 0%,#1a5c42 35%,#2a7d63 65%,#1f6450 100%);overflow:hidden}
-.cover-circle{position:absolute;border-radius:50%;opacity:.15}
-.c1{width:300px;height:300px;background:radial-gradient(circle,#c9a84c,transparent);top:-80px;right:-80px;animation:floatC 8s ease-in-out infinite}
-.c2{width:200px;height:200px;background:radial-gradient(circle,#4ecb8d,transparent);bottom:120px;left:-60px;animation:floatC 10s ease-in-out infinite reverse}
-.c3{width:150px;height:150px;background:radial-gradient(circle,#c9a84c,transparent);bottom:260px;right:20px;animation:floatC 6s ease-in-out infinite 2s}
-@keyframes floatC{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-20px) scale(1.1)}}
-.cover-leaves{position:absolute;font-size:120px;opacity:.06;bottom:-20px;right:-20px;transform:rotate(-20deg);pointer-events:none}
+.cover-bg{position:absolute;inset:0;background:linear-gradient(160deg,#0a2e20 0%,#1a5c42 45%,#2a7d63 100%);overflow:hidden}
+.cover-circle{position:absolute;border-radius:50%;opacity:.12}
+.c1{width:400px;height:400px;background:radial-gradient(circle,#c9a84c,transparent);top:-100px;right:-100px;animation:floatC 8s ease-in-out infinite}
+.c2{width:300px;height:300px;background:radial-gradient(circle,#4ecb8d,transparent);bottom:200px;left:-100px;animation:floatC 10s ease-in-out infinite reverse}
+.c3{width:200px;height:200px;background:radial-gradient(circle,#c9a84c,transparent);bottom:350px;right:30px;animation:floatC 6s ease-in-out infinite 2s}
+@keyframes floatC{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-24px) scale(1.08)}}
+.cover-leaves{position:absolute;font-size:200px;opacity:.04;bottom:-30px;right:-30px;transform:rotate(-15deg);pointer-events:none}
 .cover-content{position:relative;z-index:1;display:flex;flex-direction:column;height:100%}
-.cover-top{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 24px 20px;min-height:0}
-.cover-logo{width:130px;height:130px;object-fit:contain;border-radius:32px;box-shadow:0 20px 60px #00000040;animation:logoIn .8s ease}
-@keyframes logoIn{from{opacity:0;transform:translateY(-20px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
-.cover-tagline{color:#ffffffcc;font-size:16px;text-align:center;margin-top:16px;line-height:1.65;font-weight:300;letter-spacing:.01em;animation:fadeInUp .8s ease .3s both}
-@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.cover-card{background:#fff;border-radius:28px 28px 0 0;padding:24px 24px 8px;animation:slideUpCard .5s ease .1s both;flex-shrink:0}
-@keyframes slideUpCard{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
-.cover-tabs{display:flex;background:#f4f4f4;border-radius:12px;padding:4px;margin-bottom:18px}
-.cover-tab{flex:1;padding:10px;border:none;background:none;border-radius:10px;font-size:14px;font-weight:500;color:#aaa;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
-.cover-tab.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 6px #0000001a;font-weight:600}
-.cover-inp-wrap{display:flex;align-items:center;gap:10px;background:#f8f8f8;border:1.5px solid #eee;border-radius:14px;padding:3px 14px;transition:border-color .15s}
+.cover-top{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:0 32px 24px;min-height:0}
+.cover-logo{width:min(180px, 45vw);height:min(180px, 45vw);object-fit:contain;border-radius:36px;box-shadow:0 24px 80px #00000050;animation:logoIn .8s ease}
+@keyframes logoIn{from{opacity:0;transform:translateY(-24px) scale(.85)}to{opacity:1;transform:translateY(0) scale(1)}}
+.cover-tagline{color:#ffffffdd;font-size:clamp(16px,4.5vw,22px);text-align:center;margin-top:20px;line-height:1.6;font-weight:300;letter-spacing:.01em;animation:fadeInUp .8s ease .3s both;max-width:280px}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.cover-card{background:#fff;border-radius:32px 32px 0 0;padding:28px 24px 16px;animation:slideUpCard .5s ease .1s both;flex-shrink:0}
+@keyframes slideUpCard{from{opacity:0;transform:translateY(60px)}to{opacity:1;transform:translateY(0)}}
+.cover-tabs{display:flex;background:#f0f0f0;border-radius:14px;padding:4px;margin-bottom:20px}
+.cover-tab{flex:1;padding:12px;border:none;background:none;border-radius:11px;font-size:clamp(14px,4vw,16px);font-weight:500;color:#aaa;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.cover-tab.active{background:#fff;color:#1a1a1a;box-shadow:0 2px 8px #0000001a;font-weight:600}
+.cover-inp-wrap{display:flex;align-items:center;gap:12px;background:#f8f8f8;border:1.5px solid #eee;border-radius:16px;padding:4px 16px;transition:border-color .15s;margin-bottom:12px}
 .cover-inp-wrap:focus-within{border-color:#2a7d63;background:#fff}
-.cover-inp-icon{font-size:16px;flex-shrink:0}
-.cover-inp{flex:1;padding:11px 0;border:none;background:none;font-size:14px;font-family:'DM Sans',sans-serif;color:#1a1a1a;outline:none}
-.cover-inp::placeholder{color:#bbb}
-.cover-btn-main{width:100%;padding:15px;background:linear-gradient(135deg,#2a7d63,#1f6450);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 20px #2a7d6340;transition:all .15s;margin-bottom:14px}
-.cover-btn-main:active{transform:scale(.98)}
-.cover-btn-google{width:100%;padding:13px;background:#fff;color:#333;border:1.5px solid #e8e8e8;border-radius:14px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .15s;margin-bottom:4px}
-.cover-btn-google:hover{background:#f8f8f8}
-.cover-link{background:none;border:none;color:#2a7d63;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
-.cover-divider{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.cover-inp-icon{font-size:18px;flex-shrink:0}
+.cover-inp{flex:1;padding:14px 0;border:none;background:none;font-size:clamp(15px,4vw,17px);font-family:'DM Sans',sans-serif;color:#1a1a1a;outline:none}
+.cover-inp::placeholder{color:#ccc}
+.cover-btn-main{width:100%;padding:17px;background:linear-gradient(135deg,#2a7d63,#1a5c42);color:#fff;border:none;border-radius:16px;font-size:clamp(15px,4.5vw,17px);font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 6px 24px #2a7d6345;transition:all .15s;margin-bottom:14px}
+.cover-btn-main:active{transform:scale(.97);opacity:.9}
+.cover-btn-google{width:100%;padding:15px;background:#fff;color:#333;border:1.5px solid #e0e0e0;border-radius:16px;font-size:clamp(14px,4vw,16px);font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:12px;transition:all .15s;margin-bottom:4px;box-shadow:0 2px 8px #00000010}
+.cover-btn-google:active{background:#f5f5f5}
+.cover-link{background:none;border:none;color:#2a7d63;font-size:clamp(12px,3.5vw,14px);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
+.cover-divider{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .cover-divider::before,.cover-divider::after{content:'';flex:1;height:1px;background:#eee}
-.cover-divider span{font-size:12px;color:#bbb;white-space:nowrap}
-.cover-footer{padding:12px 24px 24px;text-align:center;flex-shrink:0}
+.cover-divider span{font-size:clamp(11px,3vw,13px);color:#bbb;white-space:nowrap}
+.cover-footer{padding:12px 24px max(env(safe-area-inset-bottom),20px);text-align:center;flex-shrink:0}
 </style>
 
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-             signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged,
-             updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+             signInWithRedirect, getRedirectResult, GoogleAuthProvider,
+             signOut, onAuthStateChanged, updateProfile }
+             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, collection,
              addDoc, query, where, getDocs, deleteDoc, orderBy }
              from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -411,41 +412,53 @@ textarea.inp{resize:none;min-height:76px}
       try {
         await signInWithEmailAndPassword(auth, email, pass);
       } catch (e) {
-        window.showCoverError(window.firebaseError(e.code));
+        const msg = window.firebaseError(e.code);
+        window.showCoverError(msg);
+        // Se conta não encontrada, sugerir cadastro
+        if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
+          setTimeout(() => {
+            const errEl = document.getElementById('cover-error');
+            if (errEl) {
+              errEl.innerHTML = msg + '<br><button onclick="coverTab('register')" style="color:#2a7d63;background:none;border:none;font-weight:600;cursor:pointer;font-size:13px;margin-top:6px;font-family:DM Sans,sans-serif">→ Criar conta agora</button>';
+            }
+          }, 100);
+        }
       } finally {
         window.setCoverLoading(false);
       }
     };
 
-    window.doGoogleLogin = async () => {
-      window.setCoverLoading(true);
-      try {
-        // Em PWA/mobile usar redirect em vez de popup
-        const { signInWithRedirect, getRedirectResult } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-        await signInWithRedirect(auth, googleProvider);
-      } catch (e) {
-        if (e.code !== 'auth/popup-closed-by-user')
-          window.showCoverError(window.firebaseError(e.code));
-        window.setCoverLoading(false);
-      }
-    };
-
-    // Verificar resultado de redirect ao carregar
-    const { getRedirectResult } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+    // Verificar resultado de redirect do Google ao carregar o app
     try {
-      const result = await getRedirectResult(auth);
-      if (result?.user) {
-        const user = result.user;
-        await setDoc(doc(db, 'users', user.uid), {
-          name: user.displayName || user.email.split('@')[0],
-          email: user.email,
+      const redirectResult = await getRedirectResult(auth);
+      if (redirectResult?.user) {
+        const u = redirectResult.user;
+        await setDoc(doc(db, 'users', u.uid), {
+          name: u.displayName || u.email.split('@')[0],
+          email: u.email,
+          photo: u.photoURL || '',
           createdAt: new Date().toISOString(),
           isPremium: false
         }, { merge: true });
       }
     } catch(e) {
-      console.log('Redirect result error:', e.message);
+      console.log('Redirect result:', e.code);
+      if (e.code && e.code !== 'auth/null-user') {
+        setTimeout(() => window.showCoverError && window.showCoverError(window.firebaseError(e.code)), 500);
+      }
     }
+
+    window.doGoogleLogin = async () => {
+      window.setCoverLoading(true);
+      try {
+        googleProvider.setCustomParameters({ prompt: 'select_account' });
+        await signInWithRedirect(auth, googleProvider);
+        // página vai recarregar após redirect - loading continua
+      } catch (e) {
+        window.showCoverError(window.firebaseError(e.code));
+        window.setCoverLoading(false);
+      }
+    };
 
     window.doLogout = async () => {
       if (!confirm('Deseja sair da sua conta?')) return;
@@ -519,9 +532,9 @@ textarea.inp{resize:none;min-height:76px}
         'auth/email-already-in-use': 'Este e-mail já está cadastrado.',
         'auth/invalid-email': 'E-mail inválido.',
         'auth/weak-password': 'Senha muito fraca. Use pelo menos 6 caracteres.',
-        'auth/user-not-found': 'Conta não encontrada. Verifique o e-mail.',
-        'auth/wrong-password': 'Senha incorreta.',
-        'auth/invalid-credential': 'E-mail ou senha incorretos.',
+        'auth/user-not-found': 'Conta não encontrada. Crie uma conta na aba "Criar conta" primeiro.',
+        'auth/wrong-password': 'Senha incorreta. Tente novamente.',
+        'auth/invalid-credential': 'E-mail ou senha incorretos. Se não tem conta, clique em "Criar conta".',
         'auth/too-many-requests': 'Muitas tentativas. Tente novamente em alguns minutos.',
         'auth/network-request-failed': 'Sem conexão. Verifique sua internet.',
       };
