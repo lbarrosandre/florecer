@@ -308,21 +308,11 @@ textarea.inp{resize:none;min-height:76px}
 .cover-footer{padding:12px 24px max(env(safe-area-inset-bottom),20px);text-align:center;flex-shrink:0}
 </style>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-             signInWithRedirect, getRedirectResult, GoogleAuthProvider,
-             signOut, onAuthStateChanged, updateProfile }
-             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, collection,
-             addDoc, query, where, getDocs, deleteDoc, orderBy }
-             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    // ══════════════════════════════════════════
-    // CONFIGURAÇÃO FIREBASE
-    // Substitua com as configurações do seu projeto Firebase
-    // ══════════════════════════════════════════
+  <!-- Firebase SDK (versão compat - mais estável) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCXWZOVseHAj8Lz28CrTMmhW2UzO4qArfc",
       authDomain: "florecer-app-c460d.firebaseapp.com",
@@ -332,115 +322,107 @@ textarea.inp{resize:none;min-height:76px}
       appId: "1:1043193300107:web:8d4b789e90b7b41a8a008e"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const googleProvider = new GoogleAuthProvider();
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    // Sinalizar que Firebase está pronto — habilitar botões
-    window.firebaseReady = true;
-    const mainBtn = document.getElementById('cover-main-btn');
-    const googleBtn = document.getElementById('cover-google-btn');
-    if (mainBtn) { mainBtn.disabled = false; mainBtn.style.opacity = '1'; mainBtn.textContent = 'Entrar'; }
-    if (googleBtn) { googleBtn.disabled = false; googleBtn.style.opacity = '1'; }
+    // Habilitar botões quando Firebase estiver pronto
+    function enableButtons() {
+      const mainBtn = document.getElementById('cover-main-btn');
+      const googleBtn = document.getElementById('cover-google-btn');
+      if (mainBtn) { mainBtn.disabled = false; mainBtn.style.opacity = '1'; mainBtn.textContent = 'Entrar'; }
+      if (googleBtn) { googleBtn.disabled = false; googleBtn.style.opacity = '1'; }
+    }
 
-    // Expor globalmente para as funções do app
-    window.fbAuth = auth;
-    window.fbDb = db;
-    window.fbFuncs = {
-      createUserWithEmailAndPassword, signInWithEmailAndPassword,
-      signInWithPopup, signOut, onAuthStateChanged,
-      updateProfile, GoogleAuthProvider, googleProvider,
-      doc, setDoc, getDoc, collection, addDoc,
-      query, where, getDocs, deleteDoc, orderBy
-    };
-
-    // ══════════════════════════════════════════
-    // OBSERVER DE AUTENTICAÇÃO
-    // ══════════════════════════════════════════
-    onAuthStateChanged(auth, async (user) => {
+    // ═══════════ AUTH STATE ═══════════
+    auth.onAuthStateChanged(async (user) => {
+      enableButtons();
       if (user) {
-        // Usuário logado
         window.S.user = {
           uid: user.uid,
           name: user.displayName || user.email.split('@')[0],
           email: user.email,
-          photo: user.photoURL
+          photo: user.photoURL || ''
         };
         localStorage.setItem('fl_user', JSON.stringify(window.S.user));
-        await window.syncFromCloud();
-        if (document.getElementById('s-cover').classList.contains('active')) {
+        await syncFromCloud();
+        const cover = document.getElementById('s-cover');
+        if (cover && cover.classList.contains('active')) {
           window.goTo('home');
         }
       } else {
-        // Não logado
         window.S.user = null;
         localStorage.removeItem('fl_user');
-        window.goTo('cover');
+        const cover = document.getElementById('s-cover');
+        if (cover && !cover.classList.contains('active')) {
+          document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+          cover.classList.add('active');
+        }
       }
     });
 
-    // ══════════════════════════════════════════
-    // AUTH FUNCTIONS
-    // ══════════════════════════════════════════
+    // ═══════════ REGISTER ═══════════
     window.doRegister = async () => {
       const name = document.getElementById('cover-name')?.value?.trim();
       const email = document.getElementById('cover-email')?.value?.trim();
       const pass = document.getElementById('cover-pass')?.value;
-
-      if (!name || !email || !pass)
-        return window.showCoverError('Preencha todos os campos.');
-      if (pass.length < 6)
-        return window.showCoverError('A senha precisa ter pelo menos 6 caracteres.');
-
-      window.setCoverLoading(true);
+      if (!name) return showCoverError('Informe seu nome.');
+      if (!email) return showCoverError('Informe seu e-mail.');
+      if (!pass || pass.length < 6) return showCoverError('A senha precisa ter pelo menos 6 caracteres.');
+      setCoverLoading(true);
       try {
-        const cred = await createUserWithEmailAndPassword(auth, email, pass);
-        await updateProfile(cred.user, { displayName: name });
-        // Criar perfil no Firestore
-        await setDoc(doc(db, 'users', cred.user.uid), {
+        const cred = await auth.createUserWithEmailAndPassword(email, pass);
+        await cred.user.updateProfile({ displayName: name });
+        await db.collection('users').doc(cred.user.uid).set({
           name, email, createdAt: new Date().toISOString(), isPremium: false
         });
       } catch (e) {
-        window.showCoverError(window.firebaseError(e.code));
+        showCoverError(firebaseError(e.code));
       } finally {
-        window.setCoverLoading(false);
+        setCoverLoading(false);
       }
     };
 
+    // ═══════════ LOGIN ═══════════
     window.doLogin = async () => {
       const email = document.getElementById('cover-email')?.value?.trim();
       const pass = document.getElementById('cover-pass')?.value;
-
-      if (!email || !pass)
-        return window.showCoverError('Preencha e-mail e senha.');
-
-      window.setCoverLoading(true);
+      if (!email || !pass) return showCoverError('Preencha e-mail e senha.');
+      setCoverLoading(true);
       try {
-        await signInWithEmailAndPassword(auth, email, pass);
+        await auth.signInWithEmailAndPassword(email, pass);
       } catch (e) {
-        const msg = window.firebaseError(e.code);
-        window.showCoverError(msg);
-        // Se conta não encontrada, sugerir cadastro
-        if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
+        let msg = firebaseError(e.code);
+        showCoverError(msg);
+        if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password') {
           setTimeout(() => {
             const errEl = document.getElementById('cover-error');
-            if (errEl) {
-              errEl.innerHTML = msg + '<br><button onclick="coverTab('register')" style="color:#2a7d63;background:none;border:none;font-weight:600;cursor:pointer;font-size:13px;margin-top:6px;font-family:DM Sans,sans-serif">→ Criar conta agora</button>';
-            }
+            if (errEl) errEl.innerHTML = msg + '<br><button onclick="coverTab('register')" style="color:#2a7d63;background:none;border:none;font-weight:600;cursor:pointer;font-size:14px;margin-top:6px;font-family:DM Sans,sans-serif">→ Criar conta agora</button>';
           }, 100);
         }
       } finally {
-        window.setCoverLoading(false);
+        setCoverLoading(false);
       }
     };
 
-    // Verificar resultado de redirect do Google ao carregar o app
-    try {
-      const redirectResult = await getRedirectResult(auth);
-      if (redirectResult?.user) {
-        const u = redirectResult.user;
-        await setDoc(doc(db, 'users', u.uid), {
+    // ═══════════ GOOGLE LOGIN ═══════════
+    window.doGoogleLogin = async () => {
+      setCoverLoading(true);
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+        await auth.signInWithRedirect(provider);
+      } catch (e) {
+        showCoverError(firebaseError(e.code));
+        setCoverLoading(false);
+      }
+    };
+
+    // Verificar resultado do redirect do Google
+    auth.getRedirectResult().then(async (result) => {
+      if (result && result.user) {
+        const u = result.user;
+        await db.collection('users').doc(u.uid).set({
           name: u.displayName || u.email.split('@')[0],
           email: u.email,
           photo: u.photoURL || '',
@@ -448,105 +430,76 @@ textarea.inp{resize:none;min-height:76px}
           isPremium: false
         }, { merge: true });
       }
-    } catch(e) {
-      console.log('Redirect result:', e.code);
-      if (e.code && e.code !== 'auth/null-user') {
-        setTimeout(() => window.showCoverError && window.showCoverError(window.firebaseError(e.code)), 500);
+    }).catch((e) => {
+      if (e.code && e.code !== 'auth/null-user' && e.code !== 'auth/no-auth-event') {
+        console.log('Google redirect error:', e.code);
       }
-    }
+    });
 
-    window.doGoogleLogin = async () => {
-      window.setCoverLoading(true);
-      try {
-        googleProvider.setCustomParameters({ prompt: 'select_account' });
-        await signInWithRedirect(auth, googleProvider);
-        // página vai recarregar após redirect - loading continua
-      } catch (e) {
-        window.showCoverError(window.firebaseError(e.code));
-        window.setCoverLoading(false);
-      }
-    };
-
+    // ═══════════ LOGOUT ═══════════
     window.doLogout = async () => {
       if (!confirm('Deseja sair da sua conta?')) return;
-      await signOut(auth);
+      await auth.signOut();
       window.S.logs = [];
-      window.S.habits = [];
+      window.S.habits = JSON.parse(localStorage.getItem('fl_habits_default') || '[{"id":1,"name":"Beber 2L de água","icon":"💧","streak":0},{"id":2,"name":"Exercício físico","icon":"🏃","streak":0},{"id":3,"name":"Meditação","icon":"🧘","streak":0}]');
       window.S.gratitude = [];
       window.S.habitDone = {};
       localStorage.clear();
     };
 
-    // ══════════════════════════════════════════
-    // SYNC CLOUD ↔ LOCAL
-    // ══════════════════════════════════════════
-    window.syncFromCloud = async () => {
+    // ═══════════ SYNC CLOUD ═══════════
+    async function syncFromCloud() {
       const uid = window.S.user?.uid;
       if (!uid) return;
       try {
-        // Logs
-        const logsQ = query(collection(db, 'logs'), where('uid', '==', uid), orderBy('date', 'desc'));
-        const logsSnap = await getDocs(logsQ);
+        const logsSnap = await db.collection('logs').where('uid','==',uid).orderBy('date','desc').get();
         window.S.logs = logsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-        // Habits
-        const habSnap = await getDoc(doc(db, 'habits', uid));
-        if (habSnap.exists()) window.S.habits = habSnap.data().list || window.S.habits;
-
-        // Gratidão
-        const gratQ = query(collection(db, 'gratitude'), where('uid', '==', uid), orderBy('date', 'desc'));
-        const gratSnap = await getDocs(gratQ);
+        const habSnap = await db.collection('habits').doc(uid).get();
+        if (habSnap.exists) window.S.habits = habSnap.data().list || window.S.habits;
+        const gratSnap = await db.collection('gratitude').where('uid','==',uid).orderBy('date','desc').get();
         window.S.gratitude = gratSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-        // HabitDone
-        const hdSnap = await getDoc(doc(db, 'habitDone', uid));
-        if (hdSnap.exists()) window.S.habitDone = hdSnap.data() || {};
-
+        const hdSnap = await db.collection('habitDone').doc(uid).get();
+        if (hdSnap.exists) window.S.habitDone = hdSnap.data() || {};
         window.save();
-      } catch (e) {
-        console.log('Sync error (usando cache local):', e.message);
-      }
-    };
+      } catch (e) { console.log('Sync (usando cache):', e.message); }
+    }
+    window.syncFromCloud = syncFromCloud;
 
     window.saveLogCloud = async (log) => {
       const uid = window.S.user?.uid;
       if (!uid) return;
-      try {
-        const ref = await addDoc(collection(db, 'logs'), { ...log, uid });
-        return ref.id;
-      } catch (e) { console.log('saveLog error:', e.message); }
+      try { await db.collection('logs').add({ ...log, uid }); } catch(e) { console.log(e); }
     };
 
     window.saveHabitsCloud = async () => {
       const uid = window.S.user?.uid;
       if (!uid) return;
       try {
-        await setDoc(doc(db, 'habits', uid), { list: window.S.habits, uid });
-        await setDoc(doc(db, 'habitDone', uid), { ...window.S.habitDone, uid });
-      } catch (e) { console.log('saveHabits error:', e.message); }
+        await db.collection('habits').doc(uid).set({ list: window.S.habits, uid });
+        await db.collection('habitDone').doc(uid).set({ ...window.S.habitDone, uid });
+      } catch(e) { console.log(e); }
     };
 
     window.saveGratitudeCloud = async (grat) => {
       const uid = window.S.user?.uid;
       if (!uid) return;
-      try {
-        await addDoc(collection(db, 'gratitude'), { ...grat, uid });
-      } catch (e) { console.log('saveGrat error:', e.message); }
+      try { await db.collection('gratitude').add({ ...grat, uid }); } catch(e) { console.log(e); }
     };
 
-    window.firebaseError = (code) => {
+    function firebaseError(code) {
       const msgs = {
-        'auth/email-already-in-use': 'Este e-mail já está cadastrado.',
+        'auth/email-already-in-use': 'Este e-mail já está cadastrado. Faça login.',
         'auth/invalid-email': 'E-mail inválido.',
         'auth/weak-password': 'Senha muito fraca. Use pelo menos 6 caracteres.',
-        'auth/user-not-found': 'Conta não encontrada. Crie uma conta na aba "Criar conta" primeiro.',
+        'auth/user-not-found': 'Conta não encontrada. Crie uma conta primeiro.',
         'auth/wrong-password': 'Senha incorreta. Tente novamente.',
-        'auth/invalid-credential': 'E-mail ou senha incorretos. Se não tem conta, clique em "Criar conta".',
-        'auth/too-many-requests': 'Muitas tentativas. Tente novamente em alguns minutos.',
+        'auth/invalid-credential': 'E-mail ou senha incorretos.',
+        'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos.',
         'auth/network-request-failed': 'Sem conexão. Verifique sua internet.',
       };
       return msgs[code] || 'Ocorreu um erro. Tente novamente.';
-    };
+    }
+    window.firebaseError = firebaseError;
   </script>
 
 
