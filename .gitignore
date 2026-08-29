@@ -1,0 +1,32 @@
+# Dependências
+node_modules/
+
+# Build / Capacitor (futuro)
+/android/
+/ios/
+/dist/
+/www/
+.gradle/
+
+# Ambiente / segredos — NUNCA versionar
+.env
+.env.*
+!.env.example
+
+# Firebase
+.firebase/
+*-debug.log
+firebase-debug.log
+firestore-debug.log
+
+# Chaves de assinatura Android — NUNCA versionar
+*.keystore
+*.jks
+keystore.properties
+key.properties
+
+# SO / editores
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
