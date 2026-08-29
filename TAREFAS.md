@@ -12,8 +12,8 @@
 |---|---|---|
 | 01 · Descoberta | 2 / 5 | 🟡 domínio e escopo Premium pendentes |
 | 02 · Arquitetura | 0 / 8 | 🔴 caminho crítico — começar já |
-| 03 · Infraestrutura | 0 / 8 | 🔴 caminho crítico — começar já |
-| 04 · Segurança + correções de código | 0 / 17 | 🔴 P0s bloqueiam o teste fechado |
+| 03 · Infraestrutura | 2 / 9 | 🟡 F3.1 e F3.4 feitos; falta domínio, deploy, e-mail |
+| 04 · Segurança + correções de código | 5 / 20 | 🟡 P0 de código feitos; regras aguardam publicação |
 | 05 · Play Store | 0 / 7 | ⚪ depende de 02/03/04 |
 | 06 · Pagamento (Play Billing) | 0 / 6 | 🟢 **fora do v1** — update pós-lançamento |
 | 07 · Processo | hábito | 🔵 recorrente |
@@ -72,10 +72,11 @@
 
 ## Fase 03 — Infraestrutura mínima antes do código
 
-- [ ] **[F3.1]** `P0` Repositório git + primeiro commit (a pasta hoje não é repo)
+- [x] **[F3.1]** ~~Repositório git + primeiro commit~~ — repo existente **`github.com/lbarrosandre/florecer`** conectado (29/08). ⚠️ está **público** — tornar privado até o lançamento. Repo chamado `florecer` (sem S) — renomear opcional.
+- [ ] **[F3.1b]** `P0` Tornar o repositório `florecer` **privado** no GitHub (Settings → Danger Zone) até o lançamento
 - [ ] **[F3.2]** `P0` Deploy automático a cada push para a **web mínima** — manter privado / sem divulgar _(depende de: F3.1)_
 - [ ] **[F3.3]** `P0` DNS do domínio apontado para a hospedagem _(depende de: F1.3, F3.2)_
-- [ ] **[F3.4]** `P0` Regras de segurança do Firestore restringindo tudo a `request.auth.uid` — verificar se está em "modo teste" _(= F4.5)_
+- [x] **[F3.4]** ~~Verificar as regras do Firestore~~ — estavam em **modo teste com expiração em 22/07/2026**, ou seja, **já expiradas**: desde essa data o Firestore nega toda leitura/escrita do cliente. `firestore.rules` novo escrito (F4.5). **Ação sua:** publicar. _(= F4.5)_
 - [ ] **[F3.5]** `P1` Nenhum segredo em código que chega ao navegador (`firebaseConfig` público é ok; Admin SDK / webhooks só em Cloud Function) _(depende de: F3.1)_
 - [ ] **[F3.6]** `P1` E-mail transacional com remetente da marca — SMTP customizado no Firebase Auth (ou Resend) para redefinição de senha e verificação _(depende de: F1.3)_
 - [ ] **[F3.7]** `P0` Publicar página de **Política de Privacidade** no primeiro deploy _(depende de: F3.2)_
@@ -89,14 +90,15 @@
 - [ ] **[F4.2]** `P0` Convenção do projeto: toda entrada de usuário que vira `innerHTML` passa por escape. Hoje notas, gratidão, nomes de hábito e `renderHistory`/`renderMore` são injetados sem escape (risco de XSS) _(depende de: F3.1)_
 - [ ] **[F4.3]** `P1` Autorização sensível (exclusão de conta, dados de terceiros) validada em Cloud Function, nunca só por flag no cliente
 - [ ] **[F4.4]** `P1` Ativar **Firebase App Check**
-- [ ] **[F4.5]** `P0` Escrever `firestore.rules`, testar no emulador e publicar _(= F3.4)_
+- [x] **[F4.5]** ~~Escrever `firestore.rules`~~ — feito (branch `setup/fundacao-e-p0`) + `firestore.indexes.json` + `firebase.json`. **Falta você publicar** no console (ou `firebase deploy --only firestore`) e testar no emulador. _(= F3.4)_
 - [ ] **[F4.6]** `P0` Preencher o formulário **"Segurança dos dados"** da Play Store (dados de saúde mental — atenção redobrada) _(depende de: F5.1)_
 - [ ] **[F4.7]** `P0` Corrigir risco de **perda de dados offline**: `syncFromCloud` sobrescreve o local a cada login e o Firestore offline não está ativado _(depende de: F2.7)_
 
 ### Correções de código (pré-requisito do build de teste)
 
-- [ ] **[F4.8]** `P0` Adicionar `<meta name="viewport">`
-- [ ] **[F4.9]** `P0` Remover os dados demo falsos do `window.onload` ([index.html:1754](index.html#L1754))
+- [x] **[F4.8]** ~~Adicionar `<meta name="viewport">`~~ — feito (+ `theme-color`)
+- [x] **[F4.9]** ~~Remover os dados demo falsos do `window.onload`~~ — feito
+- [x] **[F4.19]** `P0` ~~**Erro de sintaxe fatal** em `doLogin` (`coverTab('register')` sem escape dentro de string) que quebrava o `<script>` inteiro do Firebase — auth 100% morta~~ — **corrigido**. Sintaxe dos 4 scripts validada com `node --check`.
 - [ ] **[F4.10]** `P1` Ligar o botão de **logout** (`doLogout` existe, nenhum botão chama)
 - [ ] **[F4.11]** `P1` Implementar a aba **"Conta"** (`renderMore` não trata o caso `'conta'`)
 - [ ] **[F4.12]** `P1` Implementar **"Esqueci minha senha"** (`sendPasswordResetEmail`) _(depende de: F3.6)_
@@ -200,4 +202,5 @@ Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **
 
 - **29/08/2026** — Criado. Ficha atualizada na Carta de Navegação (framework antes chamado "Manual de Bordo"): domínio `florescer.com.br`, pagamento = Google Play Billing, plataforma = Web + Android, data alvo = 15/10/2026. Decisões D1, D2, D4, D5 resolvidas. Fase 06 movida para pós-lançamento.
 - **29/08/2026** — Carta de Navegação reestruturada: ficha movida para o topo; adicionada seção "Tese de produto" com 5 diferenciais de mercado (relatório de P&D). Criada a trilha **DP** aqui. Botão "Salvar ficha" da página desativado (bug pré-existente) — ficha passa a ser mantida via Claude Code.
-- **29/08/2026** — Kickoff. D3 resolvido: **conta Google Play como pessoa física**. Repositório git iniciado na pasta do projeto (primeiro commit).
+- **29/08/2026** — Kickoff. D3 resolvido: **conta Google Play como pessoa física**. Repositório existente `github.com/lbarrosandre/florecer` conectado à pasta local; commit `94fd6c0` adiciona TAREFAS.md + .gitignore + .gitattributes (não enviado ainda). Identidade git local: André Luiz Barros / lbarros.andre@gmail.com. **Pendências levantadas:** repo está público (tornar privado — F3.1b); pasta dentro do OneDrive; nome do repo é `florecer` sem S.
+- **29/08/2026** — Repo tornado **privado**. Branch `setup/fundacao-e-p0`: `firestore.rules` + `firestore.indexes.json` + `firebase.json` + `ARQUITETURA.md`; correções P0 no `index.html` (F4.8 viewport/theme-color, F4.9 dados demo, **F4.19 erro de sintaxe fatal no script do Firebase**). Descoberto no processo: **o app estava não-funcional** — auth quebrada por erro de sintaxe + regras do Firestore expiradas em 22/07. Ambos resolvidos (regras aguardam publicação pelo usuário).

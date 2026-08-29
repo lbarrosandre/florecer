@@ -1,0 +1,62 @@
+rules_version = '2';
+
+// Regras de segurança do Firestore — projeto florecer-app-c460d
+//
+// Princípio: cada usuário só acessa os próprios dados. Nada é público.
+// Substitui o "modo teste" (allow read, write: if true) que expirou em 22/07/2026.
+//
+// Modelo de dados (ver ARQUITETURA.md):
+//   users/{uid}          — perfil ({ name, email, photo, createdAt, isPremium })
+//   habits/{uid}         — { list: [...], uid }
+//   habitDone/{uid}      — { <data>: [ids...], uid }
+//   logs/{autoId}        — { uid, date, mood, anxiety, sleep, triggers[], note, time }
+//   gratitude/{autoId}   — { uid, date, text }
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // O usuário nunca pode se autopromover a Premium pelo cliente.
+    // Quando houver cobrança (Fase 06), uma Cloud Function com Admin SDK
+    // ignora estas regras e é a única que pode setar isPremium = true.
+    function premiumNaoElevado() {
+      return !('isPremium' in request.resource.data)
+             || request.resource.data.isPremium == false
+             || (resource != null && request.resource.data.isPremium == resource.data.isPremium);
+    }
+
+    // ── Perfil ────────────────────────────────────────────────
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create, update: if isOwner(uid) && premiumNaoElevado();
+      allow delete: if isOwner(uid);
+    }
+
+    // ── Documentos únicos por usuário (id do doc = uid) ────────
+    match /habits/{uid} {
+      allow read, write: if isOwner(uid);
+    }
+    match /habitDone/{uid} {
+      allow read, write: if isOwner(uid);
+    }
+
+    // ── Coleções com id automático + campo uid ────────────────
+    match /logs/{logId} {
+      allow read, update, delete: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+    }
+    match /gratitude/{gratId} {
+      allow read, update, delete: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    // Qualquer caminho não previsto acima é negado por padrão.
+  }
+}
