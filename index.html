@@ -413,36 +413,32 @@ textarea.inp{resize:none;min-height:76px}
       }
     };
 
-    // ═══════════ GOOGLE LOGIN ═══════════
+    // ═══════════ GOOGLE LOGIN (popup — confiável no navegador) ═══════════
     window.doGoogleLogin = async () => {
       setCoverLoading(true);
       try {
         const provider = new firebase.auth.GoogleAuthProvider();
         provider.setCustomParameters({ prompt: 'select_account' });
-        await auth.signInWithRedirect(provider);
+        const result = await auth.signInWithPopup(provider);
+        if (result && result.user) {
+          const u = result.user;
+          // TODO (Fase 06): isPremium deve ser definido só no servidor.
+          await db.collection('users').doc(u.uid).set({
+            name: u.displayName || u.email.split('@')[0],
+            email: u.email,
+            photo: u.photoURL || '',
+            createdAt: new Date().toISOString(),
+            isPremium: false
+          }, { merge: true }).catch(() => {});
+        }
+        // a navegação para a home é feita pelo onAuthStateChanged
       } catch (e) {
-        showCoverError(firebaseError(e.code));
+        if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
+          showCoverError(firebaseError(e.code));
+        }
         setCoverLoading(false);
       }
     };
-
-    // Verificar resultado do redirect do Google
-    auth.getRedirectResult().then(async (result) => {
-      if (result && result.user) {
-        const u = result.user;
-        await db.collection('users').doc(u.uid).set({
-          name: u.displayName || u.email.split('@')[0],
-          email: u.email,
-          photo: u.photoURL || '',
-          createdAt: new Date().toISOString(),
-          isPremium: false
-        }, { merge: true });
-      }
-    }).catch((e) => {
-      if (e.code && e.code !== 'auth/null-user' && e.code !== 'auth/no-auth-event') {
-        console.log('Google redirect error:', e.code);
-      }
-    });
 
     // ═══════════ LOGOUT ═══════════
     window.doLogout = async () => {
@@ -560,6 +556,7 @@ textarea.inp{resize:none;min-height:76px}
   <link rel="manifest" href="manifest.json">
   <meta name="application-name" content="Florecer">
   <meta name="apple-mobile-web-app-title" content="Florecer">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="icon-192.png">
