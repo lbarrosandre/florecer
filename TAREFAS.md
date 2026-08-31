@@ -13,13 +13,13 @@
 | 01 · Descoberta | 2 / 5 | 🟡 domínio e escopo Premium pendentes |
 | 02 · Arquitetura | 0 / 8 | 🔴 caminho crítico — começar já |
 | 03 · Infraestrutura | 2 / 9 | 🟡 F3.1 e F3.4 feitos; falta domínio, deploy, e-mail |
-| 04 · Segurança + correções de código | 8 / 21 | 🟡 regras publicadas; P0 de código feitos; falta escape XSS (F4.2), App Check |
+| 04 · Segurança + correções de código | 13 / 21 | 🟢 regras + XSS + P0 + aba Conta feitos; falta App Check, Termos/Privacidade |
 | 05 · Play Store | 0 / 7 | ⚪ depende de 02/03/04 |
 | 06 · Pagamento (Play Billing) | 0 / 6 | 🟢 **fora do v1** — update pós-lançamento |
 | 07 · Processo | hábito | 🔵 recorrente |
 | 08 · Custos / contratações | 0 / 6 | ⚪ |
 | 09 · Checklist pré-lançamento | 0 / 15 | ⚪ |
-| DP · Diferenciais de produto | 0 / 5 | 🟡 DP-A/B/C/E no v1 (baratos); DP-D pós-v1 |
+| DP · Diferenciais de produto | 3 / 5 | 🟢 DP-A/B/C feitos; DP-C2 (psicólogo) e DP-D (pós-v1) pendentes; DP-E com as políticas |
 
 **Escopo do v1 (15/10):** app atual, estruturado e corrigido, na Play Store como **freemium sem cobrança ainda** — Premium aparece como "em breve". A cobrança via Google Play Billing (Fase 06) entra num **update depois do lançamento**. É o que a própria Carta de Navegação recomenda: pagamento é segunda etapa.
 
@@ -100,11 +100,12 @@
 - [x] **[F4.8]** ~~Adicionar `<meta name="viewport">`~~ — feito (+ `theme-color`)
 - [x] **[F4.9]** ~~Remover os dados demo falsos do `window.onload`~~ — feito
 - [x] **[F4.19]** `P0` ~~**Erro de sintaxe fatal** em `doLogin` (`coverTab('register')` sem escape dentro de string) que quebrava o `<script>` inteiro do Firebase — auth 100% morta~~ — **corrigido**. Sintaxe dos 4 scripts validada com `node --check`.
-- [ ] **[F4.10]** `P1` Ligar o botão de **logout** (`doLogout` existe, nenhum botão chama)
-- [ ] **[F4.11]** `P1` Implementar a aba **"Conta"** (`renderMore` não trata o caso `'conta'`)
-- [ ] **[F4.12]** `P1` Implementar **"Esqueci minha senha"** (`sendPasswordResetEmail`) _(depende de: F3.6)_
-- [ ] **[F4.13]** `P1` Ligar os links de **Termos** e **Privacidade** às páginas reais _(depende de: F3.7)_
-- [ ] **[F4.14]** `P1` Esconder / marcar como "em breve" o CTA de assinatura do paywall no v1 _(depende de: F1.4)_
+- [x] **[F4.2]** ~~Escape de texto do usuário antes de `innerHTML`~~ — `esc()` + nome/ícone de hábito e texto de gratidão escapados (`8e51bd9`).
+- [x] **[F4.10]** ~~Botão de logout~~ — "Sair da conta" na aba Conta (`8e51bd9`).
+- [x] **[F4.11]** ~~Aba "Conta"~~ — perfil + plano + privacidade + sair + stub de exclusão (`8e51bd9`).
+- [x] **[F4.12]** ~~"Esqueci minha senha"~~ — `sendPasswordResetEmail` + feedback verde (`8e51bd9`). E-mail sai com remetente do Firebase até F3.6.
+- [ ] **[F4.13]** `P1` Ligar os links de **Termos** e **Privacidade** às páginas reais (hoje mostram "Página em preparação") _(depende de: F3.7)_
+- [x] **[F4.14]** ~~CTA de assinatura no v1~~ — aba Conta diz "Premium em breve"; paywall completo segue inacessível (sem aba). (`8e51bd9`)
 - [ ] **[F4.15]** `P2` Corrigir incoerência de path: `manifest.json` usa `/florecer/` e o service worker usa `BASE='/florecer'` — alinhar com a hospedagem
 - [ ] **[F4.16]** `P2` Deduplicar o logo base64 (~217 KB de 313 KB do HTML; está como PNG sendo JPEG) — usar os `icon-*.png`
 - [ ] **[F4.17]** `P2` Quebrar o `index.html` único em `index.html` + `app.js` + `styles.css` _(depende de: F3.1)_
@@ -133,9 +134,9 @@
 
 Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **validação real**, **privacidade blindada**, **personalização inteligente** ou **interface que acolhe sem cobrar** — senão é só paridade com concorrente.
 
-- [ ] **[DP-A]** `P1` **Design "calma primeiro"** — máx. 1 lembrete/dia, gentil e opcional; remover qualquer selo de pendência; permitir "pular hoje" sem quebrar streak nem cobrar. _v1_ _(relaciona: F4.9, F4.14)_
-- [ ] **[DP-B]** `P1` **Antipositividade tóxica** — renomear a métrica para "dias de autocuidado"; registrar humor ruim mantém a sequência; revisar todos os textos para nunca penalizar dia difícil. _v1_ _(relaciona: F4.2)_
-- [ ] **[DP-C]** `P2` **Base científica visível** — em cada exercício (respiração, grounding, PMR) mostrar 1 linha sobre a evidência que o sustenta + fonte. _v1_
+- [x] **[DP-A]** ~~Design "calma primeiro"~~ — home sem "Falta: Tarde/Noite" nem cota de 3; "registrar de novo" virou link discreto (`8e51bd9`). Lembretes: só quando houver app nativo (pós-Capacitor).
+- [x] **[DP-B]** ~~Antipositividade tóxica~~ — "dias de autocuidado"; 🔥→🌱; "X dias de cuidado"; nota "Recomeçar também é cuidar"; texto do onboarding (`8e51bd9`).
+- [x] **[DP-C]** ~~Base científica visível~~ — evidência + base em cada técnica de respiração; rodapé na tela SOS sobre TCC/regulação e limite do app (`8e51bd9`). MOOD_HINTS/EMPATHY revisados — já estavam bons.
 - [ ] **[DP-C2]** `P1` **Revisão por psicólogo(a)** — contratar revisão de copy e fluxos antes de comunicar qualquer eficácia na loja/marketing. _antes de F5.3 / F4.6_
 - [ ] **[DP-D]** `P2` **Personalização por perfil** — escolher perfil no onboarding (estudos / sobrecarga no trabalho / ansiedade / luto) e adaptar prompts de reflexão, exercícios sugeridos e insights; insights que evoluem com os dados. _pós-v1_ _(depende de: F4.7)_
 - [ ] **[DP-E]** `P0` **Privacidade como recurso de marca** — zero venda/compartilhamento; modo local opcional (sem nuvem); criptografia; política em linguagem simples; exclusão de conta imediata; LGPD desde o 1º deploy; comunicar isso na ficha da loja. _v1_ _(= F3.4, F3.7, F3.8, F4.2–F4.5; comunicação em F5.3)_
@@ -209,3 +210,4 @@ Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **
 - **29/08/2026** — Usuário publicou as `firestore.rules` no console + criou os 2 índices compostos (ativos). F3.4/F4.5 concluídos.
 - **29/08/2026** — `b82ee48`: **F4.7** (sync junta em vez de sobrescrever + persistência offline) e **F4.20** (`window.S` era `undefined` → auth/sync quebrados). Enviado para `origin/main`. Descoberta acumulada: o app tinha **3 bugs fatais** no fluxo de auth/sync (F4.19 sintaxe, F4.20 `window.S`, + regras expiradas) — nenhum login/sync funcionava.
 - **29/08/2026** — Testado em servidor local (`localhost:8000`). Google via `signInWithRedirect` não retornava — trocado por **`signInWithPopup`** (F2.4 parcial). Também `<meta mobile-web-app-capable>` + código de erro visível nas mensagens do Auth. **App validado ponta a ponta pela 1ª vez:** login Google → registro salvo → aparece no Firestore. Tudo em `origin/main`.
+- **29/08/2026** — `8e51bd9`: **Parte A** (F4.2 XSS/`esc()`, F4.10 logout, F4.11 aba Conta, F4.12 esqueci senha, F4.14 "Premium em breve") + **diferenciais DP-A/B/C** (home sem cobrança de pendência; "dias de autocuidado" e 🌱 no lugar de 🔥; evidência científica nas técnicas de respiração + rodapé na SOS). Enviado para `origin/main`.
