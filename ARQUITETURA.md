@@ -27,7 +27,7 @@ Público brasileiro, pt-BR. App **offline-first**: tudo funciona sem rede, a nuv
 | Wrapper Android | Capacitor | A montar (F2.3). |
 | Auth | Firebase Authentication | E-mail/senha + Google. No wrapper, o login Google usa plugin nativo (`@capacitor-firebase/authentication`), não `signInWithRedirect` (F2.4). |
 | Banco | Cloud Firestore | Projeto `florecer-app-c460d`, conta `lbarros.andre@gmail.com`. |
-| Offline | Persistência do Firestore + `localStorage` | Hoje só `localStorage`; `enableIndexedDbPersistence` a ligar (F2.7 / F4.7). |
+| Offline | Persistência do Firestore + `localStorage` | `enablePersistence({synchronizeTabs:true})` ligado. `syncFromCloud` **junta** nuvem+local por id (nunca sobrescreve) e reenvia entradas locais órfãs (F4.7). |
 | Hospedagem web | Netlify (tier grátis) | Deploy automático por push (F3.2). |
 | E-mail transacional | SMTP custom no Firebase Auth ou Resend | Para redefinição de senha vir com remetente da marca (F3.6). |
 | Pagamento | Google Play Billing + Cloud Function de validação | Fase 06, pós-lançamento. |
