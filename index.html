@@ -545,8 +545,10 @@ textarea.inp{resize:none;min-height:76px}
         'auth/invalid-credential': 'E-mail ou senha incorretos.',
         'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos.',
         'auth/network-request-failed': 'Sem conexão. Verifique sua internet.',
+        'auth/operation-not-allowed': 'Cadastro por e-mail/senha está desativado no Firebase.',
+        'auth/unauthorized-domain': 'Este endereço não está autorizado no Firebase Auth.',
       };
-      return msgs[code] || 'Ocorreu um erro. Tente novamente.';
+      return msgs[code] || ('Ocorreu um erro. Tente novamente. (' + (code || 'sem código') + ')');
     }
     window.firebaseError = firebaseError;
   </script>
