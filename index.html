@@ -328,6 +328,12 @@ textarea.inp{resize:none;min-height:76px}
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    // Persistência offline: escritas feitas sem rede entram numa fila e
+    // sincronizam sozinhas ao reconectar; leituras usam o cache local.
+    db.enablePersistence({ synchronizeTabs: true }).catch((e) => {
+      console.warn('Persistência offline indisponível:', e && e.code);
+    });
+
     // Habilitar botões quando Firebase estiver pronto
     function enableButtons() {
       const mainBtn = document.getElementById('cover-main-btn');
@@ -449,21 +455,66 @@ textarea.inp{resize:none;min-height:76px}
       localStorage.clear();
     };
 
-    // ═══════════ SYNC CLOUD ═══════════
+    // ═══════════ SYNC CLOUD — junta nuvem + local, nunca sobrescreve ═══════════
+    function mergeById(cloudArr, localArr) {
+      const map = new Map();
+      (cloudArr || []).forEach((x) => { if (x && x.id != null) map.set(x.id, x); });
+      const localOnly = [];
+      (localArr || []).forEach((x) => {
+        if (x && x.id != null && !map.has(x.id)) { map.set(x.id, x); localOnly.push(x); }
+      });
+      return { merged: [...map.values()], localOnly };
+    }
+    function onlyDateArrays(obj) {
+      const out = {};
+      Object.keys(obj || {}).forEach((k) => { if (Array.isArray(obj[k])) out[k] = obj[k]; });
+      return out;
+    }
+    const byDateDesc = (a, b) => new Date(b.date) - new Date(a.date);
+
     async function syncFromCloud() {
       const uid = window.S.user?.uid;
       if (!uid) return;
       try {
+        // logs
         const logsSnap = await db.collection('logs').where('uid','==',uid).orderBy('date','desc').get();
-        window.S.logs = logsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        const habSnap = await db.collection('habits').doc(uid).get();
-        if (habSnap.exists) window.S.habits = habSnap.data().list || window.S.habits;
+        const L = mergeById(logsSnap.docs.map((d) => d.data()), window.S.logs);
+        window.S.logs = L.merged.sort(byDateDesc);
+        L.localOnly.forEach((l) => db.collection('logs').add({ ...l, uid }).catch(() => {}));
+
+        // gratidão
         const gratSnap = await db.collection('gratitude').where('uid','==',uid).orderBy('date','desc').get();
-        window.S.gratitude = gratSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const G = mergeById(gratSnap.docs.map((d) => d.data()), window.S.gratitude);
+        window.S.gratitude = G.merged.sort(byDateDesc);
+        G.localOnly.forEach((g) => db.collection('gratitude').add({ ...g, uid }).catch(() => {}));
+
+        // hábitos (lista) — junta por id, mantém o maior streak
+        const habSnap = await db.collection('habits').doc(uid).get();
+        const cloudHabits = habSnap.exists ? (habSnap.data().list || []) : [];
+        const habMap = new Map(mergeById(cloudHabits, window.S.habits).merged.map((h) => [h.id, h]));
+        cloudHabits.forEach((ch) => {
+          const lh = (window.S.habits || []).find((h) => h.id === ch.id);
+          if (lh) habMap.set(ch.id, { ...ch, streak: Math.max(ch.streak || 0, lh.streak || 0) });
+        });
+        window.S.habits = [...habMap.values()];
+
+        // hábitos concluídos (por data) — une a lista de cada dia
         const hdSnap = await db.collection('habitDone').doc(uid).get();
-        if (hdSnap.exists) window.S.habitDone = hdSnap.data() || {};
+        const cloudHD = hdSnap.exists ? onlyDateArrays(hdSnap.data()) : {};
+        const localHD = onlyDateArrays(window.S.habitDone);
+        const mergedHD = {};
+        new Set([...Object.keys(cloudHD), ...Object.keys(localHD)]).forEach((k) => {
+          mergedHD[k] = [...new Set([...(cloudHD[k] || []), ...(localHD[k] || [])])];
+        });
+        window.S.habitDone = mergedHD;
+
         window.save();
-      } catch (e) { console.log('Sync (usando cache):', e.message); }
+        // devolve o estado consolidado dos hábitos para a nuvem
+        db.collection('habits').doc(uid).set({ list: window.S.habits, uid }).catch(() => {});
+        db.collection('habitDone').doc(uid).set({ ...window.S.habitDone, uid }).catch(() => {});
+      } catch (e) {
+        console.log('Sync adiado, mantendo dados locais:', e && e.message);
+      }
     }
     window.syncFromCloud = syncFromCloud;
 
@@ -952,6 +1003,8 @@ const S = {
   histTab: 'logs',
   moreTab: 'habits',
 };
+// Exposto para o script do Firebase (auth + sync) que roda no <head>.
+window.S = S;
 
 const MOODS = {1:'😞',2:'😕',3:'😐',4:'🙂',5:'😄'};
 const DAYS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -1397,7 +1450,9 @@ function toggleHabit(id) {
     const h = S.habits.find(h=>h.id===id);
     if (h) h.streak++;
   }
-  save(); renderHome();
+  save();
+  if (window.saveHabitsCloud) window.saveHabitsCloud();
+  renderHome();
   if (document.getElementById('s-more').classList.contains('active')) renderMore();
 }
 
