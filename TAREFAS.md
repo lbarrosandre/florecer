@@ -64,7 +64,7 @@
 - [ ] **[F2.1]** `P0` Documento `ARQUITETURA.md` no repo com as decisões D1/D2/D4 registradas _(depende de: F3.1)_
 - [ ] **[F2.2]** `P0` Modelar tabela de assinatura no Firestore com **provedor como campo** (`play`), mesmo sem cobrança no v1 — evita migração depois
 - [ ] **[F2.3]** `P0` Montar o wrapper **Capacitor**: projeto Android, `capacitor.config`, build gerando `.aab`
-- [ ] **[F2.4]** `P0` Trocar o login Google: `signInWithRedirect` não funciona no WebView do Capacitor. Usar plugin nativo (`@capacitor-firebase/authentication`) _(depende de: F2.3)_
+- [~] **[F2.4]** `P0` Login Google: **web já migrado de `signInWithRedirect` para `signInWithPopup`** (`d…`, funciona em localhost e navegador). **Falta** o plugin nativo (`@capacitor-firebase/authentication`) para o Android _(depende de: F2.3)_
 - [ ] **[F2.5]** `P0` Definir deep link próprio do app (`florescer://auth`) para o retorno do OAuth — não depender de App Link verificado por domínio _(depende de: F2.3)_
 - [ ] **[F2.6]** `P0` **Testar o login OAuth de ponta a ponta no build nativo, em aparelho real** — no primeiro dia do empacotamento _(depende de: F2.4, F2.5)_
 - [ ] **[F2.7]** `P1` Ligar a estratégia offline do Firestore (`enableIndexedDbPersistence`) _(relaciona: F4.7)_
@@ -208,3 +208,4 @@ Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **
 - **29/08/2026** — Commits `94fd6c0` + `5091a7d` **enviados para `origin/main`** (fast-forward). Branch de trabalho removida.
 - **29/08/2026** — Usuário publicou as `firestore.rules` no console + criou os 2 índices compostos (ativos). F3.4/F4.5 concluídos.
 - **29/08/2026** — `b82ee48`: **F4.7** (sync junta em vez de sobrescrever + persistência offline) e **F4.20** (`window.S` era `undefined` → auth/sync quebrados). Enviado para `origin/main`. Descoberta acumulada: o app tinha **3 bugs fatais** no fluxo de auth/sync (F4.19 sintaxe, F4.20 `window.S`, + regras expiradas) — nenhum login/sync funcionava.
+- **29/08/2026** — Testado em servidor local (`localhost:8000`). Google via `signInWithRedirect` não retornava — trocado por **`signInWithPopup`** (F2.4 parcial). Também `<meta mobile-web-app-capable>` + código de erro visível nas mensagens do Auth. **App validado ponta a ponta pela 1ª vez:** login Google → registro salvo → aparece no Firestore. Tudo em `origin/main`.
