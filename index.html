@@ -413,6 +413,18 @@ textarea.inp{resize:none;min-height:76px}
       }
     };
 
+    // ═══════════ ESQUECI A SENHA ═══════════
+    window.doForgotPassword = async () => {
+      const email = document.getElementById('cover-email')?.value?.trim();
+      if (!email) return showCoverError('Digite seu e-mail no campo acima e clique de novo.');
+      try {
+        await auth.sendPasswordResetEmail(email);
+        showCoverError('Enviamos um link para redefinir a senha no seu e-mail.', true);
+      } catch (e) {
+        showCoverError(firebaseError(e.code));
+      }
+    };
+
     // ═══════════ GOOGLE LOGIN (popup — confiável no navegador) ═══════════
     window.doGoogleLogin = async () => {
       setCoverLoading(true);
@@ -679,7 +691,7 @@ textarea.inp{resize:none;min-height:76px}
 
           <!-- Esqueci senha (só login) -->
           <div id="cover-forgot" style="text-align:right;margin-bottom:14px">
-            <button class="cover-link">Esqueci minha senha</button>
+            <button class="cover-link" onclick="doForgotPassword()">Esqueci minha senha</button>
           </div>
           <div id="cover-terms" style="display:none;margin-bottom:14px">
             <div style="font-size:11px;color:#aaa;line-height:1.5;text-align:center">Ao criar conta você concorda com os<br>
@@ -719,7 +731,7 @@ textarea.inp{resize:none;min-height:76px}
         </div>
 
         <div class="ob-step"><div class="ob-num">1</div><div><div class="ob-title">📝 Diário de humor</div><div class="ob-desc">Registre como se sente até 3x por dia — manhã, tarde e noite.</div></div></div>
-        <div class="ob-step"><div class="ob-num">2</div><div><div class="ob-title">🎯 Rastreie seus hábitos</div><div class="ob-desc">Crie hábitos diários e veja sua sequência crescer.</div></div></div>
+        <div class="ob-step"><div class="ob-num">2</div><div><div class="ob-title">🌱 Cultive hábitos</div><div class="ob-desc">Crie hábitos diários e acompanhe sua constância, sem cobrança.</div></div></div>
         <div class="ob-step"><div class="ob-num">3</div><div><div class="ob-title">🫁 Respire e acalme</div><div class="ob-desc">Exercícios de respiração guiados para momentos de ansiedade.</div></div></div>
         <div class="ob-step"><div class="ob-num">4</div><div><div class="ob-title">🟣 Ano em Pixels</div><div class="ob-desc">Veja um ano inteiro do seu humor numa tela só.</div></div></div>
         <div style="margin-top:20px">
@@ -860,6 +872,7 @@ textarea.inp{resize:none;min-height:76px}
         <div class="breath-sub" id="b-sub">Escolha uma técnica e toque no círculo</div>
         <button class="btn btn-p" id="b-btn" onclick="toggleBreath()" style="width:160px;margin:0 auto">▶ Iniciar</button>
         <div class="breath-cycles" id="b-cycles"></div>
+        <div id="b-evidence" style="font-size:11px;color:#aaa;line-height:1.5;text-align:center;max-width:290px;margin:14px auto 0">Prolongar a expiração ativa a resposta de calma do corpo (sistema nervoso parassimpático). Base: estudos de respiração lenta e variabilidade da frequência cardíaca.</div>
       </div>
       <div class="bnav">
         <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
@@ -970,6 +983,8 @@ textarea.inp{resize:none;min-height:76px}
           </div>
         </div>
 
+        <div style="font-size:11px;color:#bbb;text-align:center;line-height:1.6;margin:4px 4px 8px">As técnicas desta tela são baseadas em práticas de terapia cognitivo-comportamental e de regulação do sistema nervoso. O Florescer é um apoio e não substitui acompanhamento profissional.</div>
+
       </div>
     </div>
 
@@ -1004,6 +1019,13 @@ const S = {
 };
 // Exposto para o script do Firebase (auth + sync) que roda no <head>.
 window.S = S;
+
+// Escapa texto digitado pelo usuário antes de ir para innerHTML.
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+window.esc = esc;
 
 const MOODS = {1:'😞',2:'😕',3:'😐',4:'🙂',5:'😄'};
 const DAYS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -1070,7 +1092,7 @@ function renderHome() {
   const avg = weekLogs.length ? (weekLogs.reduce((s,l)=>s+l.mood,0)/weekLogs.length).toFixed(1) : '--';
 
   document.getElementById('home-metrics').innerHTML = `
-    <div class="metric"><div class="metric-n">${streak}</div><div class="metric-l">dias seguidos</div></div>
+    <div class="metric"><div class="metric-n">${streak}</div><div class="metric-l">dias de autocuidado</div></div>
     <div class="metric"><div class="metric-n">${avg}</div><div class="metric-l">humor médio</div></div>
     <div class="metric"><div class="metric-n">${S.logs.length}</div><div class="metric-l">registros total</div></div>
   `;
@@ -1089,23 +1111,24 @@ function renderHome() {
   document.getElementById('home-bars').innerHTML=bars;
   document.getElementById('home-days').innerHTML=dayls;
 
-  // action
-  const loggedToday = todayLogs.length > 0;
-  const times = todayLogs.map(l=>l.time);
+  // action — registrar é convite, não cobrança
   let actionHtml = '';
-  if (todayLogs.length >= 3) {
-    actionHtml = `<div style="background:#e8fdf3;border-radius:14px;padding:14px;text-align:center;color:#1a6b44;font-weight:500">✅ Todos os registros de hoje feitos!</div>`;
-  } else if (loggedToday) {
-    const pending = ['Manhã','Tarde','Noite'].filter(t=>!times.includes(t));
-    actionHtml = `<div style="background:#eaf5f1;border-radius:14px;padding:14px">
-      <div style="font-size:13px;font-weight:600;color:#1f6450;margin-bottom:8px">✅ ${times.join(', ')} registrados</div>
-      <div style="font-size:12px;color:#888;margin-bottom:10px">Falta: ${pending.join(', ')}</div>
-      <button class="btn btn-p" onclick="goTo('log')" style="padding:11px">Registrar ${pending[0]}</button>
+  if (todayLogs.length >= 1) {
+    const extra = todayLogs.length === 1
+      ? 'Se quiser voltar em outro momento do dia, é só abrir — sem obrigação.'
+      : `${todayLogs.length} registros hoje.`;
+    actionHtml = `<div style="background:#eaf5f1;border-radius:14px;padding:14px;text-align:center">
+      <div style="font-size:13px;font-weight:600;color:#1f6450">Você cuidou de você hoje. 🌱</div>
+      <div style="font-size:12px;color:#888;margin-top:6px">${extra}</div>
+      <button class="btn-link" onclick="goTo('log')" style="margin-top:4px">Registrar de novo</button>
     </div>`;
   } else {
     actionHtml = `<button class="btn btn-p" onclick="goTo('log')">✏️ Fazer registro do dia</button>`;
   }
-  document.getElementById('home-action').innerHTML = actionHtml;
+  const restartNote = (streak === 0 && S.logs.length > 0)
+    ? `<div style="font-size:12px;color:#1f6450;text-align:center;margin-bottom:10px">Recomeçar também é cuidar. 🌱</div>`
+    : '';
+  document.getElementById('home-action').innerHTML = restartNote + actionHtml;
 
   // habits preview
   const todayKey = new Date().toDateString();
@@ -1113,9 +1136,9 @@ function renderHome() {
   const habHtml = S.habits.slice(0,3).map(h=>`
     <div class="habit-item">
       <div class="habit-check ${doneToday.includes(h.id)?'done':''}" onclick="toggleHabit(${h.id})">${doneToday.includes(h.id)?'✓':''}</div>
-      <span style="font-size:16px">${h.icon}</span>
-      <span class="habit-name" style="font-size:13px">${h.name}</span>
-      <span class="habit-streak">${h.streak>0?'🔥'+h.streak:''}</span>
+      <span style="font-size:16px">${esc(h.icon)}</span>
+      <span class="habit-name" style="font-size:13px">${esc(h.name)}</span>
+      <span class="habit-streak">${h.streak>0?'🌱 '+h.streak:''}</span>
     </div>
   `).join('') + `<div style="text-align:center;margin-top:8px"><button class="btn-link" onclick="moreTab('habits');goTo('more')">Ver todos os hábitos →</button></div>`;
   document.getElementById('home-habits-preview').innerHTML = habHtml;
@@ -1125,7 +1148,7 @@ function renderHome() {
   let gratHtml;
   if (todayGrat.length) {
     gratHtml = todayGrat.slice(0,2).map((g,i)=>`
-      <div class="grat-item"><div class="grat-num">${i+1}</div><div class="grat-text">${g.text}</div></div>
+      <div class="grat-item"><div class="grat-num">${i+1}</div><div class="grat-text">${esc(g.text)}</div></div>
     `).join('') + `<button class="btn-link" onclick="moreTab('gratitude');goTo('more')" style="margin-top:6px">Ver mais →</button>`;
   } else {
     gratHtml = `<div style="text-align:center;padding:8px 0">
@@ -1308,17 +1331,19 @@ function saveLog() {
 // ═══════════ COVER / LOGIN ═══════════
 let coverMode = 'login';
 
-function showCoverError(msg) {
+function showCoverError(msg, ok) {
   let el = document.getElementById('cover-error');
   if (!el) {
     el = document.createElement('div');
     el.id = 'cover-error';
-    el.style.cssText = 'background:#fef0ee;color:#c0392b;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:12px;text-align:center';
     document.getElementById('cover-card').insertBefore(el, document.getElementById('cover-main-btn'));
   }
+  el.style.cssText = 'border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:12px;text-align:center;'
+    + (ok ? 'background:#e8fdf3;color:#1a6b44' : 'background:#fef0ee;color:#c0392b');
   el.textContent = msg;
   el.style.display = 'block';
 }
+window.showCoverError = showCoverError;
 
 function setCoverLoading(on) {
   const btn = document.getElementById('cover-main-btn');
@@ -1457,9 +1482,12 @@ function toggleHabit(id) {
 
 // ═══════════ BREATHING ═══════════
 const BREATH_TYPES = {
-  '478': {name:'4-7-8',phases:[{l:'Inspire',d:4,c:'#2a7d63'},{l:'Segure',d:7,c:'#c9a84c'},{l:'Expire',d:8,c:'#4ecb8d'}],desc:'Reduz ansiedade rapidamente'},
-  'box':  {name:'Box',phases:[{l:'Inspire',d:4,c:'#2a7d63'},{l:'Segure',d:4,c:'#c9a84c'},{l:'Expire',d:4,c:'#4ecb8d'},{l:'Segure',d:4,c:'#ff6b6b'}],desc:'Foco e concentração'},
-  'calm': {name:'Acalmar',phases:[{l:'Inspire',d:4,c:'#2a7d63'},{l:'Expire',d:6,c:'#4ecb8d'}],desc:'Simples e relaxante'},
+  '478': {name:'4-7-8',phases:[{l:'Inspire',d:4,c:'#2a7d63'},{l:'Segure',d:7,c:'#c9a84c'},{l:'Expire',d:8,c:'#4ecb8d'}],desc:'Reduz ansiedade rapidamente',
+    evidence:'Prolongar a expiração ativa a resposta de calma do corpo (sistema nervoso parassimpático). Base: estudos de respiração lenta e variabilidade da frequência cardíaca.'},
+  'box':  {name:'Box',phases:[{l:'Inspire',d:4,c:'#2a7d63'},{l:'Segure',d:4,c:'#c9a84c'},{l:'Expire',d:4,c:'#4ecb8d'},{l:'Segure',d:4,c:'#ff6b6b'}],desc:'Foco e concentração',
+    evidence:'Ciclos iguais de inspirar, segurar e expirar ajudam a estabilizar a atenção. Usada em treinamento de foco e manejo de estresse.'},
+  'calm': {name:'Acalmar',phases:[{l:'Inspire',d:4,c:'#2a7d63'},{l:'Expire',d:6,c:'#4ecb8d'}],desc:'Simples e relaxante',
+    evidence:'Expirar por mais tempo do que se inspira favorece o relaxamento. Base: pesquisa sobre respiração diafragmática e ansiedade.'},
 };
 let breathPhase=0, breathTimer=null, breathCount=0, breathRunning=false, breathType='478', breathCycles=0;
 
@@ -1474,6 +1502,7 @@ function selBreath(type, el) {
   document.getElementById('b-text').innerHTML='Pronto?';
   document.getElementById('b-count').textContent='';
   document.getElementById('b-cycles').textContent='';
+  const ev=document.getElementById('b-evidence'); if(ev) ev.textContent=bt.evidence||'';
 }
 
 function toggleBreath() {
@@ -1639,9 +1668,9 @@ function renderMore() {
     const habList=S.habits.map(h=>`
       <div class="habit-item">
         <div class="habit-check ${doneToday.includes(h.id)?'done':''}" onclick="toggleHabit(${h.id})">${doneToday.includes(h.id)?'✓':''}</div>
-        <span style="font-size:18px">${h.icon}</span>
-        <div style="flex:1"><div class="habit-name">${h.name}</div><div style="font-size:11px;color:#bbb">Sequência: ${h.streak} dias</div></div>
-        <span class="habit-streak">${h.streak>0?'🔥'+h.streak:''}</span>
+        <span style="font-size:18px">${esc(h.icon)}</span>
+        <div style="flex:1"><div class="habit-name">${esc(h.name)}</div><div style="font-size:11px;color:#bbb">${h.streak} ${h.streak===1?'dia':'dias'} de cuidado</div></div>
+        <span class="habit-streak">${h.streak>0?'🌱 '+h.streak:''}</span>
       </div>
     `).join('');
 
@@ -1672,7 +1701,7 @@ function renderMore() {
         <div class="card-title">🙏 Gratidão de hoje</div>
         <div class="card-sub">Pelo que você é grato hoje?</div>
         <div id="grat-today-list">
-          ${todayGrat.map((g,i)=>`<div class="grat-item"><div class="grat-num">${i+1}</div><div class="grat-text">${g.text}</div></div>`).join('')}
+          ${todayGrat.map((g,i)=>`<div class="grat-item"><div class="grat-num">${i+1}</div><div class="grat-text">${esc(g.text)}</div></div>`).join('')}
         </div>
         ${todayGrat.length<5?`<div style="display:flex;gap:8px;margin-top:10px">
           <input class="inp" id="grat-inp" placeholder="Escreva algo pelo que é grato..." style="flex:1">
@@ -1683,7 +1712,7 @@ function renderMore() {
         <div class="card-title">📚 Gratidões anteriores</div>
         ${oldGrat.map(g=>`<div class="grat-item">
           <div class="grat-num" style="background:#f5f5f5;color:#bbb">🙏</div>
-          <div class="grat-text">${g.text}<div style="font-size:10px;color:#ccc;margin-top:2px">${new Date(g.date).toLocaleDateString('pt-BR')}</div></div>
+          <div class="grat-text">${esc(g.text)}<div style="font-size:10px;color:#ccc;margin-top:2px">${new Date(g.date).toLocaleDateString('pt-BR')}</div></div>
         </div>`).join('')}
       </div>`:''}
     `;
@@ -1738,6 +1767,33 @@ function renderMore() {
     </div>`;
 
     body.innerHTML=html;
+
+  } else if (moreCurrentTab==='conta') {
+    const u = S.user || {};
+    body.innerHTML = `
+      <div class="card" style="text-align:center">
+        ${u.photo
+          ? `<img src="${esc(u.photo)}" alt="" referrerpolicy="no-referrer" style="width:56px;height:56px;border-radius:50%;object-fit:cover;margin-bottom:8px">`
+          : `<div style="width:56px;height:56px;border-radius:50%;background:#eaf5f1;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 8px">🌱</div>`}
+        <div style="font-size:15px;font-weight:600;color:#1a1a1a">${esc(u.name || 'Você')}</div>
+        <div style="font-size:12px;color:#bbb">${esc(u.email || '')}</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Seu plano</div>
+        <div style="font-size:13px;color:#444;margin-top:2px">Gratuito · <span style="color:#2a7d63">Premium em breve</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Privacidade</div>
+        <div style="font-size:12px;color:#888;line-height:1.6;margin-top:4px">Seus registros são seus. O Florescer não vende nem compartilha seus dados.</div>
+        <div style="margin-top:10px">
+          <button class="btn-link" style="font-size:12px" onclick="alert('Página em preparação.')">Política de Privacidade</button>
+          <span style="color:#ddd;margin:0 6px">·</span>
+          <button class="btn-link" style="font-size:12px" onclick="alert('Página em preparação.')">Termos de Uso</button>
+        </div>
+      </div>
+      <button class="btn btn-g" onclick="doLogout()">Sair da conta</button>
+      <button class="btn-link" style="display:block;margin:12px auto 24px;color:#c0392b;font-size:12px" onclick="alert('A exclusão de conta pelo app chega em breve. Enquanto isso, escreva para o suporte que apagamos tudo.')">Excluir minha conta</button>
+    `;
 
   } else if (moreCurrentTab==='premium') {
     body.innerHTML=`
