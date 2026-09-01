@@ -107,8 +107,8 @@
 - [ ] **[F4.13]** `P1` Ligar os links de **Termos** e **Privacidade** às páginas reais (hoje mostram "Página em preparação") _(depende de: F3.7)_
 - [x] **[F4.14]** ~~CTA de assinatura no v1~~ — aba Conta diz "Premium em breve"; paywall completo segue inacessível (sem aba). (`8e51bd9`)
 - [ ] **[F4.15]** `P2` Corrigir incoerência de path: `manifest.json` usa `/florecer/` e o service worker usa `BASE='/florecer'` — alinhar com a hospedagem
-- [ ] **[F4.16]** `P2` Deduplicar o logo base64 (~217 KB de 313 KB do HTML; está como PNG sendo JPEG) — usar os `icon-*.png`
-- [ ] **[F4.17]** `P2` Quebrar o `index.html` único em `index.html` + `app.js` + `styles.css` _(depende de: F3.1)_
+- [x] **[F4.16]** ~~Deduplicar o logo base64~~ — `index.html` 317 KB → 100 KB; as `<img>` usam `icon-512.png` (`bc…`).
+- [~] **[F4.17]** `P2` Quebrar o `index.html` — **adiado**: com F4.16 o arquivo ficou gerenciável (~110 KB); o split é arriscado num app funcionando com `onclick` inline por toda parte. Fazer numa tarefa dedicada depois do v1.
 - [ ] **[F4.18]** `P2` Padronizar a grafia "Florescer" em todo o código e assets _(depende de: D5 ✅)_
 
 ## Fase 05 — Publicação na Play Store
@@ -211,3 +211,4 @@ Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **
 - **29/08/2026** — `b82ee48`: **F4.7** (sync junta em vez de sobrescrever + persistência offline) e **F4.20** (`window.S` era `undefined` → auth/sync quebrados). Enviado para `origin/main`. Descoberta acumulada: o app tinha **3 bugs fatais** no fluxo de auth/sync (F4.19 sintaxe, F4.20 `window.S`, + regras expiradas) — nenhum login/sync funcionava.
 - **29/08/2026** — Testado em servidor local (`localhost:8000`). Google via `signInWithRedirect` não retornava — trocado por **`signInWithPopup`** (F2.4 parcial). Também `<meta mobile-web-app-capable>` + código de erro visível nas mensagens do Auth. **App validado ponta a ponta pela 1ª vez:** login Google → registro salvo → aparece no Firestore. Tudo em `origin/main`.
 - **29/08/2026** — `8e51bd9`: **Parte A** (F4.2 XSS/`esc()`, F4.10 logout, F4.11 aba Conta, F4.12 esqueci senha, F4.14 "Premium em breve") + **diferenciais DP-A/B/C** (home sem cobrança de pendência; "dias de autocuidado" e 🌱 no lugar de 🔥; evidência científica nas técnicas de respiração + rodapé na SOS). Enviado para `origin/main`.
+- **30/08/2026** — Gamificação **aprovada** com mockup visual (planta SVG + 8 estágios + animações). `bc…` **F4.16** (logo base64 → arquivo, −211 KB). `origin/main` **Fase 1**: foto de perfil (upload + recorte circular via canvas, Firebase Storage) + aba Conta expandida (cadastro, editar nome) + `storage.rules` + `firebase.json`. **Ação sua:** ativar Storage no console + publicar `storage.rules`. Próximo: Fase 2 (núcleo da gamificação).
