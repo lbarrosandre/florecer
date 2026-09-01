@@ -10,9 +10,9 @@
 
 | Fase | Progresso | Situação |
 |---|---|---|
-| 01 · Descoberta | 2 / 5 | 🟡 domínio e escopo Premium pendentes |
-| 02 · Arquitetura | 0 / 8 | 🔴 caminho crítico — começar já |
-| 03 · Infraestrutura | 2 / 9 | 🟡 F3.1 e F3.4 feitos; falta domínio, deploy, e-mail |
+| 01 · Descoberta | 3 / 5 | 🟡 escopo Premium a congelar (roadmap já feito) |
+| 02 · Arquitetura | 0 / 8 | 🔴 caminho crítico — wrapper Capacitor |
+| 03 · Infraestrutura | 3 / 9 | 🟡 falta hospedar as 2 páginas legais (Firebase Hosting, grátis) |
 | 04 · Segurança + correções de código | 13 / 21 | 🟢 regras + XSS + P0 + aba Conta feitos; falta App Check, Termos/Privacidade |
 | 05 · Play Store | 0 / 7 | ⚪ depende de 02/03/04 |
 | 06 · Pagamento (Play Billing) | 0 / 6 | 🟢 **fora do v1** — update pós-lançamento |
@@ -31,7 +31,8 @@
 | # | Decisão | Status | Resolução |
 |---|---|---|---|
 | D1 | Wrapper Capacitor × TWA | ✅ **Resolvido** | **Capacitor.** Play Billing exige plugin nativo; montar já em Capacitor evita reconstruir o wrapper depois (erro caro citado na Carta de Navegação). |
-| D2 | Onde roda de verdade | ✅ **Resolvido** | **Android na loja + web mínima** (só política de privacidade, exclusão de conta e `assetlinks.json`). Sem iOS. |
+| D2 | Onde roda de verdade | ✅ **Resolvido** | **Android na loja, só isso.** Sem iOS, sem site. As 2 páginas obrigatórias (privacidade, exclusão de conta) ficam no **Firebase Hosting** (`florecer-app-c460d.web.app`, grátis). |
+| D7 | Domínio próprio no v1 | ✅ **Resolvido** | **Não é necessário.** Capacitor empacota local; retorno de OAuth por esquema `florescer://` (sem App Link verificado → sem `assetlinks.json`); páginas legais via Firebase Hosting. Registrar `florescer.com.br` fica para depois (e-mail com marca, divulgação). |
 | D3 | Conta de dev: pessoa física × CNPJ | ✅ **Resolvido** | **Pessoa física.** Ciente de que o nome civil aparece publicamente na ficha da loja. Reavaliar migração para CNPJ se/quando houver empresa. |
 | D4 | Cobrança da assinatura | ✅ **Resolvido** | **Google Play Billing.** Mercado Pago descartado. |
 | D5 | Grafia do nome | ✅ **Resolvido** | **"Florescer"** (com S) em código, assets e loja. |
@@ -39,16 +40,20 @@
 
 ---
 
-## Próximas ações (semana de 01–07/09)
+## Próximas ações (a partir de 30/08)
 
-1. ~~**[F3.1]** Criar o repositório git do projeto + primeiro commit~~ — **em andamento (29/08)**
-2. ~~**[D3]** Decidir pessoa física × CNPJ~~ — **resolvido: pessoa física**
-3. **[F1.3]** Registrar `florescer.com.br` _(você)_
-4. **[F3.4]** Abrir o console do Firebase e verificar se as regras estão em "modo teste" _(você)_
-5. **[F4.5]** Escrever o `firestore.rules` _(Claude Code)_
-6. **[F4.8] [F4.9]** Correções P0 rápidas no código: `<meta viewport>` + remover dados demo falsos _(Claude Code)_
-7. **[F2.1]** Criar `ARQUITETURA.md` com as decisões registradas _(Claude Code)_
-8. **[F5.3]** Começar a recrutar os **12 testadores** (prontos até ~22/09) _(você)_
+**Você:**
+1. Testar no navegador: a **gamificação** (planta/Jornada) e o **login e-mail/senha**
+2. Agendar a **revisão do psicólogo** (DP-C2) — precede qualquer comunicação de eficácia
+3. Criar a **conta Google Play Developer** (US$ 25, pessoa física) — F5.1
+4. Começar a **recrutar 12 testadores** — F5.3
+
+**Claude Code:**
+5. **App Check** (F4.4)
+6. Páginas de **Política de Privacidade** + **Exclusão de conta** no Firebase Hosting (F3.7/F3.8) — quando você liberar (você pediu pro fim)
+7. **Wrapper Capacitor** (F2.3) → login Google nativo (F2.4) → teste OAuth em aparelho (F2.6) — caminho crítico
+
+_Domínio (`florescer.com.br`): **opcional, adiado** (ver D7)._
 
 ---
 
@@ -56,7 +61,7 @@
 
 - [x] **[F1.1]** Problema e público em uma frase _(ficha)_
 - [x] **[F1.2]** Modelo de monetização decidido — freemium com assinatura _(ficha)_
-- [ ] **[F1.3]** `P0` Registrar o domínio `florescer.com.br`
+- [ ] **[F1.3]** `P2` ~~Registrar `florescer.com.br`~~ — **opcional, adiado** (ver D7). Não trava o lançamento; útil depois para e-mail com marca e divulgação.
 - [ ] **[F1.4]** `P1` Fechar a divisão grátis × Premium (paywall já lista: hábitos ilimitados, Ano em Pixels completo, export PDF, temas, lembretes, backup) — validar e congelar para o v1
 - [ ] **[F1.5]** `P2` Registrar handles de marca (Instagram etc.) como "Florescer" _(depende de: D6)_
 
@@ -73,15 +78,15 @@
 
 ## Fase 03 — Infraestrutura mínima antes do código
 
-- [x] **[F3.1]** ~~Repositório git + primeiro commit~~ — repo existente **`github.com/lbarrosandre/florecer`** conectado (29/08). ⚠️ está **público** — tornar privado até o lançamento. Repo chamado `florecer` (sem S) — renomear opcional.
-- [ ] **[F3.1b]** `P0` Tornar o repositório `florecer` **privado** no GitHub (Settings → Danger Zone) até o lançamento
-- [ ] **[F3.2]** `P0` Deploy automático a cada push para a **web mínima** — manter privado / sem divulgar _(depende de: F3.1)_
-- [ ] **[F3.3]** `P0` DNS do domínio apontado para a hospedagem _(depende de: F1.3, F3.2)_
-- [x] **[F3.4]** ~~Verificar/publicar as regras do Firestore~~ — estavam em modo teste expirado (22/07); regras novas **publicadas** + índices criados (29/08). _(= F4.5)_
-- [ ] **[F3.5]** `P1` Nenhum segredo em código que chega ao navegador (`firebaseConfig` público é ok; Admin SDK / webhooks só em Cloud Function) _(depende de: F3.1)_
-- [ ] **[F3.6]** `P1` E-mail transacional com remetente da marca — SMTP customizado no Firebase Auth (ou Resend) para redefinição de senha e verificação _(depende de: F1.3)_
-- [ ] **[F3.7]** `P0` Publicar página de **Política de Privacidade** no primeiro deploy _(depende de: F3.2)_
-- [ ] **[F3.8]** `P0` Publicar página de **Exclusão de conta** (URL pública — exigência da Play Store) _(depende de: F3.2)_
+- [x] **[F3.1]** ~~Repositório git~~ — **`github.com/lbarrosandre/florecer`** conectado, `origin/main` em dia. Nome sem S (renomear opcional).
+- [x] **[F3.1b]** ~~Tornar o repo privado~~ — feito (29/08).
+- [ ] **[F3.2]** `P1` Publicar as 2 páginas legais no **Firebase Hosting** (`florecer-app-c460d.web.app`, grátis no plano atual). Não precisa de deploy automático nem domínio.
+- [x] **[F3.3]** ~~DNS do domínio~~ — **N/A** (sem domínio no v1 — ver D7).
+- [x] **[F3.4]** ~~Verificar/publicar as regras do Firestore~~ — modo teste expirado (22/07); regras novas **publicadas** + índices criados (29/08). _(= F4.5)_
+- [ ] **[F3.5]** `P1` Nenhum segredo em código que chega ao navegador (`firebaseConfig` público é ok; Admin SDK / webhooks só em Cloud Function)
+- [ ] **[F3.6]** `P2` E-mail transacional com remetente da marca — **adiado** (precisa de domínio; o remetente padrão do Firebase funciona para o v1).
+- [ ] **[F3.7]** `P0` Escrever e publicar a **Política de Privacidade** (Firebase Hosting) — exigência da Play Store; revisar com o psicólogo/LGPD. _Usuário pediu para deixar por último._
+- [ ] **[F3.8]** `P0` Publicar página de **Exclusão de conta/dados** (URL pública) + fluxo real de exclusão no app (Cloud Function ou processo manual documentado). _(depende de: F3.2)_
 
 ## Fase 04 — Segurança, conformidade e correções de código
 
@@ -117,9 +122,9 @@
 - [ ] **[F5.1]** `P0` Criar a conta de desenvolvedor Google Play (US$ 25, única) _(depende de: F4.1)_
 - [ ] **[F5.2]** `P0` Gerar a chave de assinatura + **backup em 2 lugares** no mesmo dia. Manter Play App Signing _(depende de: F2.3)_
 - [ ] **[F5.3]** `P1` Assets da ficha da loja durante o desenvolvimento: ícone, capturas (celular e tablet), banner 1024×500, descrições _(depende de: D6)_
-- [ ] **[F5.4]** `P0` `assetlinks.json` publicado no domínio (Digital Asset Links) _(depende de: F3.3, F5.2)_
+- [x] **[F5.4]** ~~`assetlinks.json` / Digital Asset Links~~ — **não é necessário** com Capacitor + esquema `florescer://` (ver D7).
 - [ ] **[F5.5]** `P0` **Teste fechado: 12 testadores, 14 dias corridos** antes de Produção — recrutar já _(depende de: F5.1, F5.6)_
-- [ ] **[F5.6]** `P0` Build de release `.aab` assinado, com todos os P0 resolvidos, na trilha de teste fechado _(depende de: F2.3, F2.6, F4.5, F4.7, F4.8, F4.9, F4.14, F3.7, F3.8)_
+- [ ] **[F5.6]** `P0` Build de release `.aab` assinado, com todos os P0 resolvidos, na trilha de teste fechado _(depende de: F2.3, F2.6, F3.7, F3.8; código P0 já feito)_
 - [ ] **[F5.7]** `P0` Liberar para Produção _(depende de: F5.5, F4.6)_
 
 ## Fase 06 — Pagamento via Google Play Billing · _pós-lançamento_
@@ -164,11 +169,11 @@ Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **
 
 ## Fase 08 — Custos / contratações
 
-- [ ] **[F8.1]** Domínio `.com.br` — R$ 40–60/ano _(= F1.3)_
-- [ ] **[F8.2]** Conta Google Play — US$ 25 única _(= F5.1)_
-- [ ] **[F8.3]** Hospedagem web (Netlify grátis) — R$ 0 _(= F3.2)_
-- [ ] **[F8.4]** Firebase — ~R$ 0 no início; ativar Blaze só quando precisar de Cloud Functions (Fase 06)
-- [ ] **[F8.5]** E-mail transacional (Resend grátis, se usado) — R$ 0
+- [ ] **[F8.1]** ~~Domínio `.com.br`~~ — **R$ 0 no v1** (adiado; ~R$ 40–60/ano quando registrar)
+- [ ] **[F8.2]** Conta Google Play — **US$ 25 única** _(= F5.1)_ — **único custo obrigatório do v1**
+- [ ] **[F8.3]** Hospedagem das páginas legais — **Firebase Hosting, R$ 0** (plano Spark) _(= F3.2)_
+- [ ] **[F8.4]** Firebase — ~R$ 0 no início; Blaze só na Fase 06 (Cloud Functions do Play Billing)
+- [ ] **[F8.5]** ~~E-mail transacional~~ — R$ 0 (remetente padrão do Firebase no v1)
 - [ ] **[F8.6]** Play Billing — ~15% por venda (só na Fase 06)
 
 ## Fase 09 — Checklist rápido pré-lançamento
@@ -176,15 +181,14 @@ Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **
 **Antes do código**
 - [x] Problema e público em uma frase
 - [x] Monetização decidida
-- [ ] Nome e domínio registrados _(F1.3)_
-- [x] Web-só ou também loja — decidido _(D1, D2)_
+- [x] Nome definido (domínio adiado — D7)
+- [x] Web-só ou também loja — decidido _(D1, D2, D7)_
 
 **Primeira semana**
-- [ ] Repo com deploy automático _(F3.1, F3.2)_
-- [ ] Domínio com DNS apontado _(F3.3)_
-- [ ] Backend com regras de segurança desde a primeira coleção _(F3.4)_
+- [x] Repo git privado
+- [x] Backend com regras de segurança _(F3.4)_
 - [ ] Segredos só em função de servidor _(F3.5)_
-- [ ] E-mail transacional configurado _(F3.6)_
+- [x] ~~Domínio / DNS / e-mail transacional~~ — adiados (D7)
 
 **Antes de empacotar pra loja**
 - [ ] Login OAuth testado dentro do wrapper nativo _(F2.6)_
@@ -202,15 +206,16 @@ Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **
 
 | Semana | Foco | Marcos |
 |---|---|---|
-| 01–07/09 | Fundação | repo, domínio, regras Firestore, P0 de código rápidos, D3 |
-| 08–14/09 | Web mínima + código | privacidade + exclusão de conta no ar, escape de `innerHTML`, aba Conta, logout, offline |
-| 15–21/09 | Wrapper | Capacitor montado, login Google nativo, deep link |
-| 22–28/09 | Empacotamento | teste de OAuth em aparelho, conta Google Play, chave + backup, assets da loja, 12 testadores confirmados |
-| **29/09** | **Sobe teste fechado** | **início dos 14 dias travados** |
-| 29/09–13/10 | Teste fechado | corrigir o que os testadores acharem |
+| até 29/08 | ✅ Fundação + app | repo, regras, todos os P0 de código, aba Conta, gamificação completa |
+| 01–07/09 | App Check + páginas legais + testes | F4.4; privacidade + exclusão de conta no Firebase Hosting; usuário testa no navegador; conta Google Play criada |
+| 08–14/09 | Wrapper | Capacitor montado, login Google nativo, esquema `florescer://` |
+| 15–21/09 | Empacotamento | **teste de OAuth em aparelho real** (gargalo), chave + backup, assets da loja, 12 testadores confirmados |
+| ~22/09 | **Sobe teste fechado** | **início dos 14 dias travados** |
+| 22/09–06/10 | Teste fechado | corrigir o que os testadores acharem |
+| 07–15/10 | Produção | envio + revisão da Play → **lançamento** |
 | 14–15/10 | Produção | envio + revisão da Play → **lançamento** |
 
-**Risco:** o cronograma tem folga zero. Se qualquer bloco atrasar, o teste fechado empurra a data na mesma proporção (são 14 dias fixos, não negociáveis). Ponto de atenção principal: **F2.6** (login OAuth no wrapper) — é o maior gargalo histórico segundo a Carta de Navegação.
+**Risco:** o teste fechado são 14 dias fixos — se algo antes dele atrasar, a data anda junto. Gargalo principal: **F2.6** (login Google no wrapper Capacitor em aparelho real). Com o domínio fora do caminho crítico (D7), sobrou uma semana de folga vs. a versão anterior do cronograma.
 
 ---
 
@@ -229,3 +234,4 @@ Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **
 - **30/08/2026** — **Fase 2** (motor da gamificação, sem UI): `S.progress` + `users/{uid}.progress`; 8 estágios da planta por "dias de cuidado"; 12 conquistas + `checkBadges`; `markCareDay` com hooks em registro/gratidão/hábito/respiração; conquista Recomeço por ausência de 7+ dias; contadores de respiração e SOS.
 - **30/08/2026** — **Fase 3** (`origin/main`): planta SVG (8 estágios), card na Home, tela **Jornada** (planta grande + grade de conquistas + desafio semanal opt-in), animações (crescimento, regada, volta, conquista), `backfillCareDays` (usa histórico existente). Gamificação **DP-F v1 completa** — falta o usuário testar no navegador (Ctrl+Shift+R).
 - **30/08/2026** — **Escopo do v1 congelado.** O usuário levantou que o app está "pobre" (falta meditação, registro raso). Decisão: v1 lança enxuto e grátis; profundidade (meditação guiada, thought record TCC, insights pro, relatório PDF, programas) vira **Roadmap de produto RP-1..7**, pós-lançamento, com o psicólogo (DP-C2). Registrado aqui e na Carta de Navegação.
+- **30/08/2026** — **D7: domínio não é necessário para o v1.** App só Android + Capacitor → sem `assetlinks.json` (F5.4 cancelado), sem DNS (F3.3 N/A), sem e-mail de marca (F3.6 adiado). As 2 páginas legais vão no **Firebase Hosting** grátis (`florecer-app-c460d.web.app`). Único custo obrigatório do v1: **US$ 25** da conta Google Play. Cronograma reorganizado (uma semana de folga a mais).
