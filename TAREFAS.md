@@ -1,8 +1,8 @@
 # Florescer — Tarefas e Acompanhamento
 
 > Base: **Carta de Navegação v1.0** · ficha atualizada em 29/08/2026
-> **Data alvo (v1 na Play Store): 15/10/2026** · Última atualização deste doc: 29/08/2026
-> Tese de produto (5 diferenciais de mercado) registrada na Carta de Navegação, logo após a ficha.
+> **Data alvo (v1 na Play Store): 15/10/2026** · Última atualização deste doc: 30/08/2026
+> Tese de produto (5 diferenciais) + roadmap de profundidade na Carta de Navegação.
 
 ---
 
@@ -22,7 +22,7 @@
 | DP · Diferenciais de produto | 3 / 5 | 🟢 DP-A/B/C feitos; DP-C2 (psicólogo) e DP-D (pós-v1) pendentes; DP-E com as políticas |
 | **DP-F · Gamificação que acolhe** | 🟢 v1 completo | planta SVG + Jornada + 12 conquistas + desafio semanal + animações no `origin/main` — falta teste no navegador |
 
-**Escopo do v1 (15/10):** app atual, estruturado e corrigido, na Play Store como **freemium sem cobrança ainda** — Premium aparece como "em breve". A cobrança via Google Play Billing (Fase 06) entra num **update depois do lançamento**. É o que a própria Carta de Navegação recomenda: pagamento é segunda etapa.
+**Escopo do v1 (15/10) — CONGELADO em 30/08:** o app **como está hoje** (diário de humor + respiração + hábitos + gratidão + planta/Jornada) + polimento + empacotamento. **Grátis**, sem cobrança, Premium como "em breve". Nada de meditação guiada, thought record ou insights pro no v1 — está no **Roadmap de produto** (RP-1..7), build pós-lançamento com o psicólogo. Motivo: o app precisa ir pra loja e começar a testar retenção; profundidade sem lançamento é adiar para sempre.
 
 ---
 
@@ -141,6 +141,19 @@ Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **
 - [ ] **[DP-C2]** `P1` **Revisão por psicólogo(a)** — contratar revisão de copy e fluxos antes de comunicar qualquer eficácia na loja/marketing. _antes de F5.3 / F4.6_
 - [ ] **[DP-D]** `P2` **Personalização por perfil** — escolher perfil no onboarding (estudos / sobrecarga no trabalho / ansiedade / luto) e adaptar prompts de reflexão, exercícios sugeridos e insights; insights que evoluem com os dados. _pós-v1_ _(depende de: F4.7)_
 - [ ] **[DP-E]** `P0` **Privacidade como recurso de marca** — zero venda/compartilhamento; modo local opcional (sem nuvem); criptografia; política em linguagem simples; exclusão de conta imediata; LGPD desde o 1º deploy; comunicar isso na ficha da loja. _v1_ _(= F3.4, F3.7, F3.8, F4.2–F4.5; comunicação em F5.3)_
+- [x] **[DP-F]** ~~Gamificação que acolhe~~ — planta que floresce (8 estágios), 12 conquistas, desafio semanal, aba Jornada, animações. `origin/main` (`8e…`/Fase 3). _v1_
+
+## Roadmap de produto — profundidade (pós-lançamento)
+
+> Decidido 30/08: **v1 lança enxuto e grátis** (o que existe + polimento) para ganhar usuários e testar retenção. A camada "que se paga" abaixo é build deliberado **depois do lançamento**, feito **com o psicólogo (DP-C2) junto**. Isto responde à falha nº 4 do relatório de mercado (baixa retenção por falta de profundidade/personalização) — não é "mais recurso", é profundidade.
+
+- [ ] **[RP-1]** `Premium` **Insights Pro** — correlações claras (sono↔humor, dia da semana, gatilhos), **relatório mensal** e **PDF para levar ao terapeuta**. _(evolui os Insights atuais)_
+- [ ] **[RP-2]** `Premium` **Programas / trilhas** — ex. "21 dias para entender sua ansiedade", um passo por dia. Dá sensação de caminho, não de planilha. _(revisão psicólogo obrigatória)_
+- [ ] **[RP-3]** `Premium` **Biblioteca de meditação guiada** (áudio gravado ou licenciado). Produção/licença = custo alto → pós-lançamento.
+- [ ] **[RP-4]** `v1.x` **Seção "Meditar"** — timer (silêncio + sinos + intervalos) + 3-4 práticas guiadas **em texto** (body scan, autocompaixão, visualização). Barato; pode entrar num update rápido pós-v1. _(revisão psicólogo)_
+- [ ] **[RP-5]** `v1.x` **Registro de pensamento (thought record)** — ferramenta central da TCC, hoje ausente: situação → pensamento → emoção → evidências → pensamento alternativo. _(revisão psicólogo)_
+- [ ] **[RP-6]** `v1.x` **Prompts de reflexão adaptativos** — a pergunta do dia muda conforme humor/gatilho registrado.
+- [ ] **[RP-7]** liga com **[DP-D]** (perfil no onboarding adapta prompts, exercícios e insights).
 
 ## Fase 07 — Processo (recorrente, todo commit)
 
@@ -215,3 +228,4 @@ Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **
 - **30/08/2026** — Gamificação **aprovada** com mockup visual (planta SVG + 8 estágios + animações). **F4.16** (logo base64 → arquivo, −211 KB). **Fase 1**: foto de perfil (recorte circular via canvas) + aba Conta expandida (cadastro, editar nome). O Firebase Storage passou a exigir plano Blaze (cartão) — mudado para salvar a foto como **data URI no doc `users/{uid}`** (funciona no plano grátis, sem ação no console). Foto testada com sucesso.
 - **30/08/2026** — **Fase 2** (motor da gamificação, sem UI): `S.progress` + `users/{uid}.progress`; 8 estágios da planta por "dias de cuidado"; 12 conquistas + `checkBadges`; `markCareDay` com hooks em registro/gratidão/hábito/respiração; conquista Recomeço por ausência de 7+ dias; contadores de respiração e SOS.
 - **30/08/2026** — **Fase 3** (`origin/main`): planta SVG (8 estágios), card na Home, tela **Jornada** (planta grande + grade de conquistas + desafio semanal opt-in), animações (crescimento, regada, volta, conquista), `backfillCareDays` (usa histórico existente). Gamificação **DP-F v1 completa** — falta o usuário testar no navegador (Ctrl+Shift+R).
+- **30/08/2026** — **Escopo do v1 congelado.** O usuário levantou que o app está "pobre" (falta meditação, registro raso). Decisão: v1 lança enxuto e grátis; profundidade (meditação guiada, thought record TCC, insights pro, relatório PDF, programas) vira **Roadmap de produto RP-1..7**, pós-lançamento, com o psicólogo (DP-C2). Registrado aqui e na Carta de Navegação.
