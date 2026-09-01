@@ -331,7 +331,6 @@ textarea.inp{resize:none;min-height:76px}
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCXWZOVseHAj8Lz28CrTMmhW2UzO4qArfc",
@@ -345,8 +344,6 @@ textarea.inp{resize:none;min-height:76px}
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-    let storage = null;
-    try { storage = firebase.storage(); } catch (e) { console.warn('Storage indisponível:', e); }
 
     // Persistência offline: escritas feitas sem rede entram numa fila e
     // sincronizam sozinhas ao reconectar; leituras usam o cache local.
@@ -375,6 +372,16 @@ textarea.inp{resize:none;min-height:76px}
           provider: (user.providerData && user.providerData[0] && user.providerData[0].providerId) || 'password'
         };
         localStorage.setItem('fl_user', JSON.stringify(window.S.user));
+        // nome e foto salvos pelo próprio usuário ficam no doc users/{uid}
+        try {
+          const udoc = await db.collection('users').doc(user.uid).get();
+          if (udoc.exists) {
+            const ud = udoc.data();
+            if (ud.photo) window.S.user.photo = ud.photo;
+            if (ud.name) window.S.user.name = ud.name;
+            localStorage.setItem('fl_user', JSON.stringify(window.S.user));
+          }
+        } catch (e) { console.log('users doc:', e && e.message); }
         await syncFromCloud();
         const cover = document.getElementById('s-cover');
         if (cover && cover.classList.contains('active')) {
@@ -600,18 +607,16 @@ textarea.inp{resize:none;min-height:76px}
       try { if (auth.currentUser) await db.collection('users').doc(auth.currentUser.uid).set({ name: clean }, { merge: true }); } catch (e) { console.log(e); }
     };
 
-    window.uploadAvatar = async (blob) => {
+    // A foto é guardada como data URI compacto no doc do usuário
+    // (o Storage do Firebase exige plano pago; a foto recortada é pequena).
+    window.saveAvatarDataUrl = async (dataUrl) => {
       const uid = window.S.user && window.S.user.uid;
       if (!uid) throw new Error('sem usuário');
-      if (!storage) throw new Error('storage indisponível');
-      const ref = storage.ref('avatars/' + uid + '/avatar.jpg');
-      await ref.put(blob, { contentType: 'image/jpeg' });
-      const url = await ref.getDownloadURL();
-      if (window.S.user) window.S.user.photo = url;
+      if (!dataUrl || dataUrl.length > 240000) throw new Error('imagem grande demais');
+      if (window.S.user) window.S.user.photo = dataUrl;
       persistUser();
-      try { if (auth.currentUser) await auth.currentUser.updateProfile({ photoURL: url }); } catch (e) { console.log(e); }
-      try { await db.collection('users').doc(uid).set({ photo: url }, { merge: true }); } catch (e) { console.log(e); }
-      return url;
+      await db.collection('users').doc(uid).set({ photo: dataUrl }, { merge: true });
+      return dataUrl;
     };
   </script>
 
@@ -1987,18 +1992,19 @@ function openCropper(dataUrl){
     wrap.querySelector('#crop-save').addEventListener('click', () => {
       const btn = wrap.querySelector('#crop-save');
       btn.disabled = true; btn.textContent = 'Salvando…';
-      const out = document.createElement('canvas'); out.width = out.height = 400;
-      const f = 400 / size;
+      const OUT = 256;
+      const out = document.createElement('canvas'); out.width = out.height = OUT;
+      const f = OUT / size;
       out.getContext('2d').drawImage(img, ox*f, oy*f, img.width*base*scale*f, img.height*base*scale*f);
-      out.toBlob((blob) => {
-        if (!blob || !window.uploadAvatar) { wrap.remove(); return; }
-        window.uploadAvatar(blob).then(() => {
-          wrap.remove(); save(); renderMore();
-        }).catch(() => {
-          btn.disabled = false; btn.textContent = 'Salvar';
-          alert('Não deu para salvar a foto agora. Se o Firebase Storage ainda não foi ativado, ative e tente de novo.');
-        });
-      }, 'image/jpeg', 0.85);
+      let dataUrl;
+      try { dataUrl = out.toDataURL('image/jpeg', 0.8); } catch (e) { dataUrl = null; }
+      if (!dataUrl || !window.saveAvatarDataUrl) { wrap.remove(); return; }
+      window.saveAvatarDataUrl(dataUrl).then(() => {
+        wrap.remove(); save(); renderMore();
+      }).catch(() => {
+        btn.disabled = false; btn.textContent = 'Salvar';
+        alert('Não deu para salvar a foto agora. Tente outra imagem ou tente de novo.');
+      });
     });
   };
   img.src = dataUrl;
