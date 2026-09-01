@@ -69,7 +69,7 @@ _Domínio (`florescer.com.br`): **opcional, adiado** (ver D7)._
 
 - [ ] **[F2.1]** `P0` Documento `ARQUITETURA.md` no repo com as decisões D1/D2/D4 registradas _(depende de: F3.1)_
 - [ ] **[F2.2]** `P0` Modelar tabela de assinatura no Firestore com **provedor como campo** (`play`), mesmo sem cobrança no v1 — evita migração depois
-- [ ] **[F2.3]** `P0` Montar o wrapper **Capacitor**: projeto Android, `capacitor.config`, build gerando `.aab`
+- [~] **[F2.3]** `P0` Montar o wrapper **Capacitor** — base no repo (`capacitor.config.json`, `package.json` com `npm run build` → `www/`, `scripts/build-www.mjs`, **`CAPACITOR.md`** com o passo a passo). Falta rodar `npx cap add android` etc. na máquina do usuário (Android Studio + JDK 17).
 - [~] **[F2.4]** `P0` Login Google: **web já migrado de `signInWithRedirect` para `signInWithPopup`** (`d…`, funciona em localhost e navegador). **Falta** o plugin nativo (`@capacitor-firebase/authentication`) para o Android _(depende de: F2.3)_
 - [ ] **[F2.5]** `P0` Definir deep link próprio do app (`florescer://auth`) para o retorno do OAuth — não depender de App Link verificado por domínio _(depende de: F2.3)_
 - [ ] **[F2.6]** `P0` **Testar o login OAuth de ponta a ponta no build nativo, em aparelho real** — no primeiro dia do empacotamento _(depende de: F2.4, F2.5)_
@@ -112,10 +112,10 @@ _Domínio (`florescer.com.br`): **opcional, adiado** (ver D7)._
 - [x] **[F4.12]** ~~"Esqueci minha senha"~~ — `sendPasswordResetEmail` + feedback verde (`8e51bd9`). E-mail sai com remetente do Firebase até F3.6.
 - [ ] **[F4.13]** `P1` Ligar os links de **Termos** e **Privacidade** às páginas reais (hoje mostram "Página em preparação") _(depende de: F3.7)_
 - [x] **[F4.14]** ~~CTA de assinatura no v1~~ — aba Conta diz "Premium em breve"; paywall completo segue inacessível (sem aba). (`8e51bd9`)
-- [ ] **[F4.15]** `P2` Corrigir incoerência de path: `manifest.json` usa `/florecer/` e o service worker usa `BASE='/florecer'` — alinhar com a hospedagem
+- [x] **[F4.15]** ~~Path `/florecer/` no manifest/SW~~ — caminhos relativos (`./`), `CACHE_NAME` → `florescer-v3`. Funciona em qualquer raiz (Firebase Hosting + Capacitor).
 - [x] **[F4.16]** ~~Deduplicar o logo base64~~ — `index.html` 317 KB → 100 KB; as `<img>` usam `icon-512.png` (`bc…`).
 - [~] **[F4.17]** `P2` Quebrar o `index.html` — **adiado**: com F4.16 o arquivo ficou gerenciável (~110 KB); o split é arriscado num app funcionando com `onclick` inline por toda parte. Fazer numa tarefa dedicada depois do v1.
-- [ ] **[F4.18]** `P2` Padronizar a grafia "Florescer" em todo o código e assets _(depende de: D5 ✅)_
+- [x] **[F4.18]** ~~Padronizar grafia "Florescer"~~ — `index.html` + `manifest.json` (name/short_name) 100% "Florescer". _(o projeto Firebase `florecer-app-c460d` mantém o id; só cosmético o que muda)_
 
 ## Fase 05 — Publicação na Play Store
 
