@@ -1,23 +1,33 @@
 # Dependências
 node_modules/
 
-# Build / Capacitor (futuro)
-/android/
-/ios/
-/dist/
+# Web gerada (Capacitor empacota daqui)
 /www/
+/dist/
+
+# Capacitor — a pasta android/ É versionada (customizações nativas),
+# mas os artefatos de build e coisas de máquina, não:
+/ios/
+android/local.properties
+android/.gradle/
+android/build/
+android/app/build/
+android/captures/
+android/.idea/
+android/app/release/
 .gradle/
+
+# Firebase — config do app Android (baixar do console quando precisar)
+android/app/google-services.json
+.firebase/
+*-debug.log
+firebase-debug.log
+firestore-debug.log
 
 # Ambiente / segredos — NUNCA versionar
 .env
 .env.*
 !.env.example
-
-# Firebase
-.firebase/
-*-debug.log
-firebase-debug.log
-firestore-debug.log
 
 # Chaves de assinatura Android — NUNCA versionar
 *.keystore
