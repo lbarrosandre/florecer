@@ -325,6 +325,79 @@ textarea.inp{resize:none;min-height:76px}
 .crop-save:disabled{opacity:.6}
 .conta-avatar-wrap{position:relative;display:inline-block}
 .conta-avatar-edit{position:absolute;right:-2px;bottom:6px;width:26px;height:26px;border-radius:50%;background:#2a7d63;color:#fff;border:2px solid #fff;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+
+/* ── Jornada / planta ── */
+.plnt{overflow:visible}
+.plnt .foliage{transform-box:fill-box;transform-origin:50% 92%;animation:pl-sway 6.5s ease-in-out infinite}
+@keyframes pl-sway{0%,100%{transform:rotate(-1.4deg)}50%{transform:rotate(1.4deg)}}
+.plnt.dormant .foliage{animation:none;filter:saturate(.32) brightness(1.03)}
+.plnt .stem{stroke:#1f6450;stroke-width:4;fill:none;stroke-linecap:round}
+.plnt .stem-soft{stroke:#1f6450;stroke-width:3;fill:none;stroke-linecap:round}
+.plnt .lf{fill:#2f8266}
+.plnt .lf-light{fill:#7fcfa7}
+.plnt .root{stroke:#7a5a42;stroke-width:2;fill:none;stroke-linecap:round;opacity:.5}
+.plnt .seed{fill:#b98b5e}
+.plnt .bud{fill:#7fcfa7}
+.plnt .bud-tip{fill:#c9a84c}
+.plnt .petal{fill:#e2929a}
+.plnt .flower-core{fill:#c9a84c}
+.plnt .grass{stroke:#2f8266;stroke-width:3;fill:none;stroke-linecap:round}
+.plnt .pot-body{fill:#d9c4ad}
+.plnt .pot-rim{fill:#cbb096}
+.plnt .soil{fill:#7a5a42}
+.plnt .soil-wet{fill:#5a4230;opacity:0}
+.plant-wrap{position:relative;width:200px;height:230px;margin:0 auto}
+.plant-wrap svg{position:absolute;inset:0;width:100%;height:100%}
+.plant-incoming{clip-path:inset(100% 0 0 0);opacity:.35}
+.plant-grow{transition:clip-path .9s cubic-bezier(.22,.7,.2,1),opacity .5s ease}
+.plant-revive .foliage{transition:filter 1.5s ease}
+.pl-glow{position:absolute;inset:0;border-radius:50%;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 58%,#7fcfa78c,transparent 62%)}
+.pl-glow.on{animation:pl-glowpulse 1.3s ease-out}
+@keyframes pl-glowpulse{0%{opacity:0;transform:scale(.7)}35%{opacity:1}100%{opacity:0;transform:scale(1.15)}}
+.pl-particle{position:absolute;left:50%;bottom:60px;width:7px;height:7px;border-radius:50% 50% 50% 0;background:#7fcfa7;opacity:0;pointer-events:none}
+.pl-particle.go{animation:pl-drift 2s ease-out forwards}
+@keyframes pl-drift{0%{opacity:0;transform:translate(-50%,0) rotate(0)}15%{opacity:.9}100%{opacity:0;transform:translate(var(--dx,-50%),-80px) rotate(150deg)}}
+.pl-drop{position:absolute;left:50%;top:0;width:8px;height:11px;border-radius:50% 50% 50% 0;background:#7fcfa7;transform:translateX(-50%) rotate(45deg);opacity:0}
+.pl-drop.fall{animation:pl-fall .7s ease-in forwards}
+@keyframes pl-fall{0%{opacity:0;top:0}20%{opacity:1}80%{opacity:1}100%{opacity:0;top:60%}}
+.pl-cap{text-align:center;font-size:12px;color:#1f6450;margin-top:6px;min-height:1.2em;transition:opacity .3s;line-height:1.4}
+.home-plant-card{background:linear-gradient(180deg,#f2faf6,#fff);border:1px solid #e3f0e9;border-radius:18px;padding:12px 14px;margin:2px 0 16px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.home-plant-card .plant-wrap{width:74px;height:88px;margin:0}
+.home-plant-info{flex:1;min-width:0}
+.home-plant-stage{font-size:13px;font-weight:600;color:#1a1a1a}
+.home-plant-sub{font-size:11px;color:#999;margin-top:2px}
+.home-plant-bar{height:5px;background:#e8e8e8;border-radius:5px;margin-top:8px;overflow:hidden}
+.home-plant-bar>div{height:100%;background:#2a7d63;border-radius:5px;transition:width .5s}
+.jor-hero{text-align:center;padding:6px 0 2px}
+.jor-hero .plant-wrap{width:190px;height:220px}
+.jor-stage-name{font-size:18px;font-weight:700;color:#1a1a1a;margin-top:4px}
+.jor-stage-msg{font-size:13px;color:#888}
+.jor-next{font-size:11px;color:#bbb;margin-top:6px}
+.badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.badge-cell{background:#fff;border:1px solid #f0f0f0;border-radius:14px;padding:10px 4px;text-align:center;cursor:pointer}
+.badge-cell .b-emoji{font-size:23px;display:block;filter:grayscale(1);opacity:.3}
+.badge-cell.got .b-emoji{filter:none;opacity:1}
+.badge-cell .b-name{font-size:9px;color:#bbb;margin-top:3px;line-height:1.15;display:block}
+.badge-cell.got .b-name{color:#666}
+.chal-card{background:linear-gradient(135deg,#eaf5f1,#e9e6fd);border-radius:16px;padding:16px;margin-top:4px}
+.chal-title{font-size:11px;font-weight:700;color:#1f6450;text-transform:uppercase;letter-spacing:.05em}
+.chal-text{font-size:13px;color:#444;margin:5px 0 10px}
+.chal-bar{height:8px;background:#ffffffb0;border-radius:8px;overflow:hidden}
+.chal-bar>div{height:100%;background:#2a7d63;border-radius:8px;transition:width .8s}
+.chal-done{font-size:12px;color:#1a6b44;font-weight:600;margin-top:8px}
+.jbadge-sheet{background:#fff;border-radius:28px 28px 0 0;padding:28px 24px 36px;width:100%;text-align:center;animation:slideUp3 .34s cubic-bezier(.2,.7,.2,1)}
+.jbadge-ring{position:relative;width:92px;height:92px;margin:0 auto 12px}
+.jbadge-ring .rng{position:absolute;inset:0;border-radius:50%;border:2px solid #c9a84c;opacity:0;animation:jb-ring 1s ease-out}
+@keyframes jb-ring{0%{opacity:.9;transform:scale(.55)}100%{opacity:0;transform:scale(1.25)}}
+.jbadge-ring .mdl{position:absolute;inset:10px;border-radius:50%;background:#f4f7f5;display:flex;align-items:center;justify-content:center;font-size:34px;animation:jb-in .5s cubic-bezier(.2,.7,.2,1) both}
+@keyframes jb-in{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.jbadge-kind{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#c9a84c;font-weight:700}
+.jbadge-title{font-size:19px;font-weight:600;color:#1a1a1a;margin:2px 0 4px}
+.jbadge-sub{font-size:13px;color:#666;margin:0 0 16px}
+@media (prefers-reduced-motion:reduce){
+  .plnt .foliage{animation:none}
+  .pl-particle,.pl-drop{display:none!important}
+}
 </style>
 
   <!-- Firebase SDK (versão compat - mais estável) -->
@@ -814,6 +887,7 @@ textarea.inp{resize:none;min-height:76px}
           </div>
           <button class="sos-btn" onclick="goTo('sos')"><span style="font-size:18px">🆘</span><span style="font-size:9px">SOS</span></button>
         </div>
+        <div id="home-plant"></div>
         <div class="metrics" id="home-metrics"></div>
         <div class="section-lbl">Esta semana</div>
         <div class="card" style="padding:14px">
@@ -1050,6 +1124,23 @@ textarea.inp{resize:none;min-height:76px}
       </div>
     </div>
 
+    <!-- ══════════════════════════════ JORNADA ══ -->
+    <div class="screen" id="s-jornada">
+      <div class="status"><span>9:41</span><span class="status-center">Sua jornada</span><span></span></div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 16px 4px;flex-shrink:0">
+        <button onclick="goTo('home')" style="background:none;border:none;font-size:22px;cursor:pointer;padding:0">‹</button>
+        <span style="font-size:15px;font-weight:600;color:#1a1a1a">Sua jornada</span>
+      </div>
+      <div class="scroll pad" id="jornada-body"></div>
+      <div class="bnav">
+        <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
+        <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
+        <div class="bni" onclick="goTo('breath')"><span class="bni-icon">🫁</span><span class="bni-lbl">Respirar</span></div>
+        <div class="bni" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
+        <div class="bni" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
+      </div>
+    </div>
+
   </div><!-- phone-screen -->
 </div><!-- phone-frame -->
 
@@ -1194,6 +1285,9 @@ function markCareDay(){
 }
 function bumpBreathSession(){
   S.progress.breathSessions = (S.progress.breathSessions || 0) + 1;
+  const wk = weekKey();
+  if (!S.progress.breathWeek || S.progress.breathWeek.week !== wk) S.progress.breathWeek = { week: wk, count: 0 };
+  S.progress.breathWeek.count++;
   progressSave();
   markCareDay();
 }
@@ -1212,18 +1306,276 @@ function mergeProgress(cloud, local){
     sosOpens: Math.max(cloud.sosOpens||0, local.sosOpens||0),
     lastActive: [cloud.lastActive, local.lastActive].filter(Boolean).sort().pop() || null,
     seenStage: Math.max(cloud.seenStage||0, local.seenStage||0, plantStageIndex(days.length)),
+    breathWeek: local.breathWeek || cloud.breathWeek || null,
+    challenge: local.challenge || cloud.challenge || null,
+    _init: cloud._init || local._init || false,
   };
+}
+// uma vez: aproveita o histórico existente como "dias de cuidado"
+function backfillCareDays(){
+  const p = S.progress;
+  if (p._init) return;
+  const set = new Set(p.careDays);
+  S.logs.forEach(l => set.add(dateKey(l.date)));
+  S.gratitude.forEach(g => set.add(dateKey(g.date)));
+  Object.keys(S.habitDone || {}).forEach(k => { if ((S.habitDone[k] || []).length) set.add(dateKey(k)); });
+  p.careDays = [...set].sort();
+  p.seenStage = plantStageIndex(p.careDays.length);
+  p._init = true;
+  progressSave();
 }
 window.applyCloudProgress = function(cloudProgress){
   S.progress = mergeProgress(cloudProgress, S.progress);
   try { localStorage.setItem('fl_progress', JSON.stringify(S.progress)); } catch(e){}
+  backfillCareDays();
   checkBadges();
 };
+
+// ═══════════ JORNADA — planta SVG, animações, desafio ═══════════
+const PLANT_POT = '<ellipse cx="115" cy="206" rx="42" ry="8" class="soil"/>'
+  + '<path d="M76 208 L154 208 L146 246 Q115 253 84 246 Z" class="pot-body"/>'
+  + '<rect x="70" y="200" width="90" height="10" rx="3.5" class="pot-rim"/>'
+  + '<ellipse cx="115" cy="205" rx="40" ry="7.5" class="soil"/>'
+  + '<ellipse cx="115" cy="205" rx="40" ry="7.5" class="soil-wet"/>';
+function plLeaf(x,y,rot,s,cls){
+  return '<path d="M0 0 C 11 -8 26 -7 33 0 C 26 8 11 8 0 0 Z" transform="translate('+x+' '+y+') rotate('+rot+') scale('+s+')" class="'+(cls||'lf')+'"/>';
+}
+function plPair(x,y,s,l,r,cls){ return plLeaf(x,y,l,s,cls)+plLeaf(x,y,r,s,cls); }
+const PLANT_ART = [
+  ()=> '<ellipse cx="115" cy="200" rx="7" ry="9.5" transform="rotate(18 115 200)" class="seed"/><path d="M115 193 q 3 -7 1 -13" fill="none" stroke="#7fcfa7" stroke-width="2" stroke-linecap="round"/>',
+  ()=> '<path d="M115 206 Q 112 180 115 162" class="stem"/>' + plPair(115,163,.62,-34,-146,'lf-light'),
+  ()=> '<path d="M115 206 Q 111 172 115 138" class="stem"/>' + plPair(115,168,.72,-32,-148) + plPair(115,140,.8,-40,-140,'lf-light'),
+  ()=> '<path d="M115 208 q -8 12 -15 22 M115 208 q 7 13 13 20" class="root"/><path d="M115 206 Q 110 165 115 116" class="stem"/>'
+       + plPair(115,176,.74,-30,-150) + plPair(115,148,.82,-38,-142) + plPair(115,120,.78,-44,-136,'lf-light'),
+  ()=> '<path d="M115 208 q -8 12 -15 22 M115 208 q 7 13 13 20" class="root"/><path d="M115 206 Q 109 158 115 100" class="stem"/><path d="M115 150 q 20 -3 34 -18" class="stem-soft"/>'
+       + plPair(115,180,.72,-30,-150) + plPair(115,154,.8,-36,-144) + plPair(115,128,.82,-40,-140) + plPair(115,104,.72,-46,-134,'lf-light')
+       + plLeaf(150,132,-20,.6) + plLeaf(150,132,-70,.55,'lf-light'),
+  ()=> '<path d="M115 208 q -8 12 -15 22 M115 208 q 7 13 13 20" class="root"/><path d="M115 206 Q 109 150 115 86" class="stem"/><path d="M115 150 q 20 -3 34 -18" class="stem-soft"/>'
+       + plPair(115,182,.72,-30,-150) + plPair(115,156,.8,-36,-144) + plPair(115,130,.82,-40,-140)
+       + plLeaf(150,132,-20,.6) + plLeaf(150,132,-70,.55,'lf-light')
+       + '<path d="M115 86 Q 103 68 115 48 Q 127 68 115 86 Z" class="bud"/><circle cx="115" cy="52" r="3.4" class="bud-tip"/>',
+  ()=> { let p=''; for(let k=0;k<6;k++) p+='<ellipse cx="115" cy="48" rx="11" ry="17" class="petal" transform="rotate('+(k*60)+' 115 66)"/>';
+    return '<path d="M115 208 q -8 12 -15 22 M115 208 q 7 13 13 20" class="root"/><path d="M115 206 Q 109 150 115 76" class="stem"/><path d="M115 150 q 20 -3 34 -18" class="stem-soft"/>'
+       + plPair(115,182,.72,-30,-150) + plPair(115,156,.8,-36,-144) + plPair(115,132,.82,-40,-140)
+       + plLeaf(150,132,-20,.6) + plLeaf(150,132,-70,.55,'lf-light') + p + '<circle cx="115" cy="66" r="8" class="flower-core"/>'; },
+  ()=> { let p=''; for(let k=0;k<6;k++) p+='<ellipse cx="103" cy="58" rx="9.5" ry="15" class="petal" transform="rotate('+(k*60)+' 103 74)"/>';
+    return '<path d="M92 200 q 2 -16 -3 -28 M138 200 q -3 -15 2 -26 M115 200 q 1 -18 6 -30" class="grass"/><path d="M103 206 Q 99 150 103 84" class="stem"/>'
+       + plPair(103,176,.66,-30,-150) + plPair(103,150,.72,-36,-144) + p + '<circle cx="103" cy="74" r="7" class="flower-core"/>'
+       + '<path d="M150 206 Q 152 180 149 158" class="stem-soft"/>' + plPair(149,158,.5,-34,-146,'lf-light')
+       + '<path d="M149 150 Q 143 140 149 130 Q 155 140 149 150 Z" class="bud"/><circle cx="149" cy="133" r="2.4" class="bud-tip"/>'
+       + '<path d="M78 206 Q 76 188 79 172" class="stem-soft"/>' + plPair(79,172,.44,-32,-148); },
+];
+function plantSVG(idx, opts){
+  opts = opts || {};
+  const art = (PLANT_ART[idx] || PLANT_ART[0])();
+  return '<svg class="plnt'+(opts.dormant?' dormant':'')+'" viewBox="0 0 230 270" aria-hidden="true">'
+    + PLANT_POT + '<g class="foliage">' + art + '</g></svg>';
+}
+function plantDormant(){
+  const la = S.progress.lastActive;
+  if (!la) return false;
+  return Math.round((new Date(dateKey()) - new Date(la)) / 86400000) >= 7;
+}
+
+// ── fila de efeitos (preenchida pelos ganchos do motor) ──
+const _fx = { grew:null, watered:false, revived:false, badges:[] };
+window.onPlantGrew = (stage) => { _fx.grew = stage; };
+window.onCareToday = () => { _fx.watered = true; };
+window.onBadgesEarned = (ids) => {
+  ids.forEach(id => { if (_fx.badges.indexOf(id) < 0) _fx.badges.push(id); });
+  if (ids.indexOf('recomeco') >= 0) _fx.revived = true;
+  if (['s-home','s-jornada','s-more'].some(s => document.getElementById(s) && document.getElementById(s).classList.contains('active'))) flushBadgeFx();
+};
+
+function plParticles(wrap){
+  for (let k=0;k<5;k++){
+    const p=document.createElement('div'); p.className='pl-particle';
+    p.style.setProperty('--dx', (Math.random()*70-35-50)+'px');
+    p.style.left=(44+Math.random()*16)+'%';
+    p.style.animationDelay=(k*0.12)+'s';
+    wrap.appendChild(p);
+    requestAnimationFrame(()=>p.classList.add('go'));
+    setTimeout(()=>p.remove(),2400);
+  }
+}
+const _reduce = () => window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+function fxGrow(host, stage){
+  const wrap = host.querySelector('.plant-wrap');
+  const cap = host.querySelector('.pl-cap');
+  if (!wrap) return;
+  const ghost = wrap.querySelector('.plnt');
+  wrap.insertAdjacentHTML('beforeend', plantSVG(stage));
+  const svgs = wrap.querySelectorAll('.plnt');
+  const nw = svgs[svgs.length-1];
+  if (cap){ cap.textContent = 'Sua planta virou ' + PLANT_STAGES[stage].nome + '. ' + PLANT_STAGES[stage].msg;
+    setTimeout(()=>{ if (cap.textContent.indexOf('virou') >= 0) cap.textContent=''; }, 6000); }
+  if (_reduce()){ if (ghost) ghost.remove(); return; }
+  nw.classList.add('plant-incoming'); nw.getBoundingClientRect();
+  nw.classList.add('plant-grow');
+  requestAnimationFrame(()=> nw.classList.remove('plant-incoming'));
+  const glow = wrap.querySelector('.pl-glow');
+  if (glow){ glow.classList.remove('on'); void glow.offsetWidth; glow.classList.add('on'); }
+  plParticles(wrap);
+  if (ghost){ ghost.style.transition='opacity .6s'; setTimeout(()=>{ ghost.style.opacity='0'; },30); setTimeout(()=>ghost.remove(),700); }
+}
+function fxWater(host){
+  const wrap = host.querySelector('.plant-wrap');
+  const cap = host.querySelector('.pl-cap');
+  if (!wrap) return;
+  if (cap){ cap.textContent='Regada hoje 🌱'; setTimeout(()=>{ if (cap.textContent==='Regada hoje 🌱') cap.textContent=''; }, 3500); }
+  if (_reduce()) return;
+  const drop=document.createElement('div'); drop.className='pl-drop';
+  wrap.appendChild(drop);
+  requestAnimationFrame(()=>drop.classList.add('fall'));
+  setTimeout(()=>drop.remove(),800);
+  const wet = wrap.querySelector('.soil-wet');
+  if (wet) wet.animate([{opacity:0},{opacity:.5},{opacity:.15}],{duration:1600,easing:'ease-out'});
+  const fol = wrap.querySelector('.foliage');
+  if (fol) setTimeout(()=>fol.animate([{transform:'rotate(0)'},{transform:'rotate(3deg)'},{transform:'rotate(0)'}],{duration:800,easing:'ease-in-out'}),560);
+}
+function fxRevive(host){
+  const wrap = host.querySelector('.plant-wrap');
+  const cap = host.querySelector('.pl-cap');
+  const svg = wrap && wrap.querySelector('.plnt');
+  if (!svg) return;
+  svg.classList.add('plant-revive');
+  requestAnimationFrame(()=> svg.classList.remove('dormant'));
+  if (cap){ cap.textContent='Que bom te ver de volta. Sua planta te esperou. 🌱'; setTimeout(()=>{ cap.textContent=''; }, 5500); }
+  setTimeout(()=> svg.classList.remove('plant-revive'), 1700);
+}
+function flushPlantFx(host){
+  if (!host) return;
+  if (_fx.revived){ _fx.revived = false; _fx.watered = false; fxRevive(host); }
+  else if (_fx.grew != null){ const s = _fx.grew; _fx.grew = null; _fx.watered = false; fxGrow(host, s); }
+  else if (_fx.watered){ _fx.watered = false; fxWater(host); }
+}
+function flushBadgeFx(){
+  if (!_fx.badges.length) return;
+  if (document.querySelector('.jbadge-sheet')) return; // uma de cada vez
+  const b = BADGES.find(x => x.id === _fx.badges[0]);
+  _fx.badges.shift();
+  if (!b){ flushBadgeFx(); return; }
+  const ov = document.createElement('div');
+  ov.className = 'empathy-overlay';
+  ov.innerHTML = '<div class="jbadge-sheet">'
+    + '<div class="jbadge-ring"><div class="rng"></div><div class="mdl">'+b.emoji+'</div></div>'
+    + '<div class="jbadge-kind">Conquista</div>'
+    + '<div class="jbadge-title">'+esc(b.nome)+'</div>'
+    + '<div class="jbadge-sub">'+esc(b.dica)+'</div>'
+    + '<button class="btn btn-p" onclick="this.closest(\'.empathy-overlay\').remove(); flushBadgeFx();">Guardar</button>'
+    + '</div>';
+  document.getElementById('app').appendChild(ov);
+}
+window.flushBadgeFx = flushBadgeFx;
+
+function renderHomePlant(){
+  const host = document.getElementById('home-plant');
+  if (!host) return;
+  backfillCareDays();
+  const days = S.progress.careDays.length;
+  const idx = plantStageIndex(days);
+  const st = PLANT_STAGES[idx];
+  const next = PLANT_STAGES[idx+1];
+  const prog = next ? Math.round(((days - st.min) / (next.min - st.min)) * 100) : 100;
+  host.innerHTML = '<div class="home-plant-card" onclick="goTo(\'jornada\')">'
+    + '<div class="plant-wrap"><div class="pl-glow"></div>' + plantSVG(idx,{dormant:plantDormant()}) + '</div>'
+    + '<div class="home-plant-info">'
+    +   '<div class="home-plant-stage">' + st.nome + ' · ' + days + (days===1?' dia':' dias') + ' de cuidado</div>'
+    +   '<div class="home-plant-sub">' + (next ? ('Faltam ' + (next.min - days) + ' para ' + next.nome) : 'Sua planta chegou ao topo 🌷') + '</div>'
+    +   '<div class="home-plant-bar"><div style="width:' + Math.max(4, Math.min(100, prog)) + '%"></div></div>'
+    + '</div></div>'
+    + '<div class="pl-cap"></div>';
+  flushPlantFx(host);
+}
+
+// ── desafio semanal ──
+function weekStart(){ const d=new Date(); const day=(d.getDay()+6)%7; d.setHours(0,0,0,0); d.setDate(d.getDate()-day); return d; }
+function weekKey(x){
+  const d = x ? new Date(x) : new Date();
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const day = t.getUTCDay() || 7;
+  t.setUTCDate(t.getUTCDate() + 4 - day);
+  const ys = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+  const wn = Math.ceil((((t - ys) / 86400000) + 1) / 7);
+  return t.getUTCFullYear() + '-W' + String(wn).padStart(2, '0');
+}
+function logsThisWeek(){ const s = weekStart(); return S.logs.filter(l => new Date(l.date) >= s); }
+function gratThisWeek(){ const s = weekStart(); return S.gratitude.filter(g => new Date(g.date) >= s); }
+const CHALLENGES = [
+  { id:'reg3',  text:'Fazer 3 registros esta semana',       target:3, count:()=> logsThisWeek().length },
+  { id:'grat3', text:'Escrever 3 gratidões esta semana',     target:3, count:()=> gratThisWeek().length },
+  { id:'noite', text:'Fazer 1 registro à noite esta semana', target:1, count:()=> logsThisWeek().filter(l => l.time === 'Noite').length },
+  { id:'resp3', text:'Fazer 3 sessões de respiração',        target:3, count:()=> (S.progress.breathWeek && S.progress.breathWeek.week === weekKey()) ? S.progress.breathWeek.count : 0 },
+];
+function currentChallenge(){
+  const wk = weekKey();
+  let c = S.progress.challenge;
+  if (!c || c.week !== wk){
+    const n = parseInt(wk.slice(-2), 10) || 0;
+    c = { id: CHALLENGES[n % CHALLENGES.length].id, week: wk, joined:false, done:false };
+    S.progress.challenge = c;
+    progressSave();
+  }
+  return c;
+}
+function challengeView(){
+  const c = currentChallenge();
+  const def = CHALLENGES.find(x => x.id === c.id) || CHALLENGES[0];
+  const n = def.count();
+  if (c.joined && n >= def.target && !c.done){ c.done = true; progressSave(); }
+  if (!c.joined){
+    return '<div class="chal-card"><div class="chal-title">Esta semana</div>'
+      + '<div class="chal-text">' + def.text + '</div>'
+      + '<button class="btn-sm btn-sm-p" onclick="joinChallenge()">Topar o desafio</button></div>';
+  }
+  const pct = Math.min(100, Math.round(n / def.target * 100));
+  return '<div class="chal-card"><div class="chal-title">Esta semana</div>'
+    + '<div class="chal-text">' + def.text + '</div>'
+    + '<div class="chal-bar"><div style="width:' + pct + '%"></div></div>'
+    + (n >= def.target
+        ? '<div class="chal-done">Feito! ' + n + '/' + def.target + ' 🌱</div>'
+        : '<div style="font-size:11px;color:#888;margin-top:6px">' + n + ' de ' + def.target + '. Recomeçar semana que vem, sem pressa.</div>')
+    + '</div>';
+}
+function joinChallenge(){ currentChallenge().joined = true; progressSave(); renderJornada(); }
+window.joinChallenge = joinChallenge;
+
+function badgeInfo(id){ const b = BADGES.find(x => x.id === id); if (b) alert(b.nome + '\n\n' + b.dica); }
+window.badgeInfo = badgeInfo;
+
+function renderJornada(){
+  const body = document.getElementById('jornada-body');
+  if (!body) return;
+  const days = S.progress.careDays.length;
+  const idx = plantStageIndex(days);
+  const st = PLANT_STAGES[idx];
+  const next = PLANT_STAGES[idx+1];
+  const gotCount = Object.keys(S.progress.badges || {}).length;
+  const grid = BADGES.map(b => {
+    const got = !!S.progress.badges[b.id];
+    return '<div class="badge-cell ' + (got ? 'got' : '') + '" onclick="badgeInfo(\'' + b.id + '\')">'
+      + '<span class="b-emoji">' + b.emoji + '</span><span class="b-name">' + esc(b.nome) + '</span></div>';
+  }).join('');
+  body.innerHTML = '<div class="jor-hero" id="jor-plant">'
+    + '<div class="plant-wrap"><div class="pl-glow"></div>' + plantSVG(idx,{dormant:plantDormant()}) + '</div>'
+    + '<div class="pl-cap"></div>'
+    + '<div class="jor-stage-name">' + st.nome + '</div>'
+    + '<div class="jor-stage-msg">' + st.msg + '</div>'
+    + '<div class="jor-next">' + (next ? (days + ' de ' + next.min + ' dias de cuidado para ' + next.nome) : (days + ' dias de cuidado · você chegou ao topo')) + '</div>'
+    + '</div>'
+    + '<div class="section-lbl">Conquistas · ' + gotCount + '/' + BADGES.length + '</div>'
+    + '<div class="badge-grid">' + grid + '</div>'
+    + '<div class="section-lbl">Desafio da semana</div>'
+    + challengeView();
+  flushPlantFx(document.getElementById('jor-plant'));
+  flushBadgeFx();
+}
 
 // ═══════════ NAVIGATION ═══════════
 function goTo(screen) {
   // Bloquear acesso às telas internas sem autenticação
-  const protectedScreens = ['home','log','breath','history','more','sos'];
+  const protectedScreens = ['home','log','breath','history','more','sos','jornada'];
   if (protectedScreens.includes(screen) && !S.user) {
     console.warn('Acesso bloqueado: usuário não autenticado');
     return;
@@ -1235,6 +1587,7 @@ function goTo(screen) {
   if (screen === 'log') resetLog();
   if (screen === 'history') renderHistory();
   if (screen === 'more') renderMore();
+  if (screen === 'jornada') renderJornada();
   if (screen === 'sos') bumpSos();
 }
 
@@ -1342,8 +1695,10 @@ function renderHome() {
   }
   document.getElementById('home-grat-preview').innerHTML = gratHtml;
 
+  renderHomePlant();
   // conquistas que já valem pelos dados existentes
   checkBadges();
+  flushBadgeFx();
 }
 
 // ═══════════ LOG FORM ═══════════
