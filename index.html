@@ -308,12 +308,30 @@ textarea.inp{resize:none;min-height:76px}
 .cover-divider::before,.cover-divider::after{content:'';flex:1;height:1px;background:#eee}
 .cover-divider span{font-size:clamp(11px,3vw,13px);color:#bbb;white-space:nowrap}
 .cover-footer{padding:12px 24px max(env(safe-area-inset-bottom),20px);text-align:center;flex-shrink:0}
+
+/* ── Recorte de foto ── */
+.crop-overlay{position:absolute;inset:0;z-index:300;background:#0d1b16f2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;animation:fadeOv .2s ease}
+.crop-title{color:#fff;font-size:15px;font-weight:600;margin-bottom:16px}
+.crop-stage{position:relative;width:min(280px,72vw);height:min(280px,72vw);border-radius:16px;overflow:hidden;background:#000;touch-action:none;cursor:grab}
+.crop-stage:active{cursor:grabbing}
+.crop-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.crop-mask{position:absolute;inset:0;pointer-events:none;box-shadow:0 0 0 999px #000000a8;border-radius:50%}
+.crop-zoom{width:min(280px,72vw);margin:18px 0 6px;accent-color:#2a7d63}
+.crop-hint{color:#ffffff90;font-size:11px;margin-bottom:16px}
+.crop-actions{display:flex;gap:10px;width:min(280px,72vw)}
+.crop-actions button{flex:1;padding:12px;border-radius:12px;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+.crop-cancel{background:#ffffff20;color:#fff}
+.crop-save{background:#2a7d63;color:#fff}
+.crop-save:disabled{opacity:.6}
+.conta-avatar-wrap{position:relative;display:inline-block}
+.conta-avatar-edit{position:absolute;right:-2px;bottom:6px;width:26px;height:26px;border-radius:50%;background:#2a7d63;color:#fff;border:2px solid #fff;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 </style>
 
   <!-- Firebase SDK (versão compat - mais estável) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCXWZOVseHAj8Lz28CrTMmhW2UzO4qArfc",
@@ -327,6 +345,8 @@ textarea.inp{resize:none;min-height:76px}
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
+    let storage = null;
+    try { storage = firebase.storage(); } catch (e) { console.warn('Storage indisponível:', e); }
 
     // Persistência offline: escritas feitas sem rede entram numa fila e
     // sincronizam sozinhas ao reconectar; leituras usam o cache local.
@@ -350,7 +370,9 @@ textarea.inp{resize:none;min-height:76px}
           uid: user.uid,
           name: user.displayName || user.email.split('@')[0],
           email: user.email,
-          photo: user.photoURL || ''
+          photo: user.photoURL || '',
+          created: (user.metadata && user.metadata.creationTime) || null,
+          provider: (user.providerData && user.providerData[0] && user.providerData[0].providerId) || 'password'
         };
         localStorage.setItem('fl_user', JSON.stringify(window.S.user));
         await syncFromCloud();
@@ -419,7 +441,7 @@ textarea.inp{resize:none;min-height:76px}
       if (!email) return showCoverError('Digite seu e-mail no campo acima e clique de novo.');
       try {
         await auth.sendPasswordResetEmail(email);
-        showCoverError('Enviamos um link para redefinir a senha no seu e-mail.', true);
+        showCoverError('Se houver uma conta com senha nesse e-mail, o link chega em instantes (confira o spam). Contas criadas com Google não usam senha — entre pelo botão do Google.', true);
       } catch (e) {
         showCoverError(firebaseError(e.code));
       }
@@ -563,6 +585,34 @@ textarea.inp{resize:none;min-height:76px}
       return msgs[code] || ('Ocorreu um erro. Tente novamente. (' + (code || 'sem código') + ')');
     }
     window.firebaseError = firebaseError;
+
+    // ═══════════ CONTA — nome e foto ═══════════
+    function persistUser() {
+      try { if (window.S.user) localStorage.setItem('fl_user', JSON.stringify(window.S.user)); } catch (e) {}
+    }
+
+    window.updateDisplayName = async (name) => {
+      const clean = String(name || '').trim().slice(0, 40);
+      if (!clean) return;
+      if (window.S.user) window.S.user.name = clean;
+      persistUser();
+      try { if (auth.currentUser) await auth.currentUser.updateProfile({ displayName: clean }); } catch (e) { console.log(e); }
+      try { if (auth.currentUser) await db.collection('users').doc(auth.currentUser.uid).set({ name: clean }, { merge: true }); } catch (e) { console.log(e); }
+    };
+
+    window.uploadAvatar = async (blob) => {
+      const uid = window.S.user && window.S.user.uid;
+      if (!uid) throw new Error('sem usuário');
+      if (!storage) throw new Error('storage indisponível');
+      const ref = storage.ref('avatars/' + uid + '/avatar.jpg');
+      await ref.put(blob, { contentType: 'image/jpeg' });
+      const url = await ref.getDownloadURL();
+      if (window.S.user) window.S.user.photo = url;
+      persistUser();
+      try { if (auth.currentUser) await auth.currentUser.updateProfile({ photoURL: url }); } catch (e) { console.log(e); }
+      try { await db.collection('users').doc(uid).set({ photo: url }, { merge: true }); } catch (e) { console.log(e); }
+      return url;
+    };
   </script>
 
 
@@ -1770,13 +1820,27 @@ function renderMore() {
 
   } else if (moreCurrentTab==='conta') {
     const u = S.user || {};
+    const entrou = u.provider === 'google.com' ? 'Google' : 'e-mail e senha';
+    const desde = u.created ? new Date(u.created).toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'}) : '—';
     body.innerHTML = `
       <div class="card" style="text-align:center">
-        ${u.photo
-          ? `<img src="${esc(u.photo)}" alt="" referrerpolicy="no-referrer" style="width:56px;height:56px;border-radius:50%;object-fit:cover;margin-bottom:8px">`
-          : `<div style="width:56px;height:56px;border-radius:50%;background:#eaf5f1;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 8px">🌱</div>`}
-        <div style="font-size:15px;font-weight:600;color:#1a1a1a">${esc(u.name || 'Você')}</div>
+        <div class="conta-avatar-wrap">
+          ${u.photo
+            ? `<img src="${esc(u.photo)}" alt="" referrerpolicy="no-referrer" style="width:64px;height:64px;border-radius:50%;object-fit:cover;display:block">`
+            : `<div style="width:64px;height:64px;border-radius:50%;background:#eaf5f1;display:flex;align-items:center;justify-content:center;font-size:26px">🌱</div>`}
+          <label class="conta-avatar-edit" title="Trocar foto">✎<input type="file" accept="image/*" style="display:none" onchange="onPickAvatar(this)"></label>
+        </div>
+        <div id="conta-name" style="font-size:16px;font-weight:600;color:#1a1a1a;margin-top:8px">${esc(u.name || 'Você')}
+          <button class="btn-link" style="font-size:12px;vertical-align:middle" onclick="editContaName()">editar</button>
+        </div>
         <div style="font-size:12px;color:#bbb">${esc(u.email || '')}</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Cadastro</div>
+        <div style="font-size:12px;color:#666;line-height:1.9;margin-top:4px">
+          Entrou com <strong>${entrou}</strong><br>
+          No Florescer desde <strong>${desde}</strong>
+        </div>
       </div>
       <div class="card">
         <div class="card-title">Seu plano</div>
@@ -1841,6 +1905,105 @@ function renderMore() {
     `;
   }
 }
+
+// ═══════════ CONTA — editar nome / trocar foto ═══════════
+function editContaName(){
+  const name = prompt('Como você quer ser chamado?', (S.user && S.user.name) || '');
+  if (name == null) return;
+  const clean = name.trim().slice(0,40);
+  if (!clean) return;
+  const done = () => { save(); renderMore(); };
+  (window.updateDisplayName ? window.updateDisplayName(clean) : Promise.resolve()).then(done, done);
+}
+window.editContaName = editContaName;
+
+function onPickAvatar(input){
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  if (file.size > 8 * 1024 * 1024) { alert('Imagem muito grande (máximo 8 MB).'); return; }
+  const reader = new FileReader();
+  reader.onload = () => openCropper(reader.result);
+  reader.readAsDataURL(file);
+}
+window.onPickAvatar = onPickAvatar;
+
+function openCropper(dataUrl){
+  const img = new Image();
+  img.onload = () => {
+    const size = 300; // px do canvas (área quadrada de recorte)
+    const wrap = document.createElement('div');
+    wrap.className = 'crop-overlay';
+    wrap.innerHTML = `
+      <div class="crop-title">Ajuste sua foto</div>
+      <div class="crop-stage" id="crop-stage">
+        <canvas id="crop-canvas" width="${size}" height="${size}"></canvas>
+        <div class="crop-mask"></div>
+      </div>
+      <input class="crop-zoom" id="crop-zoom" type="range" min="1" max="3" step="0.01" value="1">
+      <div class="crop-hint">Arraste para posicionar · barra para aproximar</div>
+      <div class="crop-actions">
+        <button class="crop-cancel" id="crop-cancel" type="button">Cancelar</button>
+        <button class="crop-save" id="crop-save" type="button">Salvar</button>
+      </div>`;
+    document.getElementById('app').appendChild(wrap);
+
+    const cv = wrap.querySelector('#crop-canvas');
+    const ctx = cv.getContext('2d');
+    const base = Math.max(size / img.width, size / img.height); // "cobrir"
+    let scale = 1, ox = 0, oy = 0;
+
+    function draw(){
+      const w = img.width * base * scale, h = img.height * base * scale;
+      ox = Math.min(0, Math.max(size - w, ox));
+      oy = Math.min(0, Math.max(size - h, oy));
+      ctx.clearRect(0,0,size,size);
+      ctx.drawImage(img, ox, oy, w, h);
+    }
+    ox = (size - img.width*base)/2; oy = (size - img.height*base)/2; draw();
+
+    const stage = wrap.querySelector('#crop-stage');
+    let drag = false, lx = 0, ly = 0;
+    stage.addEventListener('pointerdown', e => { drag = true; lx = e.clientX; ly = e.clientY; stage.setPointerCapture(e.pointerId); });
+    stage.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const k = size / cv.getBoundingClientRect().width;
+      ox += (e.clientX - lx) * k; oy += (e.clientY - ly) * k;
+      lx = e.clientX; ly = e.clientY; draw();
+    });
+    const stop = () => { drag = false; };
+    stage.addEventListener('pointerup', stop);
+    stage.addEventListener('pointercancel', stop);
+
+    wrap.querySelector('#crop-zoom').addEventListener('input', e => {
+      const prev = scale; scale = parseFloat(e.target.value);
+      const c = size/2;
+      ox = c - (c - ox) * (scale/prev);
+      oy = c - (c - oy) * (scale/prev);
+      draw();
+    });
+
+    wrap.querySelector('#crop-cancel').addEventListener('click', () => wrap.remove());
+    wrap.querySelector('#crop-save').addEventListener('click', () => {
+      const btn = wrap.querySelector('#crop-save');
+      btn.disabled = true; btn.textContent = 'Salvando…';
+      const out = document.createElement('canvas'); out.width = out.height = 400;
+      const f = 400 / size;
+      out.getContext('2d').drawImage(img, ox*f, oy*f, img.width*base*scale*f, img.height*base*scale*f);
+      out.toBlob((blob) => {
+        if (!blob || !window.uploadAvatar) { wrap.remove(); return; }
+        window.uploadAvatar(blob).then(() => {
+          wrap.remove(); save(); renderMore();
+        }).catch(() => {
+          btn.disabled = false; btn.textContent = 'Salvar';
+          alert('Não deu para salvar a foto agora. Se o Firebase Storage ainda não foi ativado, ative e tente de novo.');
+        });
+      }, 'image/jpeg', 0.85);
+    });
+  };
+  img.src = dataUrl;
+}
+window.openCropper = openCropper;
 
 function addHabit() {
   const name=document.getElementById('new-habit-name')?.value?.trim();
