@@ -380,6 +380,7 @@ textarea.inp{resize:none;min-height:76px}
             if (ud.photo) window.S.user.photo = ud.photo;
             if (ud.name) window.S.user.name = ud.name;
             localStorage.setItem('fl_user', JSON.stringify(window.S.user));
+            if (ud.progress && window.applyCloudProgress) window.applyCloudProgress(ud.progress);
           }
         } catch (e) { console.log('users doc:', e && e.message); }
         await syncFromCloud();
@@ -568,6 +569,12 @@ textarea.inp{resize:none;min-height:76px}
         await db.collection('habits').doc(uid).set({ list: window.S.habits, uid });
         await db.collection('habitDone').doc(uid).set({ ...window.S.habitDone, uid });
       } catch(e) { console.log(e); }
+    };
+
+    window.saveProgressCloud = async (progress) => {
+      const uid = window.S.user && window.S.user.uid;
+      if (!uid) return;
+      try { await db.collection('users').doc(uid).set({ progress }, { merge: true }); } catch (e) { console.log(e); }
     };
 
     window.saveGratitudeCloud = async (grat) => {
@@ -1067,6 +1074,16 @@ const S = {
   ])),
   gratitude: JSON.parse(localStorage.getItem('fl_grat') || '[]'),
   habitDone: JSON.parse(localStorage.getItem('fl_hdone') || '{}'),
+  progress: (function(){
+    const d = {careDays:[], badges:{}, breathSessions:0, sosOpens:0, lastActive:null, seenStage:0};
+    try {
+      const p = JSON.parse(localStorage.getItem('fl_progress') || '{}');
+      if (p && typeof p === 'object') Object.assign(d, p);
+    } catch (e) {}
+    if (!Array.isArray(d.careDays)) d.careDays = [];
+    if (!d.badges || typeof d.badges !== 'object') d.badges = {};
+    return d;
+  })(),
   logForm: {mood:null,anx:null,sleep:null,triggers:[],note:'',time:'Manhã'},
   breath: {type:'478',running:false,phase:0,count:0,timer:null,cyclesDone:0},
   histTab: 'logs',
@@ -1091,7 +1108,117 @@ function save() {
   localStorage.setItem('fl_habits', JSON.stringify(S.habits));
   localStorage.setItem('fl_grat', JSON.stringify(S.gratitude));
   localStorage.setItem('fl_hdone', JSON.stringify(S.habitDone));
+  localStorage.setItem('fl_progress', JSON.stringify(S.progress));
 }
+
+// ═══════════ PROGRESSO — planta, dias de cuidado, conquistas ═══════════
+const PLANT_STAGES = [
+  {key:'semente',   min:0,   nome:'Semente',   msg:'Você plantou uma semente.'},
+  {key:'broto',     min:3,   nome:'Broto',     msg:'Um broto apareceu.'},
+  {key:'muda',      min:7,   nome:'Muda',      msg:'Criando folhas.'},
+  {key:'plantinha', min:14,  nome:'Plantinha', msg:'Firme na terra.'},
+  {key:'vicosa',    min:30,  nome:'Viçosa',    msg:'Crescendo forte.'},
+  {key:'botao',     min:60,  nome:'Botão',     msg:'Um botão se formou.'},
+  {key:'flor',      min:100, nome:'Flor',      msg:'Floresceu.'},
+  {key:'jardim',    min:180, nome:'Jardim',    msg:'Seu jardim começou.'},
+];
+function plantStageIndex(days) {
+  let s = 0;
+  for (let i = 0; i < PLANT_STAGES.length; i++) if (days >= PLANT_STAGES[i].min) s = i;
+  return s;
+}
+
+const BADGES = [
+  {id:'primeiro-passo',  emoji:'🌱', nome:'Primeiro passo',  dica:'Faça seu primeiro registro.',            check:()=> S.logs.length >= 1},
+  {id:'uma-semana',      emoji:'📅', nome:'Uma semana',       dica:'7 dias de autocuidado.',                 check:(p)=> p.careDays.length >= 7},
+  {id:'um-mes',          emoji:'🗓️', nome:'Um mês',           dica:'30 dias de autocuidado.',                check:(p)=> p.careDays.length >= 30},
+  {id:'floresceu',       emoji:'🌷', nome:'Floresceu',        dica:'Sua planta chega a Flor.',               check:(p)=> plantStageIndex(p.careDays.length) >= 6},
+  {id:'respiro',         emoji:'🫁', nome:'Respiro',          dica:'10 sessões de respiração.',              check:(p)=> (p.breathSessions||0) >= 10},
+  {id:'pausa',           emoji:'🧘', nome:'Pausa',            dica:'25 sessões de respiração.',              check:(p)=> (p.breathSessions||0) >= 25},
+  {id:'grato',           emoji:'🙏', nome:'Grato',            dica:'Escreva 20 gratidões.',                  check:()=> S.gratitude.length >= 20},
+  {id:'desabafo',        emoji:'✍️', nome:'Desabafo',         dica:'15 registros com texto escrito.',        check:()=> S.logs.filter(l=>l.note && l.note.trim()).length >= 15},
+  {id:'momento-dificil', emoji:'🤍', nome:'Momento difícil',  dica:'Você usou o SOS quando precisou.',       check:(p)=> (p.sosOpens||0) >= 1},
+  {id:'recomeco',        emoji:'🔄', nome:'Recomeço',         dica:'Voltar depois de um tempo longe também conta.', check:()=> false},
+  {id:'dia-inteiro',     emoji:'🌙', nome:'Dia inteiro',      dica:'Registre manhã, tarde e noite no mesmo dia.',   check:()=> hasFullDay()},
+  {id:'autoconhecimento',emoji:'📊', nome:'Autoconhecimento', dica:'Faça 3 registros e destrave os Insights.',      check:()=> S.logs.length >= 3},
+];
+
+function hasFullDay(){
+  const by = {};
+  S.logs.forEach(l=>{
+    const k = new Date(l.date).toDateString();
+    (by[k] = by[k] || new Set()).add(l.time);
+  });
+  return Object.values(by).some(set => set.has('Manhã') && set.has('Tarde') && set.has('Noite'));
+}
+function dateKey(d){
+  d = d ? new Date(d) : new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function progressSave(){
+  try { localStorage.setItem('fl_progress', JSON.stringify(S.progress)); } catch(e){}
+  if (window.saveProgressCloud) window.saveProgressCloud(S.progress);
+}
+function checkBadges(){
+  const p = S.progress;
+  const novos = [];
+  BADGES.forEach(b=>{
+    if (!p.badges[b.id]) {
+      try { if (b.check(p)) { p.badges[b.id] = new Date().toISOString(); novos.push(b.id); } } catch(e){}
+    }
+  });
+  if (novos.length) {
+    progressSave();
+    if (window.onBadgesEarned) window.onBadgesEarned(novos);
+  }
+  return novos;
+}
+function markCareDay(){
+  const p = S.progress;
+  const today = dateKey();
+  const last = p.lastActive;
+  const gap = last ? Math.round((new Date(today) - new Date(last)) / 86400000) : 0;
+  if (last && gap >= 7 && !p.badges.recomeco) {
+    p.badges.recomeco = new Date().toISOString();
+    if (window.onBadgesEarned) window.onBadgesEarned(['recomeco']);
+  }
+  if (!p.careDays.includes(today)) p.careDays.push(today);
+  p.lastActive = today;
+  const stage = plantStageIndex(p.careDays.length);
+  const grew = stage > (p.seenStage || 0);
+  if (grew) p.seenStage = stage;
+  progressSave();
+  checkBadges();
+  if (grew && window.onPlantGrew) window.onPlantGrew(stage);
+  else if (window.onCareToday) window.onCareToday();
+}
+function bumpBreathSession(){
+  S.progress.breathSessions = (S.progress.breathSessions || 0) + 1;
+  progressSave();
+  markCareDay();
+}
+function bumpSos(){
+  S.progress.sosOpens = (S.progress.sosOpens || 0) + 1;
+  progressSave();
+  checkBadges();
+}
+function mergeProgress(cloud, local){
+  cloud = cloud || {}; local = local || {};
+  const days = [...new Set([...(cloud.careDays||[]), ...(local.careDays||[])])].sort();
+  return {
+    careDays: days,
+    badges: { ...(local.badges||{}), ...(cloud.badges||{}) },
+    breathSessions: Math.max(cloud.breathSessions||0, local.breathSessions||0),
+    sosOpens: Math.max(cloud.sosOpens||0, local.sosOpens||0),
+    lastActive: [cloud.lastActive, local.lastActive].filter(Boolean).sort().pop() || null,
+    seenStage: Math.max(cloud.seenStage||0, local.seenStage||0, plantStageIndex(days.length)),
+  };
+}
+window.applyCloudProgress = function(cloudProgress){
+  S.progress = mergeProgress(cloudProgress, S.progress);
+  try { localStorage.setItem('fl_progress', JSON.stringify(S.progress)); } catch(e){}
+  checkBadges();
+};
 
 // ═══════════ NAVIGATION ═══════════
 function goTo(screen) {
@@ -1108,6 +1235,7 @@ function goTo(screen) {
   if (screen === 'log') resetLog();
   if (screen === 'history') renderHistory();
   if (screen === 'more') renderMore();
+  if (screen === 'sos') bumpSos();
 }
 
 // ═══════════ HOME ═══════════
@@ -1213,6 +1341,9 @@ function renderHome() {
     </div>`;
   }
   document.getElementById('home-grat-preview').innerHTML = gratHtml;
+
+  // conquistas que já valem pelos dados existentes
+  checkBadges();
 }
 
 // ═══════════ LOG FORM ═══════════
@@ -1380,6 +1511,7 @@ function saveLog() {
   S.logs.push(newLog);
   save();
   if (window.saveLogCloud) window.saveLogCloud(newLog);
+  markCareDay();
   showEmpathy(S.logForm.mood, S.logForm.anx, S.logForm.triggers);
 }
 
@@ -1528,6 +1660,7 @@ function toggleHabit(id) {
     S.habitDone[key].push(id);
     const h = S.habits.find(h=>h.id===id);
     if (h) h.streak++;
+    markCareDay();
   }
   save();
   if (window.saveHabitsCloud) window.saveHabitsCloud();
@@ -1560,9 +1693,10 @@ function selBreath(type, el) {
   const ev=document.getElementById('b-evidence'); if(ev) ev.textContent=bt.evidence||'';
 }
 
+let breathSessionCounted=false;
 function toggleBreath() {
   if (breathRunning) { stopBreath(); return; }
-  breathRunning=true; breathPhase=0; breathCount=0; breathCycles=0;
+  breathRunning=true; breathPhase=0; breathCount=0; breathCycles=0; breathSessionCounted=false;
   document.getElementById('b-btn').textContent='⏹ Parar';
   runBreathPhase();
 }
@@ -1604,6 +1738,7 @@ function runBreathPhase() {
       if (breathPhase % bt.phases.length === 0) {
         breathCycles++;
         document.getElementById('b-cycles').textContent=`Ciclos completos: ${breathCycles}`;
+        if (!breathSessionCounted) { breathSessionCounted=true; bumpBreathSession(); }
       }
       if (breathRunning) runBreathPhase();
     }
@@ -2028,6 +2163,7 @@ function addGrat() {
   S.gratitude.push(newGrat);
   save();
   if (window.saveGratitudeCloud) window.saveGratitudeCloud(newGrat);
+  markCareDay();
   renderMore(); renderHome();
 }
 
