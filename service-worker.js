@@ -1,11 +1,10 @@
-const CACHE_NAME = 'florecer-v2';
-const BASE = '/florecer';
+const CACHE_NAME = 'florescer-v3';
 const ASSETS = [
-  BASE + '/',
-  BASE + '/index.html',
-  BASE + '/manifest.json',
-  BASE + '/icon-192.png',
-  BASE + '/icon-512.png',
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
 ];
 
 self.addEventListener('install', (e) => {
@@ -39,7 +38,7 @@ self.addEventListener('fetch', (e) => {
         return res;
       })
       .catch(() => caches.match(e.request)
-        .then(cached => cached || caches.match(BASE + '/index.html'))
+        .then(cached => cached || caches.match('./index.html'))
       )
   );
 });
