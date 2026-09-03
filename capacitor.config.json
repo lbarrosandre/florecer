@@ -1,5 +1,11 @@
 {
   "appId": "br.com.florescer.app",
   "appName": "Florescer",
-  "webDir": "www"
+  "webDir": "www",
+  "plugins": {
+    "FirebaseAuthentication": {
+      "skipNativeAuth": true,
+      "providers": ["google.com"]
+    }
+  }
 }

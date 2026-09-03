@@ -528,28 +528,47 @@ textarea.inp{resize:none;min-height:76px}
       }
     };
 
-    // ═══════════ GOOGLE LOGIN (popup — confiável no navegador) ═══════════
+    // ═══════════ GOOGLE LOGIN ═══════════
+    // No app Android (Capacitor) o popup não funciona no WebView — usa o
+    // plugin nativo, que devolve o idToken; entramos no SDK JS com ele.
+    // No navegador, popup normal.
+    const isNativeApp = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+
     window.doGoogleLogin = async () => {
       setCoverLoading(true);
       try {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        provider.setCustomParameters({ prompt: 'select_account' });
-        const result = await auth.signInWithPopup(provider);
-        if (result && result.user) {
-          const u = result.user;
+        let user;
+        if (isNativeApp && window.Capacitor.Plugins && window.Capacitor.Plugins.FirebaseAuthentication) {
+          const FA = window.Capacitor.Plugins.FirebaseAuthentication;
+          const res = await FA.signInWithGoogle();
+          const idToken = res && res.credential && res.credential.idToken;
+          const accessToken = res && res.credential && res.credential.accessToken;
+          if (!idToken) throw new Error('sem idToken do Google');
+          const cred = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);
+          const result = await auth.signInWithCredential(cred);
+          user = result.user;
+        } else {
+          const provider = new firebase.auth.GoogleAuthProvider();
+          provider.setCustomParameters({ prompt: 'select_account' });
+          const result = await auth.signInWithPopup(provider);
+          user = result.user;
+        }
+        if (user) {
           // TODO (Fase 06): isPremium deve ser definido só no servidor.
-          await db.collection('users').doc(u.uid).set({
-            name: u.displayName || u.email.split('@')[0],
-            email: u.email,
-            photo: u.photoURL || '',
+          await db.collection('users').doc(user.uid).set({
+            name: user.displayName || (user.email || '').split('@')[0],
+            email: user.email,
+            photo: user.photoURL || '',
             createdAt: new Date().toISOString(),
             isPremium: false
           }, { merge: true }).catch(() => {});
         }
         // a navegação para a home é feita pelo onAuthStateChanged
       } catch (e) {
-        if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
-          showCoverError(firebaseError(e.code));
+        const code = e && e.code;
+        if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request'
+            && !/cancel/i.test(e && e.message || '')) {
+          showCoverError(firebaseError(code) + (code ? '' : ' — ' + (e && e.message || '')));
         }
         setCoverLoading(false);
       }
