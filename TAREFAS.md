@@ -1,7 +1,7 @@
 # Florescer — Tarefas e Acompanhamento
 
 > Base: **Carta de Navegação v1.0** · ficha atualizada em 29/08/2026
-> **Data alvo (v1 na Play Store): 15/10/2026** · Última atualização deste doc: 30/08/2026
+> **Data alvo (v1 na Play Store): meados de novembro/2026** (antes 15/10 — revista em 10/09 com a entrada dos Blocos 1–4) · Última atualização deste doc: 10/09/2026
 > Tese de produto (5 diferenciais) + roadmap de profundidade na Carta de Navegação.
 
 ---
@@ -22,7 +22,9 @@
 | DP · Diferenciais de produto | 3 / 5 | 🟢 DP-A/B/C feitos; DP-C2 (psicólogo) e DP-D (pós-v1) pendentes; DP-E com as políticas |
 | **DP-F · Gamificação que acolhe** | 🟢 v1 completo | planta SVG + Jornada + 12 conquistas + desafio semanal + animações no `origin/main` — falta teste no navegador |
 
-**Escopo do v1 (15/10) — CONGELADO em 30/08:** o app **como está hoje** (diário de humor + respiração + hábitos + gratidão + planta/Jornada) + polimento + empacotamento. **Grátis**, sem cobrança, Premium como "em breve". Nada de meditação guiada, thought record ou insights pro no v1 — está no **Roadmap de produto** (RP-1..7), build pós-lançamento com o psicólogo. Motivo: o app precisa ir pra loja e começar a testar retenção; profundidade sem lançamento é adiar para sempre.
+**Escopo do v1 — REVISTO em 10/09:** ~~congelado em 30/08~~. Depois de usar o app num celular real, o usuário decidiu que ele precisa de profundidade antes de ir pra loja. O v1 agora inclui os **Blocos 1–4** (registro com emoções, relatórios, ajuda prática, envolvimento) — ver seção "Profundidade do produto". Cobrança via Play Billing continua pós-lançamento.
+
+**Cronograma novo:** Bloco 1 (até ~16/09) → Bloco 2 (até ~26/09) → **conta Google Play + política de privacidade + teste fechado começa ~29/09** → Blocos 3 e 4 entram como updates durante o teste (até ~24/10) → revisão do psicólogo → **produção em meados de novembro**. ⚠️ Para abrir o teste fechado a política de privacidade precisa estar publicada — ela deixa de ser "a última coisa".
 
 ---
 
@@ -148,17 +150,36 @@ Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **
 - [ ] **[DP-E]** `P0` **Privacidade como recurso de marca** — zero venda/compartilhamento; modo local opcional (sem nuvem); criptografia; política em linguagem simples; exclusão de conta imediata; LGPD desde o 1º deploy; comunicar isso na ficha da loja. _v1_ _(= F3.4, F3.7, F3.8, F4.2–F4.5; comunicação em F5.3)_
 - [x] **[DP-F]** ~~Gamificação que acolhe~~ — planta que floresce (8 estágios), 12 conquistas, desafio semanal, aba Jornada, animações. `origin/main` (`8e…`/Fase 3). _v1_
 
-## Roadmap de produto — profundidade (pós-lançamento)
+## Profundidade do produto — ENTRA NO v1 (Blocos 1–4)
 
-> Decidido 30/08: **v1 lança enxuto e grátis** (o que existe + polimento) para ganhar usuários e testar retenção. A camada "que se paga" abaixo é build deliberado **depois do lançamento**, feito **com o psicólogo (DP-C2) junto**. Isto responde à falha nº 4 do relatório de mercado (baixa retenção por falta de profundidade/personalização) — não é "mais recurso", é profundidade.
+> **Decisão revista em 10/09.** Depois de usar o app num celular real, o usuário concluiu que não pagaria pelo que ele oferece. Diagnóstico: **o app é uma via de mão única — a pessoa entrega dados e recebe quase nada de volta.** O congelamento de 30/08 foi desfeito: o v1 só vai pra loja depois de fechar o ciclo **registrar → entender → agir → voltar**. Estratégia de prazo: o teste fechado (12 testadores / 14 dias) começa **depois do Bloco 2** e os Blocos 3–4 entram como atualizações durante o teste. Conteúdo clínico (TCC, meditação, trilhas) passa pelo **psicólogo (DP-C2)** antes da produção.
 
-- [ ] **[RP-1]** `Premium` **Insights Pro** — correlações claras (sono↔humor, dia da semana, gatilhos), **relatório mensal** e **PDF para levar ao terapeuta**. _(evolui os Insights atuais)_
-- [ ] **[RP-2]** `Premium` **Programas / trilhas** — ex. "21 dias para entender sua ansiedade", um passo por dia. Dá sensação de caminho, não de planilha. _(revisão psicólogo obrigatória)_
-- [ ] **[RP-3]** `Premium` **Biblioteca de meditação guiada** (áudio gravado ou licenciado). Produção/licença = custo alto → pós-lançamento.
-- [ ] **[RP-4]** `v1.x` **Seção "Meditar"** — timer (silêncio + sinos + intervalos) + 3-4 práticas guiadas **em texto** (body scan, autocompaixão, visualização). Barato; pode entrar num update rápido pós-v1. _(revisão psicólogo)_
-- [ ] **[RP-5]** `v1.x` **Registro de pensamento (thought record)** — ferramenta central da TCC, hoje ausente: situação → pensamento → emoção → evidências → pensamento alternativo. _(revisão psicólogo)_
-- [ ] **[RP-6]** `v1.x` **Prompts de reflexão adaptativos** — a pergunta do dia muda conforme humor/gatilho registrado.
-- [ ] **[RP-7]** liga com **[DP-D]** (perfil no onboarding adapta prompts, exercícios e insights).
+### Bloco 1 — Registrar melhor (a base)
+- [ ] **[B1.1]** `P0` **Roda de emoções** no registro — 24 emoções em 4 quadrantes (pesadas / agitadas / calmas / vibrantes = modelo circumplexo de afeto, energia × valência). Multisseleção. Salva `emotions[]` no log.
+- [ ] **[B1.2]** `P0` **Pergunta de reflexão adaptada** ao que foi registrado (emoções + humor + gatilhos) — estilo TCC/autocompaixão. Salva `prompt` no log. _(revisão psicólogo)_
+- [ ] **[B1.3]** `P1` Polimento: esconder a barra de status falsa "9:41 · 100%" no celular; trocar a métrica de sequência por **"dias nesta semana"** (evita confusão com os "dias de cuidado" da planta); singular/plural.
+
+### Bloco 2 — Entender (relatórios)
+- [ ] **[B2.1]** `P0` **Resumo da semana** — humor vs. semana anterior, emoções mais frequentes, o que mais apareceu nos dias bons. _(= RP-1 parcial)_
+- [ ] **[B2.2]** `P0` **Relatório mensal** com gráficos — humor ao longo do mês, emoções, gatilhos, sono × humor, hábitos × humor.
+- [ ] **[B2.3]** `P0` **Descobertas** — correlações calculadas a partir dos dados ("nos dias com exercício seu humor foi 0,8 maior"), só quando houver dados suficientes e com linguagem cuidadosa.
+- [ ] **[B2.4]** `P1` Substituir/absorver a aba Insights atual pelo novo relatório.
+
+### Bloco 3 — Agir (ajuda prática)
+- [ ] **[B3.1]** `P0` **Sugestão depois do registro** — conforme emoções/ansiedade, oferece respiração, grounding, registro de pensamento ou meditação ali mesmo.
+- [ ] **[B3.2]** `P0` **Registro de pensamento (TCC)** — situação → pensamento → emoção (intensidade) → evidências a favor/contra → pensamento alternativo → emoção depois. _(= RP-5, revisão psicólogo)_
+- [ ] **[B3.3]** `P1` **Meditar** — timer (silêncio + sino + intervalos) + práticas guiadas em texto (body scan, autocompaixão, respiração consciente). _(= RP-4, revisão psicólogo)_
+- [ ] **[B3.4]** `P1` **Conteúdo curto** — cards de 1 min ("o que é ansiedade", "sono e humor", "emoções não são boas ou ruins"). _(revisão psicólogo)_
+
+### Bloco 4 — Voltar (envolvimento)
+- [ ] **[B4.1]** `P1` **Trilhas de 7–21 dias** — um passo por dia. _(= RP-2, revisão psicólogo)_
+- [ ] **[B4.2]** `P1` **Lembrete gentil opcional** — `@capacitor/local-notifications`, máx. 1/dia, horário escolhido, texto sem cobrança (respeita DP-A).
+- [ ] **[B4.3]** `P1` **Perfil no onboarding** adaptando sugestões e conteúdo. _(= DP-D)_
+- [ ] **[B4.4]** `P1` **PDF do relatório** para levar ao terapeuta. _(= RP-1)_
+- [ ] **[B4.5]** `P2` Definir o que é grátis × Premium (proposta: grátis = diário + emoções + resumo semanal + ferramentas básicas; Premium = relatório mensal + PDF + trilhas + biblioteca completa de meditação).
+
+### Continua para depois do v1
+- [ ] **[RP-3]** Biblioteca de meditação guiada em **áudio** (produção/licença = custo alto).
 
 ## Fase 07 — Processo (recorrente, todo commit)
 
@@ -235,6 +256,7 @@ Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **
 - **30/08/2026** — **Fase 3** (`origin/main`): planta SVG (8 estágios), card na Home, tela **Jornada** (planta grande + grade de conquistas + desafio semanal opt-in), animações (crescimento, regada, volta, conquista), `backfillCareDays` (usa histórico existente). Gamificação **DP-F v1 completa** — falta o usuário testar no navegador (Ctrl+Shift+R).
 - **30/08/2026** — **Escopo do v1 congelado.** O usuário levantou que o app está "pobre" (falta meditação, registro raso). Decisão: v1 lança enxuto e grátis; profundidade (meditação guiada, thought record TCC, insights pro, relatório PDF, programas) vira **Roadmap de produto RP-1..7**, pós-lançamento, com o psicólogo (DP-C2). Registrado aqui e na Carta de Navegação.
 - **31/08/2026** — **F4.15/F4.18** (paths relativos, grafia "Florescer"). **F2.3: wrapper Capacitor 8 montado e buildando** (`./gradlew assembleDebug` → `app-debug.apk`). Ambiente do usuário: Node 24, JDK 21, Android Studio ok — mas `ANDROID_HOME` estava errado (apontava pra Downloads; SDK real em `AppData\Local\Android\Sdk`, contornado com `android/local.properties`). Emulador Pixel_6 não bootou em ~10 min. SHA debug capturada para o Firebase (F2.4).
+- **10/09/2026** — **Escopo do v1 revisto.** Depois de usar no celular, o usuário concluiu que não pagaria pelo app como está ("precisa de mais robustez, informação, envolvimento, relatórios, ajuda"). Diagnóstico: via de mão única. Aprovados os **Blocos 1–4** (registrar → entender → agir → voltar) dentro do v1. Data alvo → meados de novembro; teste fechado começa após o Bloco 2 e corre em paralelo.
 - **10/09/2026** — 🎉 **F2.6 PASSOU: app rodando em aparelho real** (Galaxy A36 5G). Login Google nativo funcionou, sincronizou o Firestore, tela inicial com a planta e a gamificação. **O maior gargalo do projeto está vencido.** Caminho até aqui: Bloqueador Automático da Samsung impedia ativar a Depuração USB; emulador Pixel_6 não boota nessa máquina (usar aparelho real); e o bug que travava o login era `rgcfaIncludeGoogle` não definido em `android/variables.gradle` (o plugin caía no default `false` e compilava sem as libs do Google — `signInWithGoogle()` ficava pendurado, sem erro no logcat). Corrigido em `7e39eaa`.
 - **02/09/2026** — **F2.4 (login Google nativo) feito.** Usuário adicionou SHA + baixou `google-services.json`. Plugin `@capacitor-firebase/authentication` 8.5.1, `doGoogleLogin` bifurca native/web, build OK (`app-debug.apk` ~6 MB). **F2.5 cancelado** (plugin usa seletor nativo, sem redirect). ⚠️ **OneDrive travando os builds** (`EBUSY`/`Unable to delete`) — contornado com `gradlew --stop` + limpar `build/`, mas **recomendado mover o projeto para fora do OneDrive** (ex. `C:\dev\florescer`).
 - **30/08/2026** — **D7: domínio não é necessário para o v1.** App só Android + Capacitor → sem `assetlinks.json` (F5.4 cancelado), sem DNS (F3.3 N/A), sem e-mail de marca (F3.6 adiado). As 2 páginas legais vão no **Firebase Hosting** grátis (`florecer-app-c460d.web.app`). Único custo obrigatório do v1: **US$ 25** da conta Google Play. Cronograma reorganizado (uma semana de folga a mais).
