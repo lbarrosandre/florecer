@@ -53,10 +53,23 @@ body{background:#151520;min-height:100vh;display:flex;align-items:center;justify
   .status {
     padding-top: max(env(safe-area-inset-top), 16px) !important;
   }
+  /* no celular a barra de status é a do sistema; a "9:41 · 100%" do mockup some,
+     mas a linha fica como espaçador para o conteúdo não ir para baixo da barra real */
+  .status > span { visibility: hidden !important; }
   .bnav {
     padding-bottom: max(env(safe-area-inset-bottom), 20px) !important;
   }
 }
+/* ── Roda de emoções + reflexão ── */
+.emo-group{margin-top:12px}
+.emo-group:first-child{margin-top:4px}
+.emo-glabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.emo-glabel i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.emo-chips{display:flex;flex-wrap:wrap;gap:6px}
+.emo-chip{padding:7px 12px;border:1.5px solid #e8e8e8;border-radius:20px;font-size:12px;cursor:pointer;color:#555;background:#fff;font-family:'DM Sans',sans-serif;transition:background .15s,border-color .15s,color .15s}
+.emo-chip.sel{font-weight:600;color:#fff}
+.emo-count{font-size:11px;color:#999;margin-top:10px}
+.reflect-q{font-size:14px;font-weight:600;color:#1f6450;line-height:1.45;margin:6px 0 4px;transition:opacity .2s}
 .side-info{color:#ffffff25;font-size:11px;letter-spacing:.06em;text-transform:uppercase;line-height:2;text-align:center;max-width:120px}
 .phone-frame{width:390px;height:844px;background:#0d0d0d;border-radius:54px;padding:12px;box-shadow:0 0 0 1px #2a2a2a,0 40px 100px #00000090,inset 0 0 0 1px #1e1e1e;position:relative;flex-shrink:0}
 .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:36px;background:#0d0d0d;border-radius:0 0 22px 22px;z-index:20}
@@ -958,6 +971,11 @@ textarea.inp{resize:none;min-height:76px}
           </div>
         </div>
         <div class="card">
+          <div class="card-title">O que você está sentindo?</div>
+          <div class="card-sub">Escolha quantas quiser. Nenhuma emoção é certa ou errada.</div>
+          <div id="emo-wheel"></div>
+        </div>
+        <div class="card">
           <div class="card-title">Ansiedade agora</div>
           <div class="card-sub">0 = bem tranquilo · 10 = muito intenso. Não tem resposta errada.</div>
           <div class="scale-row" id="anx-row">
@@ -993,9 +1011,10 @@ textarea.inp{resize:none;min-height:76px}
           </div>
         </div>
         <div class="card">
-          <div class="card-title">Quer desabafar? ✍️</div>
+          <div class="card-title">Quer refletir? ✍️</div>
+          <div class="reflect-q" id="log-prompt">O que está passando pela sua cabeça agora?</div>
           <div class="card-sub">Escreva o que quiser — ou nada. Esse espaço é só seu.</div>
-          <textarea class="inp" id="log-note" placeholder="O que está passando pela sua cabeça? O que aconteceu hoje? Como seu corpo está se sentindo?"></textarea>
+          <textarea class="inp" id="log-note" placeholder="Escreva livremente…"></textarea>
         </div>
         <button class="btn btn-p" onclick="saveLog()" style="margin-bottom:8px">Salvar meu registro ✓</button>
         <div style="text-align:center;font-size:11px;color:#ccc;margin-bottom:24px">Registrar é um ato de cuidado com você mesmo 🌱</div>
@@ -1194,7 +1213,7 @@ const S = {
     if (!d.badges || typeof d.badges !== 'object') d.badges = {};
     return d;
   })(),
-  logForm: {mood:null,anx:null,sleep:null,triggers:[],note:'',time:'Manhã'},
+  logForm: {mood:null,anx:null,sleep:null,triggers:[],emotions:[],prompt:'',note:'',time:'Manhã'},
   breath: {type:'478',running:false,phase:0,count:0,timer:null,cyclesDone:0},
   histTab: 'logs',
   moreTab: 'habits',
@@ -1645,9 +1664,10 @@ function renderHome() {
   }
 
   const avg = weekLogs.length ? (weekLogs.reduce((s,l)=>s+l.mood,0)/weekLogs.length).toFixed(1) : '--';
+  const weekDays = new Set(weekLogs.map(l => new Date(l.date).toDateString())).size;
 
   document.getElementById('home-metrics').innerHTML = `
-    <div class="metric"><div class="metric-n">${streak}</div><div class="metric-l">dias de autocuidado</div></div>
+    <div class="metric"><div class="metric-n">${weekDays}</div><div class="metric-l">${weekDays===1?'dia':'dias'} nesta semana</div></div>
     <div class="metric"><div class="metric-n">${avg}</div><div class="metric-l">humor médio</div></div>
     <div class="metric"><div class="metric-n">${S.logs.length}</div><div class="metric-l">registros total</div></div>
   `;
@@ -1722,7 +1742,9 @@ function renderHome() {
 
 // ═══════════ LOG FORM ═══════════
 function resetLog() {
-  S.logForm = {mood:null,anx:null,sleep:null,triggers:[],note:'',time:'Manhã'};
+  S.logForm = {mood:null,anx:null,sleep:null,triggers:[],emotions:[],prompt:'',note:'',time:'Manhã'};
+  renderEmoWheel();
+  updateReflection();
   document.querySelectorAll('#mood-row .mood-btn').forEach(b=>b.classList.remove('sel'));
   document.querySelectorAll('#anx-row .sc-btn').forEach(b=>b.classList.remove('sel'));
   document.querySelectorAll('#sleep-row .sc-btn').forEach(b=>b.classList.remove('sel'));
@@ -1859,6 +1881,7 @@ function selMood(v) {
   hint.style.color = h.color;
   hint.textContent = h.text;
   hint.style.display = 'block';
+  updateReflection();
 }
 function selSc(type,v,el) {
   S.logForm[type]=v;
@@ -1870,16 +1893,93 @@ function togTag(el) {
   const t=el.textContent;
   if(el.classList.contains('sel')) S.logForm.triggers.push(t);
   else S.logForm.triggers=S.logForm.triggers.filter(x=>x!==t);
+  updateReflection();
 }
+
+// ═══════════ EMOÇÕES ═══════════
+// Quatro quadrantes do modelo circumplexo de afeto (valência × energia).
+const EMOTIONS = [
+  {q:'pesadas',   label:'Pesadas',   color:'#7b8fb8', items:[['tristeza','Tristeza'],['solidao','Solidão'],['cansaco','Cansaço'],['desanimo','Desânimo'],['culpa','Culpa'],['vazio','Vazio']]},
+  {q:'agitadas',  label:'Agitadas',  color:'#d67e66', items:[['ansiedade','Ansiedade'],['sobrecarga','Sobrecarga'],['irritacao','Irritação'],['frustracao','Frustração'],['medo','Medo'],['inseguranca','Insegurança']]},
+  {q:'calmas',    label:'Calmas',    color:'#4fa488', items:[['calma','Calma'],['alivio','Alívio'],['gratidao','Gratidão'],['paz','Paz'],['satisfacao','Satisfação'],['aconchego','Aconchego']]},
+  {q:'vibrantes', label:'Vibrantes', color:'#cf9e34', items:[['alegria','Alegria'],['empolgacao','Empolgação'],['orgulho','Orgulho'],['confianca','Confiança'],['motivacao','Motivação'],['carinho','Carinho']]},
+];
+const EMO_INDEX = {};
+EMOTIONS.forEach(g => g.items.forEach(([k,l]) => { EMO_INDEX[k] = {label:l, q:g.q, color:g.color}; }));
+window.EMO_INDEX = EMO_INDEX;
+function emoLabel(k){ return EMO_INDEX[k] ? EMO_INDEX[k].label : k; }
+
+function renderEmoWheel(){
+  const host = document.getElementById('emo-wheel');
+  if (!host) return;
+  const sel = S.logForm.emotions || [];
+  host.innerHTML = EMOTIONS.map(g =>
+    '<div class="emo-group"><div class="emo-glabel" style="color:'+g.color+'"><i style="background:'+g.color+'"></i>'+g.label+'</div><div class="emo-chips">'
+    + g.items.map(([k,l]) => {
+        const on = sel.indexOf(k) >= 0;
+        return '<button type="button" class="emo-chip'+(on?' sel':'')+'"'
+          + (on ? ' style="background:'+g.color+';border-color:'+g.color+'"' : '')
+          + ' onclick="togEmo(\''+k+'\')">'+l+'</button>';
+      }).join('')
+    + '</div></div>'
+  ).join('')
+  + (sel.length ? '<div class="emo-count">'+sel.map(emoLabel).join(' · ')+'</div>' : '');
+}
+function togEmo(k){
+  const a = S.logForm.emotions || (S.logForm.emotions = []);
+  const i = a.indexOf(k);
+  if (i >= 0) a.splice(i,1); else a.push(k);
+  renderEmoWheel();
+  updateReflection();
+}
+window.togEmo = togEmo;
+
+// ═══════════ PERGUNTA DE REFLEXÃO ═══════════
+// Perguntas de TCC / autocompaixão. A primeira regra que casar vence —
+// por isso as emoções difíceis vêm antes. Revisar com psicólogo (DP-C2).
+function emoHas(f, ...keys){ return (f.emotions||[]).some(e => keys.indexOf(e) >= 0); }
+function trigHas(f, t){ return (f.triggers||[]).indexOf(t) >= 0; }
+const REFLECTIONS = [
+  {when:f=> emoHas(f,'culpa'),                              q:'Se alguém que você ama estivesse no seu lugar, o que você diria a essa pessoa?'},
+  {when:f=> emoHas(f,'ansiedade','medo','inseguranca'),     q:'O que exatamente te preocupa agora? Isso está sob seu controle, mesmo que só em parte?'},
+  {when:f=> emoHas(f,'sobrecarga'),                         q:'De tudo o que está pesando, o que poderia esperar até amanhã?'},
+  {when:f=> emoHas(f,'irritacao','frustracao'),             q:'O que você esperava que acontecesse — e o que aconteceu de verdade?'},
+  {when:f=> emoHas(f,'solidao'),                            q:'Com quem você gostaria de estar agora? Existe um jeito pequeno de se aproximar dessa pessoa?'},
+  {when:f=> emoHas(f,'tristeza','desanimo','vazio'),        q:'O que você precisaria ouvir de alguém que gosta muito de você?'},
+  {when:f=> emoHas(f,'cansaco'),                            q:'O que seu corpo está pedindo agora — descanso, pausa, movimento, alimento?'},
+  {when:f=> trigHas(f,'Trabalho estressante'),              q:'No trabalho, o que está nas suas mãos — e o que não está?'},
+  {when:f=> trigHas(f,'Briga ou conflito'),                 q:'Como você acha que a outra pessoa enxergou essa situação?'},
+  {when:f=> emoHas(f,'gratidao','alegria','orgulho','satisfacao'), q:'O que tornou esse momento bom? Dá para criar mais momentos assim?'},
+  {when:f=> emoHas(f,'calma','paz','alivio','aconchego'),   q:'O que ajudou você a chegar nesse estado? Vale guardar isso para os dias difíceis.'},
+  {when:f=> emoHas(f,'empolgacao','motivacao','confianca','carinho'), q:'Para onde você quer levar essa energia hoje?'},
+  {when:f=> f.mood && f.mood <= 2,                          q:'Faz sentido se sentir assim. O que aconteceu hoje que pesou?'},
+  {when:f=> f.mood && f.mood >= 4,                          q:'O que fez o dia de hoje ser bom?'},
+];
+function currentReflection(f){
+  for (const r of REFLECTIONS) { try { if (r.when(f)) return r.q; } catch (e) {} }
+  return 'O que está passando pela sua cabeça agora?';
+}
+function updateReflection(){
+  const q = currentReflection(S.logForm);
+  S.logForm.prompt = q;
+  const el = document.getElementById('log-prompt');
+  if (!el || el.textContent === q) return;
+  el.style.opacity = 0;
+  setTimeout(() => { el.textContent = q; el.style.opacity = 1; }, 160);
+}
+
 function saveLog() {
   if (!S.logForm.mood || S.logForm.anx===null || !S.logForm.sleep) {
     alert('Preencha humor, ansiedade e sono para continuar.'); return;
   }
+  const note = document.getElementById('log-note').value;
   const newLog = {
     id:Date.now(), date:new Date().toISOString(),
     mood:S.logForm.mood, anxiety:S.logForm.anx,
     sleep:S.logForm.sleep, triggers:[...S.logForm.triggers],
-    note:document.getElementById('log-note').value,
+    emotions:[...(S.logForm.emotions||[])],
+    note:note,
+    prompt: note.trim() ? (S.logForm.prompt || '') : '',
     time:S.logForm.time
   };
   S.logs.push(newLog);
@@ -2143,7 +2243,7 @@ function renderHistory() {
         <span class="log-em">${MOODS[l.mood]}</span>
         <div class="log-info">
           <div class="log-date">${d} ${time}</div>
-          <div class="log-tags">${l.triggers?.join(' · ')||'Sem gatilhos'}</div>
+          <div class="log-tags">${esc([...(l.emotions||[]).map(emoLabel), ...(l.triggers||[])].join(' · ')) || 'Sem emoções ou gatilhos'}</div>
         </div>
         <div class="log-bdgs">
           <span class="badge ${mc}">${l.mood}/5</span>
