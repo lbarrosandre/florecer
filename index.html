@@ -3284,7 +3284,6 @@ function reminderPlugin(){
 }
 // Agenda os próximos 14 dias. Pula hoje se já houve registro. Quem ficar
 // 2 semanas sem abrir o app para de receber — lembrete não vira cobrança.
-window.scheduleReminders = () => scheduleReminders();
 async function scheduleReminders(){
   const ln = reminderPlugin();
   if (!ln) return;
