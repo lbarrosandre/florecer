@@ -172,11 +172,29 @@ Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **
 - [x] **[B3.4]** `P1` **Conteúdo curto** — cards de 1 min ("o que é ansiedade", "sono e humor", "emoções não são boas ou ruins"). _(revisão psicólogo)_
 
 ### Bloco 4 — Voltar (envolvimento)
-- [ ] **[B4.1]** `P1` **Trilhas de 7–21 dias** — um passo por dia. _(= RP-2, revisão psicólogo)_
-- [ ] **[B4.2]** `P1` **Lembrete gentil opcional** — `@capacitor/local-notifications`, máx. 1/dia, horário escolhido, texto sem cobrança (respeita DP-A).
-- [ ] **[B4.3]** `P1` **Perfil no onboarding** adaptando sugestões e conteúdo. _(= DP-D)_
-- [ ] **[B4.4]** `P1` **PDF do relatório** para levar ao terapeuta. _(= RP-1)_
-- [ ] **[B4.5]** `P2` Definir o que é grátis × Premium (proposta: grátis = diário + emoções + resumo semanal + ferramentas básicas; Premium = relatório mensal + PDF + trilhas + biblioteca completa de meditação).
+- [x] **[B4.1]** `P1` **Trilhas de 7–21 dias** — um passo por dia. _(= RP-2, revisão psicólogo)_
+- [x] **[B4.2]** `P1` **Lembrete gentil opcional** — `@capacitor/local-notifications`, máx. 1/dia, horário escolhido, texto sem cobrança (respeita DP-A).
+- [x] **[B4.3]** `P1` **Perfil no onboarding** adaptando sugestões e conteúdo. _(= DP-D)_
+- [x] **[B4.4]** `P1` **PDF do relatório** para levar ao terapeuta. _(= RP-1)_
+- [ ] **[B4.5]** `P2` Definir o que é grátis × Premium — **proposta abaixo, aguardando decisão do André.**
+
+#### Proposta — grátis × Premium (a decidir)
+Princípio: **nada ligado a segurança fica atrás de pagamento** (SOS, CVV, respiração, aterramento, registro de pensamento). O grátis precisa ser bom o bastante para criar hábito; o Premium vende **profundidade e acompanhamento**.
+
+| | Grátis | Premium |
+|---|---|---|
+| Registro (humor, 24 emoções, gatilhos, reflexão adaptada) | ✅ ilimitado | ✅ |
+| Sugestão pós-registro, SOS, respiração, aterramento | ✅ | ✅ |
+| Registro de pensamento (TCC) | ✅ | ✅ + histórico completo no PDF |
+| Relatório | Semana atual + descobertas (top 2) | Semanas e meses anteriores, todas as descobertas |
+| PDF para terapia | — | ✅ |
+| Meditação | Timer + 2 práticas guiadas | Todas as práticas + novas a cada mês |
+| Leituras de 1 minuto | 5 | Todas |
+| Trilhas | 1 (Ansiedade) | Todas |
+| Hábitos | até 3 | ilimitados |
+| Planta, conquistas, desafios, lembrete | ✅ | ✅ |
+
+Preço sugerido (referência de mercado de apps de bem-estar no Brasil): **R$ 14,90/mês ou R$ 99,90/ano**, com **7 dias grátis**. Implementação do bloqueio só junto com o Billing (Fase 06).
 
 ### Continua para depois do v1
 - [ ] **[RP-3]** Biblioteca de meditação guiada em **áudio** (produção/licença = custo alto).
@@ -262,3 +280,4 @@ Da tese registrada na Carta de Navegação. Regra: cada recurso novo reforça **
 - **30/08/2026** — **D7: domínio não é necessário para o v1.** App só Android + Capacitor → sem `assetlinks.json` (F5.4 cancelado), sem DNS (F3.3 N/A), sem e-mail de marca (F3.6 adiado). As 2 páginas legais vão no **Firebase Hosting** grátis (`florecer-app-c460d.web.app`). Único custo obrigatório do v1: **US$ 25** da conta Google Play. Cronograma reorganizado (uma semana de folga a mais).
 - **10/09/2026** — **Bloco 1 concluído** (roda de 24 emoções, pergunta de reflexão adaptada, polimento). **Bloco 2 concluído:** aba Histórico agora abre em **Relatório** (Semana/Mês com navegação entre períodos): resumo com comparação gentil ao período anterior, gráfico de humor (SVG, dias sem registro tracejados), clima emocional por quadrante, **Descobertas** (gatilhos, sono, hábitos, horário do dia, dia da semana, emoção × gatilho — só com ≥5 registros, semana olha 30 dias, linguagem de pista e não diagnóstico), gatilhos, sono × humor, hábitos × humor, gratidão. Resumo da semana também na Home. Aba Insights do "Mais" removida (absorvida). Validado com dados simulados; **falta testar no celular**.
 - **10/09/2026** — **Bloco 3 concluído.** Nova aba **Cuidar** no menu (substitui "Respirar"): "O que está pesando agora?" (6 necessidades → ferramentas recomendadas), Respirar, **Meditar** (timer 3–20 min com sino de intervalo gerado por Web Audio + 5 práticas guiadas em texto: respiração consciente, escaneamento corporal, autocompaixão, folhas no rio, relaxamento muscular), **Aterramento 5-4-3-2-1** passo a passo (também no SOS), **Registro de pensamento TCC** em 7 passos (situação → pensamento + crença → emoções + intensidade → armadilhas → evidências → alternativa → reavaliação, com antes/depois e histórico), **10 leituras de 1 minuto** com "experimente agora" e fonte. **Pós-registro** agora sugere até 2 ferramentas conforme emoções/ansiedade/sono. +4 conquistas (16, grade 4×4) e desafio semanal de meditação. ⚠️ **Ação do usuário:** publicar o `firestore.rules` atualizado (coleção `thoughts`) no console — sem isso os registros de pensamento ficam só no aparelho. Textos das práticas/leituras entram na revisão do psicólogo (DP-C2).
+- **10/09/2026** — **Bloco 4 concluído (B4.1–B4.4); B4.5 com proposta registrada.** **Perfil no onboarding** (objetivos, se faz terapia, lembrete) — aparece uma vez após o login, editável na Conta, salvo em `users/{uid}.profile`; alimenta "Para você" em Cuidar, sugestão de trilha na Home e o texto do card do PDF. **4 trilhas de 7 dias** (ansiedade, sono, gentileza, emoções), um passo por dia com ação e pergunta de reflexão, progresso em `progress.trails`, card na Home. **Lembrete gentil** com `@capacitor/local-notifications` 8.3.1: máx. 1/dia, pula o dia se já houve registro, agenda só 14 dias (quem some para de receber), ícone de notificação próprio; permissão `SCHEDULE_EXACT_ALARM` removida do manifesto (agendamento inexato, sem declaração na Play). **PDF do relatório** com jsPDF 4.2.1 (carregado sob demanda de `www/vendor/`), `@capacitor/filesystem` + `@capacitor/share` para compartilhar no Android; opção de incluir ou não os textos escritos. Validado em navegador headless e PDF gerado com dados simulados; **falta testar no celular** (notificação e compartilhamento só existem no nativo).

@@ -11,4 +11,9 @@ const files = ['index.html', 'manifest.json', 'service-worker.js', 'icon-192.png
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
 for (const f of files) copyFileSync(join(root, f), join(out, f));
-console.log(`www/ pronto — ${files.length} arquivos`);
+
+// Bibliotecas carregadas sob demanda pelo app (ex.: jsPDF para o PDF do relatório).
+const vendor = [[node_modules/jspdf/dist/jspdf.umd.min.js, jspdf.umd.min.js]];
+mkdirSync(join(out, vendor), { recursive: true });
+for (const [src, name] of vendor) copyFileSync(join(root, src), join(out, vendor, name));
+console.log(`www/ pronto — ${files.length} arquivos + ${vendor.length} em vendor/`);

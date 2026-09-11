@@ -167,6 +167,27 @@ body{background:#151520;min-height:100vh;display:flex;align-items:center;justify
 .cmp-bar div{height:100%;border-radius:5px}
 .th-lbl{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.05em;margin-top:10px}
 .th-txt{font-size:13px;color:#333;line-height:1.55;margin-top:2px;white-space:pre-wrap;word-break:break-word}
+/* ── Trilhas / lembrete ── */
+.trail-hero{text-align:center;margin:4px 0 14px}
+.trail-hero .th-e{font-size:42px}
+.trail-bar{height:6px;background:#eee;border-radius:6px;overflow:hidden;margin:10px 0 4px}
+.trail-bar div{height:100%;background:#2a7d63;border-radius:6px;transition:width .3s}
+.tday{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f3f3f3;font-size:13px;color:#333}
+.tday:last-child{border-bottom:none}
+.tday .tn{width:24px;height:24px;border-radius:50%;background:#f0f0f0;color:#999;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tday.done .tn{background:#2a7d63;color:#fff}
+.tday.lock{color:#bbb}
+.tday small{display:block;font-size:11px;color:#999;margin-top:2px;white-space:pre-wrap}
+.home-trail{display:flex;align-items:center;gap:12px;cursor:pointer}
+.home-trail .ht-e{font-size:28px}
+.home-trail b{display:block;font-size:13px;color:#1a1a1a}
+.home-trail small{display:block;font-size:11px;color:#888;margin-top:2px}
+.switch{position:relative;display:inline-block;width:44px;height:26px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;inset:0;background:#ddd;border-radius:26px;transition:.2s;cursor:pointer}
+.switch span:before{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px #0003}
+.switch input:checked+span{background:#2a7d63}
+.switch input:checked+span:before{transform:translateX(18px)}
 .side-info{color:#ffffff25;font-size:11px;letter-spacing:.06em;text-transform:uppercase;line-height:2;text-align:center;max-width:120px}
 .phone-frame{width:390px;height:844px;background:#0d0d0d;border-radius:54px;padding:12px;box-shadow:0 0 0 1px #2a2a2a,0 40px 100px #00000090,inset 0 0 0 1px #1e1e1e;position:relative;flex-shrink:0}
 .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:36px;background:#0d0d0d;border-radius:0 0 22px 22px;z-index:20}
@@ -564,13 +585,15 @@ textarea.inp{resize:none;min-height:76px}
             if (ud.name) window.S.user.name = ud.name;
             localStorage.setItem('fl_user', JSON.stringify(window.S.user));
             if (ud.progress && window.applyCloudProgress) window.applyCloudProgress(ud.progress);
+            if (ud.profile && window.applyCloudProfile) window.applyCloudProfile(ud.profile);
           }
         } catch (e) { console.log('users doc:', e && e.message); }
         await syncFromCloud();
         const cover = document.getElementById('s-cover');
         if (cover && cover.classList.contains('active')) {
-          window.goTo('home');
+          window.goTo(window.needsOnboarding && window.needsOnboarding() ? 'onboard' : 'home');
         }
+        if (window.scheduleReminders) window.scheduleReminders();
       } else {
         window.S.user = null;
         localStorage.removeItem('fl_user');
@@ -687,6 +710,8 @@ textarea.inp{resize:none;min-height:76px}
     // ═══════════ LOGOUT ═══════════
     window.doLogout = async () => {
       if (!confirm('Deseja sair da sua conta?')) return;
+      if (window.cancelReminders) await window.cancelReminders();
+      if (window.resetProfile) window.resetProfile();
       await auth.signOut();
       window.S.logs = [];
       window.S.habits = JSON.parse(localStorage.getItem('fl_habits_default') || '[{"id":1,"name":"Beber 2L de água","icon":"💧","streak":0},{"id":2,"name":"Exercício físico","icon":"🏃","streak":0},{"id":3,"name":"Meditação","icon":"🧘","streak":0}]');
@@ -769,6 +794,12 @@ textarea.inp{resize:none;min-height:76px}
       }
     }
     window.syncFromCloud = syncFromCloud;
+
+    window.saveProfileCloud = async (profile) => {
+      const uid = window.S.user?.uid;
+      if (!uid) return;
+      try { await db.collection('users').doc(uid).set({ profile }, { merge: true }); } catch(e) { console.log(e); }
+    };
 
     window.saveThoughtCloud = async (t) => {
       const uid = window.S.user?.uid;
@@ -1010,21 +1041,7 @@ textarea.inp{resize:none;min-height:76px}
     <!-- ══════════════════════════════ ONBOARDING ══ -->
     <div class="screen" id="s-onboard">
       <div class="status"><span>9:41</span><span>100%</span></div>
-      <div class="scroll pad">
-        <div style="text-align:center;margin:8px 0 24px">
-          <img src="icon-512.png" style="width:110px;height:110px;object-fit:contain;margin:0 auto 8px;display:block;border-radius:28px" alt="Florescer">
-          <p class="sub" style="line-height:1.6;margin-top:4px">Um espaço seguro para você<br>ser honesto sobre como está se sentindo.</p>
-        </div>
-
-        <div class="ob-step"><div class="ob-num">1</div><div><div class="ob-title">📝 Diário de humor</div><div class="ob-desc">Registre como se sente até 3x por dia — manhã, tarde e noite.</div></div></div>
-        <div class="ob-step"><div class="ob-num">2</div><div><div class="ob-title">🌱 Cultive hábitos</div><div class="ob-desc">Crie hábitos diários e acompanhe sua constância, sem cobrança.</div></div></div>
-        <div class="ob-step"><div class="ob-num">3</div><div><div class="ob-title">🫁 Respire e acalme</div><div class="ob-desc">Exercícios de respiração guiados para momentos de ansiedade.</div></div></div>
-        <div class="ob-step"><div class="ob-num">4</div><div><div class="ob-title">🟣 Ano em Pixels</div><div class="ob-desc">Veja um ano inteiro do seu humor numa tela só.</div></div></div>
-        <div style="margin-top:20px">
-          <button class="btn btn-p" onclick="goTo('home')">Quero cuidar da minha mente</button>
-          <div style="text-align:center;margin-top:12px;font-size:12px;color:#bbb;line-height:1.6">Sem julgamentos · Sem comparações<br>Só você e seus sentimentos</div>
-        </div>
-      </div>
+      <div class="scroll pad" id="onboard-body"></div>
     </div>
 
     <!-- ══════════════════════════════ HOME ══ -->
@@ -1047,6 +1064,7 @@ textarea.inp{resize:none;min-height:76px}
           <div id="home-week-sum"></div>
         </div>
         <div id="home-action"></div>
+        <div id="home-trail"></div>
         <div class="section-lbl">Hábitos de hoje</div>
         <div class="card" id="home-habits-preview"></div>
         <div class="section-lbl">Gratidão de hoje</div>
@@ -1505,6 +1523,9 @@ function mergeProgress(cloud, local){
     meditMinutes: Math.max(cloud.meditMinutes||0, local.meditMinutes||0),
     meditWeek: local.meditWeek || cloud.meditWeek || null,
     readArticles: [...new Set([...(cloud.readArticles||[]), ...(local.readArticles||[])])],
+    trails: mergeTrails(cloud.trails, local.trails),
+    trailActive: local.trailActive !== undefined ? local.trailActive : (cloud.trailActive || null),
+    trailsDone: [...new Set([...(cloud.trailsDone||[]), ...(local.trailsDone||[])])],
     sosOpens: Math.max(cloud.sosOpens||0, local.sosOpens||0),
     lastActive: [cloud.lastActive, local.lastActive].filter(Boolean).sort().pop() || null,
     seenStage: Math.max(cloud.seenStage||0, local.seenStage||0, plantStageIndex(days.length)),
@@ -1512,6 +1533,17 @@ function mergeProgress(cloud, local){
     challenge: local.challenge || cloud.challenge || null,
     _init: cloud._init || local._init || false,
   };
+}
+function mergeTrails(c, l){
+  c = c || {}; l = l || {};
+  const out = {};
+  new Set([...Object.keys(c), ...Object.keys(l)]).forEach(k => {
+    const a = c[k], b = l[k];
+    if (!a || !b) { out[k] = a || b; return; }
+    out[k] = {start: [a.start, b.start].filter(Boolean).sort()[0] || null,
+              done: {...(a.done||{}), ...(b.done||{})}, notes: {...(a.notes||{}), ...(b.notes||{})}};
+  });
+  return out;
 }
 // uma vez: aproveita o histórico existente como "dias de cuidado"
 function backfillCareDays(){
@@ -1778,7 +1810,7 @@ function renderJornada(){
 // ═══════════ NAVIGATION ═══════════
 function goTo(screen) {
   // Bloquear acesso às telas internas sem autenticação
-  const protectedScreens = ['home','log','breath','history','more','sos','jornada','care','tool'];
+  const protectedScreens = ['home','log','breath','history','more','sos','jornada','care','tool','onboard'];
   if (protectedScreens.includes(screen) && !S.user) {
     console.warn('Acesso bloqueado: usuário não autenticado');
     return;
@@ -1794,6 +1826,7 @@ function goTo(screen) {
   if (screen === 'jornada') renderJornada();
   if (screen === 'care') renderCare();
   if (screen === 'tool') renderTool();
+  if (screen === 'onboard') renderOnboard();
   if (screen === 'sos') bumpSos();
 }
 
@@ -1903,6 +1936,7 @@ function renderHome() {
   document.getElementById('home-grat-preview').innerHTML = gratHtml;
 
   renderHomeWeekSummary();
+  renderHomeTrail();
   renderHomePlant();
   // conquistas que já valem pelos dados existentes
   checkBadges();
@@ -2155,6 +2189,7 @@ function saveLog() {
   save();
   if (window.saveLogCloud) window.saveLogCloud(newLog);
   markCareDay();
+  scheduleReminders();
   showEmpathy(newLog);
 }
 
@@ -2523,6 +2558,8 @@ function toolDef(key){
     thought:   {emoji:'🧠', title:'Registro de pensamento', sub:'5–10 min · olhar o pensamento de outro ângulo'},
     gratidao:  {emoji:'🙏', title:'Guardar em gratidão', sub:'Anotar o que fez bem hoje'},
     meditate:  {emoji:'🧘', title:'Meditar', sub:'Timer e práticas guiadas'},
+    log:       {emoji:'✏️', title:'Fazer um registro', sub:'Humor, emoções e o que marcou o dia'},
+    report:    {emoji:'📊', title:'Ver seu relatório', sub:'Semana, mês e descobertas'},
   })[key] || null;
 }
 function toolRow(key, handler){
@@ -2555,6 +2592,9 @@ function runTool(key){
   if (key === 'gratidao') { moreTab('gratitude'); goTo('more'); return; }
   if (key === 'meditate') return openTool('meditate');
   if (key === 'thoughts') return openTool('thoughts');
+  if (key.startsWith('trail:')) return openTool('trail', key.slice(6));
+  if (key === 'log') { goTo('log'); return; }
+  if (key === 'report') { histTab('relatorio'); goTo('history'); return; }
 }
 // Ação vinda do modal pós-registro: fecha o modal sem voltar para a Home.
 function empAct(key){
@@ -2593,6 +2633,7 @@ function renderTool(keepScroll){
   else if (k === 'practice') { title.textContent = TOOL.arg === 'timer' ? 'Meditação livre' : (PRACTICES[TOOL.arg] || {}).title || ''; startPractice(body, TOOL.arg); }
   else if (k === 'thought') { title.textContent = 'Registro de pensamento'; if (!TR) TR = newTR(); renderThought(body); }
   else if (k === 'thoughts') { title.textContent = 'Seus registros de pensamento'; renderThoughtList(body); }
+  else if (k === 'trail') { title.textContent = 'Trilha'; renderTrail(body, TOOL.arg); }
 }
 
 // ── Hub
@@ -2619,6 +2660,7 @@ function renderCare(){
       <div class="chip-row">${NEEDS.map(n => `<button class="chip ${CARE_NEED === n.k ? 'sel' : ''}" onclick="selNeed('${n.k}')">${n.label}</button>`).join('')}</div>
       ${need ? `<div style="margin-top:12px">${need.tools.map(k => toolRow(k)).join('')}</div>` : ''}
     </div>
+    ${profileTools().length ? `<div class="section-lbl">Para você</div>${profileTools().slice(0, 3).map(k => toolRow(k)).join('')}` : ''}
     <div class="section-lbl">Práticas</div>
     <div class="tool-grid">
       <button class="tool-tile" onclick="goTo('breath')"><span class="tt-e">🫁</span><b>Respirar</b><small>Técnicas guiadas de 1 a 3 minutos</small></button>
@@ -2628,6 +2670,13 @@ function renderCare(){
     </div>
     ${th.length ? `<button class="tool-row" style="margin-top:10px" onclick="runTool('thoughts')"><span class="tr-e">📝</span>
       <span class="tr-t"><b>Seus registros de pensamento</b><small>${th.length} ${pl(th.length, 'registro', 'registros')}</small></span><span class="tr-go">›</span></button>` : ''}
+    <div class="section-lbl">Trilhas · um passo por dia</div>
+    ${TRAILS.map(t => {
+      const d = trailDoneCount(t.id), n = t.days.length;
+      const sub = d >= n ? '✓ concluída' : trailState(t.id) ? `Dia ${Math.min(trailCurrentDay(t.id), n)} de ${n}` + (S.progress.trailActive === t.id ? ' · em andamento' : '') : `${n} dias · ${t.desc}`;
+      return `<button class="tool-row" onclick="runTool('trail:${t.id}')"><span class="tr-e">${t.emoji}</span>
+        <span class="tr-t"><b>${t.title}</b><small>${sub}</small></span><span class="tr-go">›</span></button>`;
+    }).join('')}
     <div class="section-lbl">Aprender · leituras de 1 minuto</div>
     <div class="card" style="padding:2px 16px">
       ${ARTICLES.map(a => `<div class="art-row" onclick="runTool('art:${a.id}')"><span>${a.emoji}</span><span class="ar-t">${a.title}</span>
@@ -2991,6 +3040,492 @@ function suggestionsFor(log){
   return out.slice(0, 2);
 }
 
+// ═══════════ PERFIL (onboarding) ═══════════
+const GOALS = [
+  {k:'ansiedade', e:'🌀', l:'Lidar com a ansiedade'},
+  {k:'humor',     e:'🎨', l:'Entender meu humor e minhas emoções'},
+  {k:'sono',      e:'😴', l:'Dormir melhor'},
+  {k:'estresse',  e:'🧯', l:'Estresse e sobrecarga'},
+  {k:'gentileza', e:'💛', l:'Ser mais gentil comigo'},
+  {k:'habitos',   e:'🌱', l:'Criar hábitos de cuidado'},
+];
+const GOAL_TOOLS = {
+  ansiedade:['breath478','ground','art:ansiedade'], humor:['art:emocoes','report','bodyscan'],
+  sono:['pmr','art:sono','folhas'], estresse:['bodyscan','thought','art:ruminacao'],
+  gentileza:['compaixao','art:autocompaixao','thought'], habitos:['art:movimento','resp','gratidao'],
+};
+const GOAL_TRAIL = {ansiedade:'ansiedade', estresse:'ansiedade', sono:'sono', gentileza:'gentileza', humor:'emocoes', habitos:'emocoes'};
+const THERAPY = [['sim','Faço'],['antes','Já fiz'],['nao','Não faço'],['pref','Prefiro não dizer']];
+
+let PROFILE = (function(){ try { return JSON.parse(localStorage.getItem('fl_profile') || 'null'); } catch (e) { return null; } })();
+window.applyCloudProfile = function(p){
+  if (!p || typeof p !== 'object') return;
+  if (!PROFILE || (p.updatedAt || '') > (PROFILE.updatedAt || '')) {
+    PROFILE = p;
+    try { localStorage.setItem('fl_profile', JSON.stringify(p)); } catch (e) {}
+  }
+};
+window.needsOnboarding = () => !PROFILE;
+window.resetProfile = () => { PROFILE = null; };
+
+let OB = {goals:[], therapy:null, rem:undefined, edit:false};
+function openOnboard(edit){
+  OB = {goals:[...((PROFILE && PROFILE.goals) || [])], therapy:(PROFILE && PROFILE.therapy) || null, rem:undefined, edit:!!edit};
+  goTo('onboard');
+}
+function renderOnboard(){
+  const body = document.getElementById('onboard-body');
+  const native = !!reminderPlugin();
+  const remSel = OB.rem !== undefined ? OB.rem : (REMINDER.on ? REMINDER.h : null);
+  body.innerHTML = `<div style="text-align:center;margin:4px 0 16px">
+      <img src="icon-512.png" style="width:78px;height:78px;object-fit:contain;margin:0 auto 6px;display:block;border-radius:22px" alt="">
+      <div class="tr-q">${OB.edit ? 'Seu perfil' : 'Que bom ter você aqui 🌱'}</div>
+      <p class="sub" style="margin:0;line-height:1.5">${OB.edit ? 'Ajuste quando quiser — as sugestões do app mudam junto.' : 'Três perguntas rápidas para o Florescer se ajustar a você. Dá para mudar depois.'}</p>
+    </div>
+    <div class="card">
+      <div class="card-title">O que traz você ao Florescer?</div>
+      <div class="card-sub">Escolha quantas quiser.</div>
+      ${GOALS.map(g => `<button class="trap ${OB.goals.includes(g.k) ? 'sel' : ''}" onclick="obGoal('${g.k}')"><b>${g.e} ${g.l}</b></button>`).join('')}
+    </div>
+    <div class="card">
+      <div class="card-title">Você faz acompanhamento psicológico?</div>
+      <div class="chip-row">${THERAPY.map(([k, l]) => `<button class="chip ${OB.therapy === k ? 'sel' : ''}" onclick="OB.therapy='${k}';renderOnboard()">${l}</button>`).join('')}</div>
+      <div class="card-sub" style="margin:8px 0 0">Só para sugerir recursos — como o PDF do relatório para levar às sessões.</div>
+    </div>
+    ${native ? `<div class="card">
+      <div class="card-title">Quer um lembrete gentil?</div>
+      <div class="card-sub">No máximo 1 por dia. Se você já registrou, ele não aparece.</div>
+      <div class="chip-row">${[[9,'Manhã · 9h'],[14,'Tarde · 14h'],[21,'Noite · 21h'],[null,'Agora não']].map(([h, l]) => `<button class="chip ${remSel === h ? 'sel' : ''}" onclick="OB.rem=${h};renderOnboard()">${l}</button>`).join('')}</div>
+    </div>` : ''}
+    <button class="btn btn-p" onclick="finishOnboard(false)">${OB.edit ? 'Salvar' : 'Começar'}</button>
+    ${OB.edit ? `<button class="btn-link" style="display:block;margin:10px auto 20px" onclick="moreTab('conta');goTo('more')">Cancelar</button>`
+              : `<button class="btn-link" style="display:block;margin:10px auto 20px" onclick="finishOnboard(true)">Pular por agora</button>`}`;
+}
+function obGoal(k){ OB.goals = OB.goals.includes(k) ? OB.goals.filter(x => x !== k) : [...OB.goals, k]; renderOnboard(); }
+function finishOnboard(skip){
+  PROFILE = {goals: skip ? [] : OB.goals, therapy: skip ? '' : (OB.therapy || ''), skipped: !!skip, updatedAt: new Date().toISOString()};
+  try { localStorage.setItem('fl_profile', JSON.stringify(PROFILE)); } catch (e) {}
+  if (window.saveProfileCloud) window.saveProfileCloud(PROFILE);
+  if (!skip && OB.rem !== undefined) setReminder(OB.rem !== null, OB.rem === null ? REMINDER.h : OB.rem, 0);
+  if (OB.edit) { moreTab('conta'); goTo('more'); } else goTo('home');
+}
+function profileTools(){
+  const out = [];
+  ((PROFILE && PROFILE.goals) || []).forEach(g => (GOAL_TOOLS[g] || []).forEach(k => { if (!out.includes(k)) out.push(k); }));
+  return out;
+}
+
+// ═══════════ TRILHAS — um passo por dia ═══════════
+const TRAILS = [
+  {id:'ansiedade', emoji:'🌀', title:'Primeiros passos com a ansiedade', desc:'Entender o alarme do corpo e montar seu kit de calma.', days:[
+    {t:'Entender o alarme', x:'Antes de qualquer técnica, entender. Leia o que a ansiedade faz no corpo — e por que ela não é defeito seu.', a:'art:ansiedade'},
+    {t:'Respirar com o corpo', x:'Faça uma sessão de respiração 4-7-8. Repare no que muda quando a expiração fica mais longa.', a:'breath478'},
+    {t:'Voltar ao presente', x:'Pratique o aterramento 5-4-3-2-1 num momento tranquilo. Assim ele fica fácil de lembrar quando você precisar.', a:'ground'},
+    {t:'Dar nome ao que sente', x:'Faça um registro escolhendo as emoções com calma. Nomear uma emoção costuma diminuir a intensidade dela.', a:'log'},
+    {t:'Pensamentos não são fatos', x:'A ansiedade vem cheia de previsões. Leia sobre como olhar para esses pensamentos.', a:'art:pensamentos'},
+    {t:'Examinar uma preocupação', x:'Escolha uma preocupação recente e passe por ela no registro de pensamento. Não precisa resolver — só olhar de outro ângulo.', a:'thought'},
+    {t:'Seu kit de calma', x:'Nesta semana você experimentou respirar, aterrar, nomear e examinar. Qual dessas ferramentas combinou mais com você?', ask:'O que mais ajudou nesta semana?'},
+  ]},
+  {id:'sono', emoji:'😴', title:'Dormir melhor', desc:'Pequenos ajustes de rotina para o sono e o humor.', days:[
+    {t:'Sono e humor', x:'Comece entendendo como sono e emoções se influenciam.', a:'art:sono'},
+    {t:'Um horário para acordar', x:'Escolha um horário para acordar e tente mantê-lo nos próximos dias — inclusive no fim de semana. O relógio do corpo gosta de regularidade.', ask:'Qual horário você escolheu?'},
+    {t:'Soltar o corpo', x:'Hoje, antes de dormir, faça o relaxamento muscular. Contrair e soltar ajuda o corpo a sair do modo alerta.', a:'pmr'},
+    {t:'Luz da manhã', x:'Tente pegar uns 10 minutos de luz natural pela manhã — na janela, na rua, no caminho. Depois, registre como foi a noite.', a:'log'},
+    {t:'A última hora do dia', x:'Troque a tela da última hora por algo calmo: um banho, leitura, alongamento, música baixa.', ask:'O que você vai fazer no lugar da tela?'},
+    {t:'Cabeça a mil na cama', x:'Se os pensamentos não deixam dormir, experimente observar em vez de discutir com eles.', a:'folhas'},
+    {t:'O que fica', x:'Uma semana de pequenos ajustes. Nem tudo funciona para todo mundo — e está tudo bem.', ask:'O que você quer manter daqui pra frente?'},
+  ]},
+  {id:'gentileza', emoji:'💛', title:'Ser mais gentil comigo', desc:'Trocar a autocrítica por um jeito mais justo de se tratar.', days:[
+    {t:'O que é autocompaixão', x:'Autocompaixão não é passar a mão na cabeça. Leia o que ela é — e o que não é.', a:'art:autocompaixao'},
+    {t:'Uma pausa gentil', x:'Faça a pausa de autocompaixão pensando em algo que está pesando agora.', a:'compaixao'},
+    {t:'Como você falaria com alguém querido?', x:'Imagine alguém de quem você gosta passando pelo seu dia de hoje. O que você diria? Agora escreva isso para você.', ask:'Uma frase para você hoje:'},
+    {t:'Rótulos e “deveria”', x:'A autocrítica costuma usar rótulos (“sou um fracasso”) e regras rígidas (“eu deveria”). Veja como reconhecê-los.', a:'art:armadilhas'},
+    {t:'Um pensamento duro', x:'Escolha uma crítica que você fez a si recentemente e passe por ela no registro de pensamento.', a:'thought'},
+    {t:'O que deu certo', x:'Anote coisas que você fez bem hoje, mesmo pequenas. Levantar da cama num dia difícil conta.', a:'gratidao'},
+    {t:'Para levar', x:'Gentileza consigo é prática, não traço de personalidade. Fica mais fácil com repetição.', ask:'Que frase gentil você quer lembrar nos dias difíceis?'},
+  ]},
+  {id:'emocoes', emoji:'🎨', title:'Conhecer suas emoções', desc:'Perceber, nomear e entender o que você sente.', days:[
+    {t:'Nenhuma emoção é errada', x:'Comece pelo básico: todas as emoções têm uma função.', a:'art:emocoes'},
+    {t:'Nomear com calma', x:'Faça um registro e, antes de escolher as emoções, pare alguns segundos para perceber o que está aí.', a:'log'},
+    {t:'Emoções moram no corpo', x:'Aperto no peito, nó na garganta, ombros tensos. Faça o escaneamento corporal e perceba onde as emoções aparecem em você.', a:'bodyscan'},
+    {t:'O que ela está pedindo?', x:'Pense na emoção que mais tem aparecido nos seus dias. Toda emoção carrega um recado: descanso, limite, conexão, cuidado.', ask:'Qual emoção tem aparecido mais — e o que ela pode estar pedindo?'},
+    {t:'Quando o pensamento gira', x:'Às vezes a emoção passa, mas o pensamento continua girando. Leia sobre ruminação.', a:'art:ruminacao'},
+    {t:'Só respirar', x:'Uma prática curta de respiração consciente, sem objetivo além de estar aqui.', a:'resp'},
+    {t:'Seus padrões', x:'Abra seu relatório e procure um padrão: um gatilho, um horário, uma relação com o sono.', a:'report', ask:'O que você descobriu sobre você?'},
+  ]},
+];
+function trailDef(id){ return TRAILS.find(t => t.id === id); }
+function trailState(id){ return (S.progress.trails || {})[id] || null; }
+function trailDoneCount(id){ const st = trailState(id); return st ? Object.keys(st.done || {}).length : 0; }
+function trailCurrentDay(id){
+  const st = trailState(id), n = trailDef(id).days.length;
+  if (!st) return 1;
+  for (let i = 1; i <= n; i++) if (!st.done['d' + i]) return i;
+  return n + 1;
+}
+// Um passo por dia: o próximo só abre no dia seguinte ao último concluído.
+function trailLockedToday(id){
+  const st = trailState(id), d = trailCurrentDay(id);
+  return !!st && d > 1 && d <= trailDef(id).days.length && st.done['d' + (d - 1)] === dateKey();
+}
+function startTrail(id){
+  const p = S.progress;
+  p.trails = p.trails || {};
+  if (!p.trails[id]) p.trails[id] = {start: dateKey(), done: {}, notes: {}};
+  p.trailActive = id;
+  progressSave();
+  renderTool(1);
+}
+function completeTrailDay(id, i){
+  const st = trailState(id);
+  if (!st) return;
+  const ta = document.getElementById('trail-note');
+  if (ta && ta.value.trim()) st.notes['d' + i] = ta.value.trim().slice(0, 500);
+  st.done['d' + i] = dateKey();
+  const p = S.progress;
+  p.trailActive = id;
+  if (i === trailDef(id).days.length) {
+    p.trailsDone = [...new Set([...(p.trailsDone || []), id])];
+    p.trailActive = null;
+  }
+  progressSave();
+  markCareDay();
+  renderTool(1);
+}
+function renderTrail(body, id){
+  const tr = trailDef(id);
+  if (!tr) { body.innerHTML = ''; return; }
+  const st = trailState(id), n = tr.days.length, done = trailDoneCount(id);
+  const cur = trailCurrentDay(id), locked = trailLockedToday(id), finished = done >= n;
+  const other = S.progress.trailActive && S.progress.trailActive !== id ? trailDef(S.progress.trailActive) : null;
+  let h = `<div class="trail-hero"><div class="th-e">${tr.emoji}</div>
+      <div class="art-title" style="margin-top:4px">${tr.title}</div>
+      <div class="tr-help" style="margin:0">${tr.desc}</div>
+      <div class="trail-bar"><div style="width:${done / n * 100}%"></div></div>
+      <div style="font-size:11px;color:#999">${finished ? 'Trilha concluída 🌷' : `${done} de ${n} dias`}</div>
+    </div>`;
+  if (!st) {
+    h += `<div class="card"><div class="tr-help" style="margin-bottom:10px">São ${n} dias, um pequeno passo por dia — cerca de 5 minutos. Sem pressa: se pular um dia, é só continuar de onde parou.</div>
+      ${other ? `<div class="rep-foot" style="margin:0 0 10px">Você está na trilha “${other.title}”. O progresso dela fica guardado.</div>` : ''}
+      <button class="btn btn-p" onclick="startTrail('${id}')">Começar esta trilha</button></div>`;
+  }
+  if (finished) {
+    const notes = tr.days.map((d, i) => st.notes['d' + (i + 1)] ? `<div class="th-lbl">${d.t}</div><div class="th-txt">${esc(st.notes['d' + (i + 1)])}</div>` : '').join('');
+    h += `<div class="card" style="text-align:center"><div style="font-size:36px">🌷</div>
+      <div class="tr-q">Você concluiu esta trilha</div>
+      <div class="tr-help">Foram ${n} passos de cuidado. O que funcionou para você continua disponível em Cuidar.</div>
+      ${notes ? `<div style="text-align:left">${notes}</div>` : ''}</div>`;
+  }
+  h += `<div class="card" style="padding:4px 14px">` + tr.days.map((d, k) => {
+    const i = k + 1, isDone = st && st.done['d' + i];
+    if (isDone) {
+      const note = st.notes['d' + i];
+      return `<div class="tday done"><span class="tn">✓</span><div>${d.t}${note && !finished ? `<small>${esc(note)}</small>` : ''}</div></div>`;
+    }
+    if (st && i === cur && !locked) {
+      return `<div class="tday" style="display:block;padding:12px 0">
+        <div class="tr-step">Dia ${i} · hoje</div>
+        <div class="tr-q" style="font-size:16px">${d.t}</div>
+        <div class="tr-help">${d.x}</div>
+        ${d.a ? toolRow(d.a) : ''}
+        ${d.ask ? `<div class="tr-lbl">${d.ask}</div><textarea class="inp" id="trail-note" rows="3" placeholder="Escreva, se quiser.">${esc(st.notes['d' + i] || '')}</textarea>` : ''}
+        <button class="btn btn-p" style="margin-top:10px" onclick="completeTrailDay('${id}', ${i})">Concluir o dia ${i}</button>
+      </div>`;
+    }
+    if (st && i === cur && locked) {
+      return `<div class="tday lock"><span class="tn">${i}</span><div>${d.t}<small>Próximo passo amanhã 🌙 — um por dia ajuda a fixar.</small></div></div>`;
+    }
+    return `<div class="tday lock"><span class="tn">${i}</span><div>${d.t}</div></div>`;
+  }).join('') + `</div>`;
+  body.innerHTML = h;
+}
+function renderHomeTrail(){
+  const el = document.getElementById('home-trail');
+  if (!el) return;
+  const id = S.progress.trailActive;
+  const tr = id && trailDef(id);
+  if (tr) {
+    const n = tr.days.length, d = Math.min(trailCurrentDay(id), n), locked = trailLockedToday(id);
+    el.innerHTML = `<div class="section-lbl">Sua trilha</div>
+      <div class="card home-trail" onclick="runTool('trail:${id}')"><span class="ht-e">${tr.emoji}</span>
+        <div style="flex:1;min-width:0"><b>${tr.title}</b>
+          <small>${locked ? 'Passo de hoje feito · o próximo abre amanhã 🌙' : `Dia ${d} de ${n} · ${tr.days[d - 1].t}`}</small>
+          <div class="trail-bar" style="margin:8px 0 0"><div style="width:${trailDoneCount(id) / n * 100}%"></div></div></div>
+        <span class="tr-go" style="color:#2a7d63;font-size:18px">›</span></div>`;
+    return;
+  }
+  const started = Object.keys(S.progress.trails || {}).length;
+  const goal = ((PROFILE && PROFILE.goals) || []).find(g => GOAL_TRAIL[g]);
+  const sug = !started && goal && trailDef(GOAL_TRAIL[goal]);
+  el.innerHTML = sug ? `<div class="section-lbl">Sugestão para você</div>
+    <div class="card home-trail" onclick="runTool('trail:${sug.id}')"><span class="ht-e">${sug.emoji}</span>
+      <div style="flex:1;min-width:0"><b>${sug.title}</b><small>Trilha de ${sug.days.length} dias · um passo curto por dia</small></div>
+      <span style="color:#2a7d63;font-size:18px">›</span></div>` : '';
+}
+
+// ═══════════ LEMBRETE GENTIL (notificação local, máx. 1 por dia) ═══════════
+let REMINDER = (function(){
+  const d = {on:false, h:21, m:0};
+  try { return Object.assign(d, JSON.parse(localStorage.getItem('fl_reminder') || '{}')); } catch (e) { return d; }
+})();
+const REMINDER_TEXTS = [
+  'Como você está agora? Um minuto para você.',
+  'Se fizer sentido hoje, o Florescer está aqui.',
+  'Uma pausa curta para respirar e se ouvir?',
+  'Como foi seu dia? Sem pressa.',
+  'Um registro rápido ajuda a entender seus dias.',
+  'Que tal um minuto de cuidado?',
+  'Seu espaço está aqui quando você quiser.',
+];
+const REMINDER_IDS = Array.from({length:14}, (_, i) => 100 + i);
+function reminderPlugin(){
+  const C = window.Capacitor;
+  return C && C.isNativePlatform && C.isNativePlatform() && C.Plugins && C.Plugins.LocalNotifications || null;
+}
+// Agenda os próximos 14 dias. Pula hoje se já houve registro. Quem ficar
+// 2 semanas sem abrir o app para de receber — lembrete não vira cobrança.
+window.scheduleReminders = () => scheduleReminders();
+async function scheduleReminders(){
+  const ln = reminderPlugin();
+  if (!ln) return;
+  try {
+    await ln.cancel({notifications: REMINDER_IDS.map(id => ({id}))});
+    if (!REMINDER.on || !S.user) return;
+    const now = new Date();
+    const loggedToday = S.logs.some(l => new Date(l.date).toDateString() === now.toDateString());
+    const list = [];
+    for (let d = 0; d < 14; d++) {
+      const at = new Date(); at.setDate(at.getDate() + d); at.setHours(REMINDER.h, REMINDER.m, 0, 0);
+      if (at <= now || (d === 0 && loggedToday)) continue;
+      list.push({id: 100 + d, title: 'Florescer', body: REMINDER_TEXTS[at.getDate() % REMINDER_TEXTS.length],
+        schedule: {at, allowWhileIdle: true}, smallIcon: 'ic_stat_florescer', iconColor: '#2a7d63'});
+    }
+    if (list.length) await ln.schedule({notifications: list});
+  } catch (e) { console.log('lembrete:', e && e.message); }
+}
+window.cancelReminders = async function(){
+  const ln = reminderPlugin();
+  if (ln) try { await ln.cancel({notifications: REMINDER_IDS.map(id => ({id}))}); } catch (e) {}
+};
+async function setReminder(on, h, m){
+  const ln = reminderPlugin();
+  if (!ln) return;
+  if (on) {
+    try {
+      let p = await ln.checkPermissions();
+      if (p.display !== 'granted') p = await ln.requestPermissions();
+      if (p.display !== 'granted') { alert('Para receber o lembrete, permita as notificações do Florescer nas configurações do Android.'); on = false; }
+    } catch (e) { on = false; }
+  }
+  REMINDER = {on, h: h == null ? REMINDER.h : h, m: m == null ? REMINDER.m : m};
+  try { localStorage.setItem('fl_reminder', JSON.stringify(REMINDER)); } catch (e) {}
+  await scheduleReminders();
+  if (document.getElementById('s-more').classList.contains('active') && moreCurrentTab === 'conta') renderMore();
+}
+function setReminderTime(v){
+  const [h, m] = String(v || '').split(':').map(Number);
+  if (isNaN(h) || isNaN(m)) return;
+  setReminder(true, h, m);
+}
+
+// ═══════════ PDF DO RELATÓRIO ═══════════
+function loadScript(src){
+  return new Promise((ok, fail) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = fail; document.head.appendChild(s); });
+}
+async function ensureJsPDF(){
+  if (!window.jspdf) {
+    try { await loadScript('vendor/jspdf.umd.min.js'); }
+    catch (e) { await loadScript('node_modules/jspdf/dist/jspdf.umd.min.js'); }
+  }
+  return window.jspdf.jsPDF;
+}
+// A fonte padrão do PDF só tem caracteres latinos: tira HTML, emoji e setas.
+function pdfTxt(s){
+  return String(s == null ? '' : s).replace(/<[^>]+>/g, '')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&')
+    .replace(/→/g, '->').replace(/[←-⇿☀-➿⬀-⯿️‍]|[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '')
+    .replace(/[ \t]+/g, ' ').trim();
+}
+function hexRgb(h){ const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+
+async function exportReportPdf(){
+  const btn = document.getElementById('pdf-btn');
+  const withNotes = !!(document.getElementById('pdf-notes') || {}).checked;
+  if (btn) { btn.disabled = true; btn.textContent = 'Gerando…'; }
+  try {
+    const jsPDF = await ensureJsPDF();
+    const r = reportRange(reportMode, reportOffset);
+    const st = reportStats(r.start, r.end), prev = reportStats(r.prevStart, r.prevEnd);
+    const doc = new jsPDF({unit:'mm', format:'a4'});
+    const W = 210, M = 16, CW = W - 2 * M;
+    const GREEN = [42,125,99], GRAY = [125,125,125], DARK = [35,35,35];
+    let y = 20;
+    const ensure = (h) => { if (y + h > 280) { doc.addPage(); y = 20; } };
+    const h2 = (t) => {
+      ensure(16); y += 5;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(...GREEN); doc.text(pdfTxt(t), M, y);
+      y += 2; doc.setDrawColor(225); doc.setLineWidth(0.2); doc.line(M, y, W - M, y); y += 5;
+    };
+    const para = (t, size, color, style) => {
+      size = size || 10;
+      doc.setFont('helvetica', style || 'normal'); doc.setFontSize(size); doc.setTextColor(...(color || DARK));
+      doc.splitTextToSize(pdfTxt(t), CW).forEach(l => { ensure(6); doc.text(l, M, y); y += size * 0.47; });
+      y += 1.5;
+    };
+
+    // Cabeçalho
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(20); doc.setTextColor(...GREEN); doc.text('Florescer', M, y);
+    const tw = doc.getTextWidth('Florescer');
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(...GRAY); doc.text('Relatório de bem-estar', M + tw + 4, y);
+    doc.text('Gerado em ' + new Date().toLocaleDateString('pt-BR'), W - M, y, {align:'right'});
+    y += 9;
+    const last = new Date(r.end); last.setDate(last.getDate() - 1);
+    const periodo = r.mode === 'week'
+      ? `${last.toLocaleDateString('pt-BR')} e os 6 dias anteriores (${fmtDM(r.start)} a ${fmtDM(last)})`
+      : r.label;
+    doc.setFontSize(11); doc.setTextColor(...DARK);
+    doc.text(pdfTxt((S.user && S.user.name) || ''), M, y);
+    doc.setTextColor(...GRAY); doc.text('Período: ' + pdfTxt(periodo), M, y + 5.5);
+    y += 13;
+
+    // Resumo
+    const kpis = [['Humor médio (1-5)', fmt1(st.mood)], ['Ansiedade média (0-10)', fmt1(st.anx)], ['Dias com registro', `${st.days} de ${r.elapsed}`], ['Registros', String(st.logs.length)]];
+    const bw = (CW - 9) / 4;
+    kpis.forEach(([l, v], i) => {
+      const x = M + i * (bw + 3);
+      doc.setFillColor(242, 248, 245); doc.roundedRect(x, y, bw, 19, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(15); doc.setTextColor(...DARK); doc.text(v, x + bw / 2, y + 9, {align:'center'});
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...GRAY); doc.text(l, x + bw / 2, y + 15, {align:'center'});
+    });
+    y += 24;
+    if (prev.logs.length) para(`Período anterior: humor médio ${fmt1(prev.mood)} · ansiedade média ${fmt1(prev.anx)} · ${prev.days} dias com registro.`, 9, GRAY);
+    if (!st.logs.length) para('Não há registros neste período.', 10, GRAY);
+
+    if (st.logs.length) {
+      // Gráfico de humor
+      h2('Humor por dia');
+      ensure(50);
+      const n = r.days.length, x0 = M + 8, x1 = W - M - 2;
+      const cx = (i) => n === 1 ? (x0 + x1) / 2 : x0 + i * (x1 - x0) / (n - 1);
+      const cy = (m) => y + 36 - (m - 1) / 4 * 34;
+      doc.setFontSize(7); doc.setLineWidth(0.2);
+      [1, 2, 3, 4, 5].forEach(m => { doc.setDrawColor(232); doc.line(x0 - 2, cy(m), x1, cy(m)); doc.setTextColor(...GRAY); doc.text(String(m), M + 2, cy(m) + 1); });
+      const pts = [];
+      r.days.forEach((d, i) => { const m = st.dayMood[dateKey(d)]; if (m != null) pts.push([i, m]); });
+      doc.setDrawColor(...GREEN); doc.setLineWidth(0.7);
+      for (let k = 1; k < pts.length; k++) {
+        const gap = pts[k][0] - pts[k - 1][0] > 1;
+        if (gap) doc.setLineDashPattern([1, 1.5], 0);
+        doc.line(cx(pts[k - 1][0]), cy(pts[k - 1][1]), cx(pts[k][0]), cy(pts[k][1]));
+        if (gap) doc.setLineDashPattern([], 0);
+      }
+      doc.setFillColor(...GREEN);
+      pts.forEach(([i, m]) => doc.circle(cx(i), cy(m), n > 14 ? 0.8 : 1.1, 'F'));
+      doc.setLineWidth(0.2); doc.setTextColor(...GRAY);
+      r.days.forEach((d, i) => {
+        if (r.mode === 'week' || [1, 8, 15, 22, 29].includes(d.getDate()))
+          doc.text(r.mode === 'week' ? DAYS[d.getDay()] : String(d.getDate()), cx(i), y + 42, {align:'center'});
+      });
+      y += 46;
+      para('Média do humor de cada dia. Linha tracejada: dias sem registro entre dois registros.', 8, GRAY);
+
+      // Emoções
+      const qTotal = Object.values(st.quad).reduce((a, b) => a + b, 0);
+      if (qTotal) {
+        h2('Clima emocional');
+        ensure(12);
+        let x = M;
+        EMOTIONS.forEach(g => {
+          const c = st.quad[g.q]; if (!c) return;
+          const w = CW * c / qTotal;
+          doc.setFillColor(...hexRgb(g.color)); doc.rect(x, y, w, 5, 'F'); x += w;
+        });
+        y += 9;
+        para(EMOTIONS.filter(g => st.quad[g.q]).map(g => `${g.label} ${Math.round(st.quad[g.q] / qTotal * 100)}%`).join('  ·  '), 9);
+        const topEmo = Object.entries(st.emo).sort((a, b) => b[1] - a[1]).slice(0, 8);
+        para('Emoções mais marcadas: ' + topEmo.map(([k, v]) => `${emoLabel(k)} (${v}x)`).join(', ') + '.', 10);
+      }
+
+      const topTrig = Object.entries(st.trig).sort((a, b) => b[1] - a[1]).slice(0, 8);
+      if (topTrig.length) { h2('Situações que marcaram o período'); para(topTrig.map(([t, c]) => `${t} (${c}x)`).join(', ') + '.'); }
+
+      const sleepRows = SLEEP_ORDER.filter(s => st.sleep[s].length).map(s => `${s}: ${fmt1(avgOf(st.sleep[s]))}`);
+      if (sleepRows.length) { h2('Sono e humor'); para('Humor médio conforme a qualidade da noite anterior: ' + sleepRows.join(' · ') + '.'); }
+
+      if (S.habits.length) {
+        h2('Hábitos');
+        para(S.habits.map(h => `${h.name}: ${Object.keys(st.habitDays).filter(k => st.habitDays[k].includes(h.id)).length} dias`).join(' · ') + '.');
+      }
+
+      let base = st;
+      if (r.mode === 'week') { const s30 = new Date(r.end); s30.setDate(s30.getDate() - 30); base = reportStats(s30, r.end); }
+      const disc = base.logs.length >= 5 ? discoveries(base) : [];
+      if (disc.length) {
+        h2('Padrões observados' + (r.mode === 'week' ? ' (últimos 30 dias)' : ''));
+        disc.forEach(d => para('•  ' + d.html));
+        para('Padrões calculados a partir dos registros. São pistas para conversar, não conclusões.', 8, GRAY, 'italic');
+      }
+
+      const inR = (x) => { const d = new Date(x); return d >= r.start && d < r.end; };
+      const ths = (S.thoughts || []).filter(t => inR(t.date)).sort((a, b) => new Date(a.date) - new Date(b.date));
+      if (ths.length) {
+        h2(`Registros de pensamento (${ths.length})`);
+        if (withNotes) {
+          ths.forEach(t => {
+            para(new Date(t.date).toLocaleDateString('pt-BR'), 8, GRAY, 'bold');
+            para('Situação: ' + t.situation, 9);
+            para(`Pensamento: ${t.thought} (crença ${t.beliefBefore}% -> ${t.beliefAfter}%)`, 9);
+            if ((t.traps || []).length) para('Armadilhas percebidas: ' + t.traps.map(k => (TRAPS.find(x => x.k === k) || {l:k}).l).join(', '), 9);
+            if (t.alt) para('Pensamento alternativo: ' + t.alt, 9);
+            para('Emoções: ' + (t.emotions || []).map(e => `${emoLabel(e.k)} ${e.before}% -> ${e.after}%`).join(', '), 9);
+            y += 1.5;
+          });
+        } else {
+          const b = avgOf(ths.flatMap(t => (t.emotions || []).map(e => e.before)));
+          const a = avgOf(ths.flatMap(t => (t.emotions || []).map(e => e.after)));
+          para(`Intensidade média das emoções: ${Math.round(b)}% antes e ${Math.round(a)}% depois do exercício.`, 10);
+        }
+      }
+
+      if (withNotes) {
+        const notes = st.logs.filter(l => l.note && l.note.trim());
+        if (notes.length) {
+          h2('Reflexões escritas');
+          notes.forEach(l => {
+            para(new Date(l.date).toLocaleDateString('pt-BR') + (l.prompt ? ' — ' + l.prompt : ''), 8, GRAY, 'bold');
+            para(l.note, 9);
+          });
+        }
+      }
+      if (st.grats.length) { h2('Gratidão'); para(`${st.grats.length} ${pl(st.grats.length, 'gratidão escrita', 'gratidões escritas')} no período.`); }
+    }
+
+    const pages = doc.getNumberOfPages();
+    for (let i = 1; i <= pages; i++) {
+      doc.setPage(i);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(150);
+      doc.text('Gerado pelo app Florescer a partir de registros feitos pela própria pessoa. Não constitui diagnóstico.', M, 290);
+      doc.text(`${i}/${pages}`, W - M, 290, {align:'right'});
+    }
+    await deliverPdf(doc, `florescer-relatorio-${dateKey(r.start)}.pdf`);
+  } catch (e) {
+    if (!/cancel/i.test((e && e.message) || '')) { console.log('pdf:', e); alert('Não foi possível gerar o PDF agora. Tente de novo.'); }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Gerar PDF'; }
+  }
+}
+async function deliverPdf(doc, fname){
+  const C = window.Capacitor;
+  const P = C && C.isNativePlatform && C.isNativePlatform() ? C.Plugins : null;
+  if (P && P.Filesystem && P.Share) {
+    const b64 = doc.output('datauristring').split(',').pop();
+    const f = await P.Filesystem.writeFile({path: fname, data: b64, directory: 'CACHE'});
+    await P.Share.share({title: 'Relatório Florescer', url: f.uri, dialogTitle: 'Enviar relatório'});
+  } else {
+    doc.save(fname);
+  }
+}
+
 // ═══════════ RELATÓRIO — semana / mês ═══════════
 let reportMode = 'week', reportOffset = 0;
 const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
@@ -3306,6 +3841,16 @@ function renderReport(body){
     html += `<div class="card"><div class="card-title">Hábitos</div>${rows}</div>`;
   }
 
+  // ── PDF para levar à terapia
+  const emTerapia = PROFILE && PROFILE.therapy === 'sim';
+  html += `<div class="card">
+    <div class="card-title">📄 ${emTerapia ? 'Levar para a sessão' : 'Exportar em PDF'}</div>
+    <div class="card-sub">${emTerapia ? 'Um PDF deste período para mostrar a quem acompanha você.' : 'Um PDF deste período — útil para guardar ou mostrar a um profissional.'}</div>
+    <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#555;line-height:1.45">
+      <input type="checkbox" id="pdf-notes" style="margin-top:2px;accent-color:#2a7d63"> Incluir o que escrevi (reflexões e registros de pensamento)</label>
+    <button class="btn btn-p" style="margin-top:12px" id="pdf-btn" onclick="exportReportPdf()">Gerar PDF</button>
+  </div>`;
+
   // ── Gratidão
   if (st.grats.length) {
     const g = [...st.grats].sort((a,b) => new Date(b.date) - new Date(a.date))[0];
@@ -3497,6 +4042,24 @@ function renderMore() {
           Entrou com <strong>${entrou}</strong><br>
           No Florescer desde <strong>${desde}</strong>
         </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="card-title">Seu perfil</div>
+          <button class="btn-link" style="font-size:12px;padding:0" onclick="openOnboard(true)">editar</button>
+        </div>
+        <div style="font-size:12px;color:#666;line-height:1.7;margin-top:4px">${(PROFILE && PROFILE.goals && PROFILE.goals.length)
+          ? PROFILE.goals.map(g => (GOALS.find(x => x.k === g) || {l:g}).l).join(' · ')
+          : 'Conte o que traz você ao Florescer para receber sugestões sob medida.'}</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Lembrete gentil</div>
+        ${reminderPlugin() ? `<div class="card-sub">No máximo 1 por dia, e só se você ainda não registrou. Se ficar 2 semanas sem abrir o app, ele para sozinho.</div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <label class="switch"><input type="checkbox" ${REMINDER.on ? 'checked' : ''} onchange="setReminder(this.checked)"><span></span></label>
+          <span style="font-size:13px;color:#444;flex:1">${REMINDER.on ? 'Ativado' : 'Desativado'}</span>
+          <input type="time" class="inp" style="width:112px;padding:8px 10px" value="${String(REMINDER.h).padStart(2,'0')}:${String(REMINDER.m).padStart(2,'0')}" onchange="setReminderTime(this.value)">
+        </div>` : `<div class="card-sub" style="margin:0">Disponível no app para Android.</div>`}
       </div>
       <div class="card">
         <div class="card-title">Seu plano</div>

@@ -88,3 +88,15 @@ keytool -genkey -v -keystore florescer-release.jks -keyalg RSA -keysize 2048 -va
 ## Ordem no plano
 
 F2.3 (passos 1–3) → F2.4 (passo 4) → F2.5 (passo 5) → **F2.6 (passo 6)** → F5.2 (passo 7).
+
+## Plugins nativos em uso (set/2026)
+
+| Plugin | Para quê | Observação |
+|---|---|---|
+| `@capacitor-firebase/authentication` | Login Google nativo | exige `rgcfaIncludeGoogle = true` em `android/variables.gradle` |
+| `@capacitor/local-notifications` | Lembrete gentil (máx. 1/dia) | ícone `res/drawable/ic_stat_florescer.xml`; `SCHEDULE_EXACT_ALARM` removida no manifesto (`tools:node="remove"`) → agendamento inexato |
+| `@capacitor/filesystem` + `@capacitor/share` | Compartilhar o PDF do relatório | grava no cache e abre a folha de compartilhamento do Android |
+
+`jspdf` não é plugin: `scripts/build-www.mjs` copia `node_modules/jspdf/dist/jspdf.umd.min.js` para `www/vendor/`, e o app carrega sob demanda ao gerar o PDF.
+
+Depois de instalar/atualizar plugin: `npm run cap:sync` e gerar novo APK/AAB (mudança nativa não chega por atualização do `index.html`).
