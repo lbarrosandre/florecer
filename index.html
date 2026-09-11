@@ -70,6 +70,40 @@ body{background:#151520;min-height:100vh;display:flex;align-items:center;justify
 .emo-chip.sel{font-weight:600;color:#fff}
 .emo-count{font-size:11px;color:#999;margin-top:10px}
 .reflect-q{font-size:14px;font-weight:600;color:#1f6450;line-height:1.45;margin:6px 0 4px;transition:opacity .2s}
+/* ── Relatório ── */
+.rep-seg{display:flex;background:#f0f0f0;border-radius:12px;padding:3px;margin-bottom:8px}
+.rep-seg button{flex:1;padding:8px;border:none;background:none;border-radius:10px;font-size:12px;font-weight:600;color:#999;font-family:'DM Sans',sans-serif;cursor:pointer}
+.rep-seg button.on{background:#fff;color:#1a1a1a;box-shadow:0 1px 4px #0000001a}
+.rep-nav{display:flex;align-items:center;justify-content:space-between;margin:2px 0 10px}
+.rep-nav button{background:none;border:none;font-size:24px;color:#2a7d63;cursor:pointer;padding:0 10px;line-height:1}
+.rep-nav button:disabled{color:#ddd;cursor:default}
+.rep-nav span{font-size:13px;font-weight:600;color:#1a1a1a}
+.rep-kpis{display:flex;gap:6px;margin:8px 0 12px}
+.rep-kpi{flex:1;text-align:center}
+.rep-kpi b{display:block;font-size:22px;font-weight:700;color:#1a1a1a;font-variant-numeric:tabular-nums}
+.rep-kpi span{font-size:10px;color:#aaa}
+.rep-delta{font-size:11px;font-weight:600;margin-top:1px}
+.rep-trend{font-size:13px;color:#4a5a53;line-height:1.5;background:#f4faf7;border-radius:10px;padding:10px 12px}
+.rep-chart{width:100%;height:auto;display:block;margin-top:4px}
+.hb-row{display:flex;align-items:center;gap:8px;margin:8px 0}
+.hb-l{font-size:12px;color:#444;width:112px;flex-shrink:0;line-height:1.25}
+.hb-track{flex:1;height:8px;background:#f2f2f2;border-radius:6px;overflow:hidden}
+.hb-fill{height:100%;border-radius:6px}
+.hb-v{font-size:11px;color:#888;width:28px;text-align:right;font-variant-numeric:tabular-nums}
+.qbar{display:flex;height:14px;border-radius:8px;overflow:hidden;margin:8px 0;gap:2px}
+.qleg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11px;color:#666}
+.qleg i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:1px}
+.disc{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #f3f3f3;font-size:13px;color:#333;line-height:1.5}
+.disc:last-of-type{border-bottom:none}
+.disc-i{color:#c9a84c;flex-shrink:0;font-size:14px}
+.rep-foot{font-size:10px;color:#aaa;margin-top:8px;line-height:1.5}
+.rep-empty{font-size:12px;color:#aaa;padding:4px 0;line-height:1.5}
+.hab-row{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;padding:8px 0;border-bottom:1px solid #f3f3f3;font-size:13px;color:#333}
+.hab-row:last-child{border-bottom:none}
+.hab-n{margin-left:auto;font-size:11px;color:#2a7d63;font-weight:600}
+.hab-cmp{width:100%;font-size:11px;color:#999}
+.grat-quote{font-size:14px;color:#1f6450;font-style:italic;line-height:1.5;margin-top:6px}
+.home-wsum{font-size:12px;color:#666;line-height:1.55;margin-top:10px;padding-top:10px;border-top:1px solid #f3f3f3}
 .side-info{color:#ffffff25;font-size:11px;letter-spacing:.06em;text-transform:uppercase;line-height:2;text-align:center;max-width:120px}
 .phone-frame{width:390px;height:844px;background:#0d0d0d;border-radius:54px;padding:12px;box-shadow:0 0 0 1px #2a2a2a,0 40px 100px #00000090,inset 0 0 0 1px #1e1e1e;position:relative;flex-shrink:0}
 .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:36px;background:#0d0d0d;border-radius:0 0 22px 22px;z-index:20}
@@ -925,6 +959,7 @@ textarea.inp{resize:none;min-height:76px}
         <div class="card" style="padding:14px">
           <div class="week-bars" id="home-bars"></div>
           <div style="display:flex;gap:4px" id="home-days"></div>
+          <div id="home-week-sum"></div>
         </div>
         <div id="home-action"></div>
         <div class="section-lbl">Hábitos de hoje</div>
@@ -1063,9 +1098,9 @@ textarea.inp{resize:none;min-height:76px}
       <div style="padding:12px 20px 0;flex-shrink:0">
         <h1>Histórico</h1>
         <div class="top-tabs" style="margin-top:12px">
-          <button class="top-tab active" id="ht-logs" onclick="histTab('logs')">Registros</button>
+          <button class="top-tab active" id="ht-relatorio" onclick="histTab('relatorio')">Relatório</button>
+          <button class="top-tab" id="ht-logs" onclick="histTab('logs')">Registros</button>
           <button class="top-tab" id="ht-pixels" onclick="histTab('pixels')">Ano em Pixels</button>
-          <button class="top-tab" id="ht-stats" onclick="histTab('stats')">Estatísticas</button>
         </div>
       </div>
       <div class="scroll pad" style="padding-top:4px" id="history-body"></div>
@@ -1087,7 +1122,6 @@ textarea.inp{resize:none;min-height:76px}
         <div class="top-tabs">
           <button class="top-tab active" id="mt-habits" onclick="moreTab('habits')">Hábitos</button>
           <button class="top-tab" id="mt-gratitude" onclick="moreTab('gratitude')">Gratidão</button>
-          <button class="top-tab" id="mt-insights" onclick="moreTab('insights')">Insights</button>
           <button class="top-tab" id="mt-conta" onclick="moreTab('conta')">Conta</button>
         </div>
         <div id="more-body"></div>
@@ -1269,7 +1303,7 @@ const BADGES = [
   {id:'momento-dificil', emoji:'🤍', nome:'Momento difícil',  dica:'Você usou o SOS quando precisou.',       check:(p)=> (p.sosOpens||0) >= 1},
   {id:'recomeco',        emoji:'🔄', nome:'Recomeço',         dica:'Voltar depois de um tempo longe também conta.', check:()=> false},
   {id:'dia-inteiro',     emoji:'🌙', nome:'Dia inteiro',      dica:'Registre manhã, tarde e noite no mesmo dia.',   check:()=> hasFullDay()},
-  {id:'autoconhecimento',emoji:'📊', nome:'Autoconhecimento', dica:'Faça 3 registros e destrave os Insights.',      check:()=> S.logs.length >= 3},
+  {id:'autoconhecimento',emoji:'📊', nome:'Autoconhecimento', dica:'Faça 3 registros e veja seu relatório.',      check:()=> S.logs.length >= 3},
 ];
 
 function hasFullDay(){
@@ -1734,6 +1768,7 @@ function renderHome() {
   }
   document.getElementById('home-grat-preview').innerHTML = gratHtml;
 
+  renderHomeWeekSummary();
   renderHomePlant();
   // conquistas que já valem pelos dados existentes
   checkBadges();
@@ -2219,11 +2254,362 @@ function runBreathPhase() {
   }, 1000);
 }
 
+// ═══════════ RELATÓRIO — semana / mês ═══════════
+let reportMode = 'week', reportOffset = 0;
+const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const SLEEP_ORDER = ['Péssimo','Ruim','Ok','Bom','Ótimo'];
+const TOD_TXT = {'Manhã':'de manhã','Tarde':'à tarde','Noite':'à noite'};
+const WD_PL = ['aos domingos','às segundas','às terças','às quartas','às quintas','às sextas','aos sábados'];
+
+function fmt1(n){ return (n == null || isNaN(n)) ? '–' : n.toFixed(1).replace('.', ','); }
+function avgOf(arr){ const v = arr.filter(x => typeof x === 'number' && !isNaN(x)); return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null; }
+function pl(n, s, p){ return n === 1 ? s : p; }
+function fmtDM(d){ return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0'); }
+
+// Semana = 7 dias corridos terminando hoje (deslocados de 7 em 7).
+// Mês = mês do calendário. end é exclusivo.
+function reportRange(mode, offset){
+  const today = new Date(); today.setHours(0,0,0,0);
+  let start, end, prevStart, label;
+  if (mode === 'month') {
+    start = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+    end = new Date(start.getFullYear(), start.getMonth() + 1, 1);
+    prevStart = new Date(start.getFullYear(), start.getMonth() - 1, 1);
+    const m = MESES[start.getMonth()];
+    label = m.charAt(0).toUpperCase() + m.slice(1) + ' de ' + start.getFullYear();
+  } else {
+    end = new Date(today); end.setDate(end.getDate() + 1 + offset * 7);
+    start = new Date(end); start.setDate(start.getDate() - 7);
+    prevStart = new Date(start); prevStart.setDate(prevStart.getDate() - 7);
+    const last = new Date(end); last.setDate(last.getDate() - 1);
+    label = offset === 0 ? 'Últimos 7 dias' : fmtDM(start) + ' – ' + fmtDM(last);
+  }
+  const days = [];
+  for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) days.push(new Date(d));
+  return {mode, start, end, prevStart, prevEnd: start, label, days, elapsed: days.filter(d => d <= today).length};
+}
+
+function reportStats(start, end){
+  const inR = (x) => { const d = new Date(x); return d >= start && d < end; };
+  const logs = S.logs.filter(l => inR(l.date)).sort((a,b) => new Date(a.date) - new Date(b.date));
+  const byDay = {};
+  logs.forEach(l => { const k = dateKey(l.date); (byDay[k] = byDay[k] || []).push(l.mood); });
+  const dayMood = {};
+  Object.keys(byDay).forEach(k => dayMood[k] = avgOf(byDay[k]));
+  const emo = {}, trig = {}, quad = {};
+  EMOTIONS.forEach(g => quad[g.q] = 0);
+  logs.forEach(l => {
+    (l.emotions || []).forEach(e => { emo[e] = (emo[e] || 0) + 1; const x = EMO_INDEX[e]; if (x) quad[x.q]++; });
+    (l.triggers || []).forEach(t => trig[t] = (trig[t] || 0) + 1);
+  });
+  const sleep = {};
+  SLEEP_ORDER.forEach(s => sleep[s] = []);
+  logs.forEach(l => { if (sleep[l.sleep]) sleep[l.sleep].push(l.mood); });
+  const habitDays = {};
+  Object.keys(S.habitDone || {}).forEach(k => {
+    const d = new Date(k);
+    if (isNaN(d) || !Array.isArray(S.habitDone[k]) || !inR(d)) return;
+    habitDays[dateKey(d)] = S.habitDone[k];
+  });
+  return {
+    logs, dayMood, emo, trig, quad, sleep, habitDays,
+    grats: S.gratitude.filter(g => inR(g.date)),
+    mood: avgOf(logs.map(l => l.mood)),
+    anx: avgOf(logs.map(l => l.anxiety)),
+    days: Object.keys(dayMood).length,
+    notes: logs.filter(l => l.note && l.note.trim()).length,
+  };
+}
+
+// Padrões nos registros — nunca afirmação clínica. Cada item tem um peso
+// (tamanho da diferença × quantidade de dados) e mostramos só os mais fortes.
+function discoveries(st){
+  const logs = st.logs, out = [];
+  const moodOf = (arr) => avgOf(arr.map(l => l.mood));
+
+  Object.keys(st.trig).forEach(t => {
+    const w = logs.filter(l => (l.triggers || []).includes(t));
+    const o = logs.filter(l => !(l.triggers || []).includes(t));
+    if (w.length < 2 || o.length < 2) return;
+    const a = moodOf(w), b = moodOf(o);
+    if (Math.abs(a - b) < 0.5) return;
+    out.push({score: Math.abs(a - b) * Math.min(w.length, 6),
+      html: `Nos registros com <b>${esc(t)}</b>, seu humor fica em média <b>${fmt1(a)}</b> — e <b>${fmt1(b)}</b> nos demais.`});
+  });
+
+  const good = logs.filter(l => l.sleep === 'Bom' || l.sleep === 'Ótimo');
+  const bad = logs.filter(l => l.sleep === 'Ruim' || l.sleep === 'Péssimo');
+  if (good.length >= 2 && bad.length >= 2) {
+    const n = Math.min(good.length + bad.length, 6);
+    const a = moodOf(good), b = moodOf(bad);
+    if (a - b >= 0.5) out.push({score: (a - b) * n,
+      html: `Depois de uma noite de sono boa, seu humor fica em <b>${fmt1(a)}</b>; depois de uma noite ruim, em <b>${fmt1(b)}</b>.`});
+    const aa = avgOf(bad.map(l => l.anxiety)), ag = avgOf(good.map(l => l.anxiety));
+    if (aa != null && ag != null && aa - ag >= 1.5) out.push({score: (aa - ag) / 2 * n,
+      html: `A ansiedade costuma vir mais intensa depois de noites mal dormidas: <b>${fmt1(aa)}</b> contra <b>${fmt1(ag)}</b>.`});
+  }
+
+  const dayKeys = Object.keys(st.dayMood);
+  S.habits.forEach(h => {
+    const w = [], o = [];
+    dayKeys.forEach(k => ((st.habitDays[k] || []).includes(h.id) ? w : o).push(st.dayMood[k]));
+    if (w.length < 2 || o.length < 2) return;
+    const a = avgOf(w), b = avgOf(o);
+    if (Math.abs(a - b) < 0.5) return;
+    out.push({score: Math.abs(a - b) * Math.min(w.length, 6),
+      html: `Nos dias em que você marcou <b>${esc(h.icon)} ${esc(h.name)}</b>, seu humor médio foi <b>${fmt1(a)}</b> — e <b>${fmt1(b)}</b> nos outros dias.`});
+  });
+
+  Object.entries(st.emo).forEach(([e, c]) => {
+    if (c < 3) return;
+    const tc = {};
+    logs.filter(l => (l.emotions || []).includes(e))
+        .forEach(l => (l.triggers || []).forEach(t => tc[t] = (tc[t] || 0) + 1));
+    const best = Object.entries(tc).sort((a,b) => b[1] - a[1])[0];
+    if (!best || best[1] < 3 || best[1] / c < 0.6) return;
+    out.push({key: 'co:' + best[0], score: best[1] / c * Math.min(c, 6),
+      html: `<b>${esc(emoLabel(e))}</b> apareceu junto com <b>${esc(best[0])}</b> em ${best[1]} de ${c} registros.`});
+  });
+
+  const tods = Object.keys(TOD_TXT).map(t => {
+    const a = logs.filter(l => l.time === t);
+    return {t, m: a.length >= 2 ? moodOf(a) : null, n: a.length};
+  }).filter(x => x.m != null).sort((a,b) => b.m - a.m);
+  if (tods.length >= 2) {
+    const hi = tods[0], lo = tods[tods.length - 1];
+    if (hi.m - lo.m >= 0.5) out.push({score: (hi.m - lo.m) * Math.min(hi.n, lo.n, 6),
+      html: `Você costuma se sentir melhor <b>${TOD_TXT[hi.t]}</b> (${fmt1(hi.m)}) do que <b>${TOD_TXT[lo.t]}</b> (${fmt1(lo.m)}).`});
+  }
+
+  if (dayKeys.length >= 10) {
+    const wd = {};
+    dayKeys.forEach(k => { const g = new Date(k + 'T12:00').getDay(); (wd[g] = wd[g] || []).push(st.dayMood[k]); });
+    const e = Object.entries(wd).filter(([,v]) => v.length >= 2).map(([g,v]) => [+g, avgOf(v)]).sort((a,b) => b[1] - a[1]);
+    if (e.length >= 3 && e[0][1] - e[e.length-1][1] >= 0.7) out.push({score: (e[0][1] - e[e.length-1][1]) * 2,
+      html: `Seu humor costuma ser melhor <b>${WD_PL[e[0][0]]}</b> e mais baixo <b>${WD_PL[e[e.length-1][0]]}</b>.`});
+  }
+
+  // um mesmo gatilho não aparece em duas descobertas de "apareceu junto"
+  const seen = new Set();
+  return out.sort((a,b) => b.score - a.score)
+    .filter(d => !d.key || (!seen.has(d.key) && seen.add(d.key)))
+    .slice(0, 4);
+}
+
+function svgMoodLine(r, st){
+  const W = 320, H = 128, L = 22, R = 8, T = 10, B = 22;
+  const n = r.days.length, iw = W - L - R, ih = H - T - B;
+  const x = (i) => +(L + (n === 1 ? iw / 2 : i * iw / (n - 1))).toFixed(1);
+  const y = (m) => +(T + (5 - m) / 4 * ih).toFixed(1);
+  let g = '';
+  [1, 3, 5].forEach(m => {
+    g += `<line x1="${L}" x2="${W-R}" y1="${y(m)}" y2="${y(m)}" stroke="#f0f0f0"/>` +
+         `<text x="${L-10}" y="${y(m)+3.5}" font-size="10" fill="#c4c4c4" text-anchor="middle">${m}</text>`;
+  });
+  const pts = [];
+  r.days.forEach((d, i) => { const m = st.dayMood[dateKey(d)]; if (m != null) pts.push([i, m]); });
+  let lines = '';
+  for (let k = 1; k < pts.length; k++) {
+    const [i0, m0] = pts[k-1], [i1, m1] = pts[k];
+    // dias sem registro viram tracejado — não inventamos dado
+    const gap = i1 - i0 > 1 ? ' stroke-dasharray="3 4" stroke-opacity=".4"' : '';
+    lines += `<line x1="${x(i0)}" y1="${y(m0)}" x2="${x(i1)}" y2="${y(m1)}" stroke="#2a7d63" stroke-width="2" stroke-linecap="round"${gap}/>`;
+  }
+  const dots = pts.map(([i, m]) => `<circle cx="${x(i)}" cy="${y(m)}" r="${n > 14 ? 2.5 : 3.5}" fill="#fff" stroke="#2a7d63" stroke-width="2"/>`).join('');
+  let labels = '';
+  r.days.forEach((d, i) => {
+    if (r.mode === 'week' || [1, 8, 15, 22, 29].includes(d.getDate()))
+      labels += `<text x="${x(i)}" y="${H-6}" font-size="10" fill="#b0b0b0" text-anchor="middle">${r.mode === 'week' ? DAYS[d.getDay()] : d.getDate()}</text>`;
+  });
+  return `<svg class="rep-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Humor por dia">${g}${lines}${dots}${labels}</svg>`;
+}
+
+function hbars(entries, max, colorOf, valOf){
+  return entries.map(([k, v]) => `<div class="hb-row">
+    <div class="hb-l">${esc(k)}</div>
+    <div class="hb-track"><div class="hb-fill" style="width:${max ? Math.max(4, v / max * 100) : 0}%;background:${colorOf(k)}"></div></div>
+    <div class="hb-v">${valOf ? valOf(v) : v}</div>
+  </div>`).join('');
+}
+
+function repDelta(cur, prev, lowerIsBetter){
+  if (cur == null || prev == null) return '';
+  const d = cur - prev;
+  if (Math.abs(d) < 0.3) return `<div class="rep-delta" style="color:#bbb">≈ estável</div>`;
+  const better = lowerIsBetter ? d < 0 : d > 0;
+  return `<div class="rep-delta" style="color:${better ? '#2a7d63' : '#b08a3e'}">${d > 0 ? '↑' : '↓'} ${fmt1(Math.abs(d))}</div>`;
+}
+
+function renderReport(body){
+  const r = reportRange(reportMode, reportOffset);
+  const st = reportStats(r.start, r.end);
+  const first = S.logs.reduce((m, l) => Math.min(m, +new Date(l.date)), Infinity);
+  const unit = r.mode === 'week' ? 'semana' : 'mês';
+
+  let html = `<div class="rep-seg">
+      <button class="${r.mode === 'week' ? 'on' : ''}" onclick="setReportMode('week')">Semana</button>
+      <button class="${r.mode === 'month' ? 'on' : ''}" onclick="setReportMode('month')">Mês</button>
+    </div>
+    <div class="rep-nav">
+      <button onclick="shiftReport(-1)" ${first >= +r.start ? 'disabled' : ''} aria-label="Período anterior">‹</button>
+      <span>${r.label}</span>
+      <button onclick="shiftReport(1)" ${reportOffset >= 0 ? 'disabled' : ''} aria-label="Próximo período">›</button>
+    </div>`;
+
+  if (!st.logs.length) {
+    html += `<div class="card" style="text-align:center;padding:28px 18px">
+      <div style="font-size:32px;margin-bottom:8px">🌱</div>
+      <div style="font-size:14px;color:#888;line-height:1.5">Nenhum registro ${r.mode === 'week' ? 'nestes 7 dias' : 'neste mês'}.</div>
+      ${reportOffset === 0 ? `<button class="btn btn-p" style="margin-top:14px" onclick="goTo('log')">Fazer um registro</button>` : ''}
+    </div>`;
+    body.innerHTML = html;
+    return;
+  }
+
+  const prev = reportStats(r.prevStart, r.prevEnd);
+  const hasPrev = prev.logs.length > 0;
+
+  // ── Resumo
+  let trend;
+  if (!hasPrev) trend = `Ainda não há registros no período anterior para comparar — com o tempo, este resumo mostra como você vem mudando.`;
+  else {
+    const d = st.mood - prev.mood;
+    const prevTxt = r.mode === 'week' ? 'nos 7 dias anteriores' : 'no mês anterior';
+    if (d >= 0.3) trend = `Seu humor médio ficou mais alto que ${prevTxt}. Vale notar o que foi diferente.`;
+    else if (d <= -0.3) trend = `Seu humor médio ficou mais baixo que ${prevTxt}. Períodos assim fazem parte — seja gentil com você.`;
+    else trend = `Seu humor ficou parecido com o ${r.mode === 'week' ? 'dos 7 dias anteriores' : 'do mês anterior'}.`;
+    if (st.anx != null && prev.anx != null && st.anx - prev.anx >= 1) trend += ` A ansiedade apareceu mais intensa.`;
+    else if (st.anx != null && prev.anx != null && prev.anx - st.anx >= 1) trend += ` A ansiedade deu uma aliviada.`;
+  }
+  const extras = [];
+  extras.push(`${st.logs.length} ${pl(st.logs.length, 'registro', 'registros')}`);
+  if (st.notes) extras.push(`${st.notes} com reflexão escrita`);
+  html += `<div class="card">
+    <div class="card-title">Resumo</div>
+    <div class="rep-kpis">
+      <div class="rep-kpi"><b>${fmt1(st.mood)}</b><span>humor médio /5</span>${hasPrev ? repDelta(st.mood, prev.mood, false) : ''}</div>
+      <div class="rep-kpi"><b>${fmt1(st.anx)}</b><span>ansiedade /10</span>${hasPrev ? repDelta(st.anx, prev.anx, true) : ''}</div>
+      <div class="rep-kpi"><b>${st.days}</b><span>de ${r.elapsed} ${pl(r.elapsed, 'dia', 'dias')}</span></div>
+    </div>
+    <div class="rep-trend">${trend}</div>
+    <div class="rep-foot">${extras.join(' · ')}</div>
+  </div>`;
+
+  // ── Humor ao longo do período
+  html += `<div class="card">
+    <div class="card-title">Humor ao longo ${r.mode === 'week' ? 'da semana' : 'do mês'}</div>
+    <div class="card-sub">Média do dia, de 1 a 5. Tracejado = dias sem registro.</div>
+    ${svgMoodLine(r, st)}
+  </div>`;
+
+  // ── Clima emocional
+  const qTotal = Object.values(st.quad).reduce((a,b) => a + b, 0);
+  if (qTotal) {
+    const topEmo = Object.entries(st.emo).sort((a,b) => b[1] - a[1]).slice(0, 5);
+    html += `<div class="card">
+      <div class="card-title">Clima emocional</div>
+      <div class="card-sub">Como as emoções que você marcou se distribuem.</div>
+      <div class="qbar">${EMOTIONS.filter(g => st.quad[g.q]).map(g => `<div style="flex:${st.quad[g.q]};background:${g.color}"></div>`).join('')}</div>
+      <div class="qleg">${EMOTIONS.filter(g => st.quad[g.q]).map(g => `<span><i style="background:${g.color}"></i>${g.label} ${Math.round(st.quad[g.q] / qTotal * 100)}%</span>`).join('')}</div>
+      <div style="margin-top:12px">${hbars(topEmo.map(([k, v]) => [emoLabel(k), v]), topEmo[0][1],
+        (lbl) => { const e = Object.values(EMO_INDEX).find(x => x.label === lbl); return e ? e.color : '#bbb'; },
+        (v) => v + 'x')}</div>
+    </div>`;
+  } else {
+    html += `<div class="card"><div class="card-title">Clima emocional</div>
+      <div class="rep-empty">Marque o que está sentindo nos registros para ver aqui como suas emoções se distribuem.</div></div>`;
+  }
+
+  // ── Descobertas (semana olha os últimos 30 dias — 7 dias é pouco para padrão)
+  let base = st, baseTxt = 'Com base nos registros deste mês.';
+  if (r.mode === 'week') {
+    const s30 = new Date(r.end); s30.setDate(s30.getDate() - 30);
+    base = reportStats(s30, r.end);
+    baseTxt = 'Com base nos seus registros dos últimos 30 dias.';
+  }
+  const disc = base.logs.length >= 5 ? discoveries(base) : [];
+  html += `<div class="card">
+    <div class="card-title">Descobertas ✨</div>
+    <div class="card-sub">${baseTxt}</div>
+    ${disc.length
+      ? disc.map(d => `<div class="disc"><span class="disc-i">✦</span><span>${d.html}</span></div>`).join('') +
+        `<div class="rep-foot">São padrões nos seus registros, não certezas. Use como pista para se conhecer — não como diagnóstico.</div>`
+      : base.logs.length < 5
+        ? `<div class="rep-empty">Com pelo menos 5 registros, o Florescer começa a apontar padrões — por exemplo, como o sono ou certos gatilhos se relacionam com seu humor. Faltam ${5 - base.logs.length}.</div>`
+        : `<div class="rep-empty">Nenhum padrão forte apareceu ainda. Quanto mais variados os registros (sono, gatilhos, horários), mais o Florescer consegue enxergar.</div>`}
+  </div>`;
+
+  // ── Gatilhos
+  const topTrig = Object.entries(st.trig).sort((a,b) => b[1] - a[1]).slice(0, 6);
+  if (topTrig.length) html += `<div class="card">
+    <div class="card-title">O que marcou ${r.mode === 'week' ? 'a semana' : 'o mês'}</div>
+    ${hbars(topTrig, topTrig[0][1], () => '#9fc9b9', (v) => v + 'x')}
+  </div>`;
+
+  // ── Sono e humor
+  const sleepRows = SLEEP_ORDER.filter(s => st.sleep[s].length).map(s => [s, avgOf(st.sleep[s])]);
+  if (sleepRows.length) html += `<div class="card">
+    <div class="card-title">Sono e humor</div>
+    <div class="card-sub">Humor médio conforme a noite anterior.</div>
+    ${hbars(sleepRows, 5, (s) => ({'Péssimo':'#c9b3d6','Ruim':'#b9c3dc','Ok':'#c9d8c0','Bom':'#8fc9b0','Ótimo':'#4fa488'})[s], fmt1)}
+  </div>`;
+
+  // ── Hábitos e humor
+  if (S.habits.length) {
+    const dk = Object.keys(st.dayMood);
+    const rows = S.habits.map(h => {
+      const done = Object.keys(st.habitDays).filter(k => st.habitDays[k].includes(h.id)).length;
+      const w = [], o = [];
+      dk.forEach(k => ((st.habitDays[k] || []).includes(h.id) ? w : o).push(st.dayMood[k]));
+      const cmp = (w.length >= 2 && o.length >= 2)
+        ? `<div class="hab-cmp">Humor nos dias em que fez: ${fmt1(avgOf(w))} · nos outros: ${fmt1(avgOf(o))}</div>` : '';
+      return `<div class="hab-row"><span>${esc(h.icon)}</span><span>${esc(h.name)}</span>
+        <span class="hab-n">${done} ${pl(done, 'dia', 'dias')}</span>${cmp}</div>`;
+    }).join('');
+    html += `<div class="card"><div class="card-title">Hábitos</div>${rows}</div>`;
+  }
+
+  // ── Gratidão
+  if (st.grats.length) {
+    const g = [...st.grats].sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+    html += `<div class="card">
+      <div class="card-title">Momentos de gratidão</div>
+      <div class="card-sub">${st.grats.length} ${pl(st.grats.length, 'gratidão escrita', 'gratidões escritas')} ${r.mode === 'week' ? 'nestes dias' : 'neste mês'}. A mais recente:</div>
+      <div class="grat-quote">“${esc(g.text)}”</div>
+    </div>`;
+  }
+
+  body.innerHTML = html;
+}
+
+function setReportMode(m){ reportMode = m; reportOffset = 0; renderHistory(); }
+function shiftReport(n){ reportOffset = Math.min(0, reportOffset + n); renderHistory(); }
+
+// Resumo curto na Home — convite para o relatório, não cobrança.
+function renderHomeWeekSummary(){
+  const el = document.getElementById('home-week-sum');
+  if (!el) return;
+  const r = reportRange('week', 0);
+  const st = reportStats(r.start, r.end);
+  if (!st.logs.length) { el.innerHTML = ''; return; }
+  const prev = reportStats(r.prevStart, r.prevEnd);
+  let cmp = '';
+  if (prev.logs.length) {
+    const d = st.mood - prev.mood;
+    cmp = d >= 0.3 ? ', mais alto que na semana anterior' : d <= -0.3 ? ', mais baixo que na semana anterior' : ', parecido com a semana anterior';
+  }
+  const top = Object.entries(st.emo).sort((a,b) => b[1] - a[1])[0];
+  el.innerHTML = `<div class="home-wsum">
+    Humor médio <b>${fmt1(st.mood)}</b>${cmp}.${top ? ` O que mais apareceu: <b>${esc(emoLabel(top[0]))}</b>.` : ''}
+    <div><button class="btn-link" style="padding-left:0" onclick="histTab('relatorio');goTo('history')">Ver relatório completo →</button></div>
+  </div>`;
+}
+
 // ═══════════ HISTORY ═══════════
-let histCurrentTab='logs';
+let histCurrentTab='relatorio';
 function histTab(tab) {
   histCurrentTab=tab;
-  ['logs','pixels','stats'].forEach(t=>{
+  ['relatorio','logs','pixels'].forEach(t=>{
     document.getElementById('ht-'+t)?.classList.toggle('active',t===tab);
   });
   renderHistory();
@@ -2231,7 +2617,9 @@ function histTab(tab) {
 
 function renderHistory() {
   const body=document.getElementById('history-body');
-  if (histCurrentTab==='logs') {
+  if (histCurrentTab==='relatorio') {
+    renderReport(body);
+  } else if (histCurrentTab==='logs') {
     const logs=[...S.logs].reverse();
     if(!logs.length){body.innerHTML='<div style="text-align:center;color:#bbb;padding:40px 0;font-size:14px">Nenhum registro ainda.<br>Comece hoje! ✨</div>';return;}
     body.innerHTML=logs.map(l=>{
@@ -2278,38 +2666,6 @@ function renderHistory() {
       <div style="display:flex;align-items:center;gap:4px"><div class="px-dot" style="background:#a8e6cf"></div><span class="px-lbl">Ótimo</span></div>
     </div>`;
     body.innerHTML=html;
-
-  } else if (histCurrentTab==='stats') {
-    if(S.logs.length<3){body.innerHTML='<div style="text-align:center;color:#bbb;padding:40px 0;font-size:14px">Faça pelo menos 3 registros<br>para ver estatísticas.</div>';return;}
-    const avg=(S.logs.reduce((s,l)=>s+l.mood,0)/S.logs.length).toFixed(1);
-    const avgA=(S.logs.reduce((s,l)=>s+l.anxiety,0)/S.logs.length).toFixed(1);
-    const allT=S.logs.flatMap(l=>l.triggers||[]);
-    const tCount={};allT.forEach(t=>tCount[t]=(tCount[t]||0)+1);
-    const topT=Object.entries(tCount).sort((a,b)=>b[1]-a[1]).slice(0,3);
-    const bestDay=DAYS[parseInt(Object.entries(
-      S.logs.reduce((acc,l)=>{const d=new Date(l.date).getDay();acc[d]=(acc[d]||[]);acc[d].push(l.mood);return acc;},{}))
-      .map(([d,ms])=>[d,ms.reduce((a,b)=>a+b,0)/ms.length]).sort((a,b)=>b[1]-a[1])[0][0])];
-
-    body.innerHTML=`
-      <div class="card"><div class="card-title">📊 Resumo geral</div>
-        <div style="display:flex;gap:12px;margin-top:8px">
-          <div style="flex:1;text-align:center"><div style="font-size:24px;font-weight:700">${avg}/5</div><div style="font-size:11px;color:#bbb">Humor médio</div></div>
-          <div style="flex:1;text-align:center"><div style="font-size:24px;font-weight:700">${avgA}/10</div><div style="font-size:11px;color:#bbb">Ansiedade média</div></div>
-          <div style="flex:1;text-align:center"><div style="font-size:24px;font-weight:700">${S.logs.length}</div><div style="font-size:11px;color:#bbb">Total registros</div></div>
-        </div>
-      </div>
-      <div class="card"><div class="card-title">📅 Melhor dia da semana</div>
-        <div style="font-size:22px;font-weight:700;color:#2a7d63;margin-top:6px">${bestDay}</div>
-        <div style="font-size:12px;color:#bbb;margin-top:2px">Seu humor costuma ser melhor neste dia</div>
-      </div>
-      ${topT.length?`<div class="card"><div class="card-title">⚡ Gatilhos mais frequentes</div>
-        ${topT.map(([t,c],i)=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f5f5f5">
-          <div style="width:24px;height:24px;background:#eaf5f1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#2a7d63">${i+1}</div>
-          <span style="font-size:13px;flex:1">${t}</span>
-          <span class="badge bg-purple">${c}x</span>
-        </div>`).join('')}
-      </div>`:''}
-    `;
   }
 }
 
@@ -2317,7 +2673,7 @@ function renderHistory() {
 let moreCurrentTab='habits';
 function moreTab(tab) {
   moreCurrentTab=tab;
-  ['habits','gratitude','insights','conta','premium'].forEach(t=>{
+  ['habits','gratitude','conta','premium'].forEach(t=>{
     document.getElementById('mt-'+t)?.classList.toggle('active',t===tab);
   });
   renderMore();
@@ -2380,57 +2736,6 @@ function renderMore() {
         </div>`).join('')}
       </div>`:''}
     `;
-
-  } else if (moreCurrentTab==='insights') {
-    if(S.logs.length<3){
-      body.innerHTML=`<div style="text-align:center;padding:40px 0">
-        <div style="font-size:36px;margin-bottom:12px">📊</div>
-        <div style="font-size:14px;color:#999">Faça pelo menos 3 registros<br>para ver seus insights.</div>
-        <button class="btn btn-p" style="margin-top:16px" onclick="goTo('log')">Fazer registro agora</button>
-      </div>`;
-      return;
-    }
-    const logs=S.logs;
-    const avgM=(logs.reduce((s,l)=>s+l.mood,0)/logs.length).toFixed(1);
-    const avgA=(logs.reduce((s,l)=>s+l.anxiety,0)/logs.length).toFixed(1);
-    const goodSleep=logs.filter(l=>['Bom','Ótimo'].includes(l.sleep));
-    const goodSleepMood=goodSleep.length?(goodSleep.reduce((s,l)=>s+l.mood,0)/goodSleep.length).toFixed(1):null;
-    const allT=logs.flatMap(l=>l.triggers||[]);
-    const tCount={};allT.forEach(t=>tCount[t]=(tCount[t]||0)+1);
-    const topT=Object.entries(tCount).sort((a,b)=>b[1]-a[1])[0];
-    const friendLogs=logs.filter(l=>l.triggers?.includes('Tempo com amigos'));
-    const friendMood=friendLogs.length?(friendLogs.reduce((s,l)=>s+l.mood,0)/friendLogs.length).toFixed(1):null;
-
-    let html=`<div class="card" style="background:linear-gradient(135deg,#eaf5f1,#fff)">
-      <div style="font-size:11px;color:#4a9e86;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Resumo</div>
-      <div style="display:flex;gap:12px">
-        <div style="flex:1"><div style="font-size:22px;font-weight:700;color:#2a7d63">${avgM}/5</div><div style="font-size:10px;color:#bbb">humor médio</div></div>
-        <div style="flex:1"><div style="font-size:22px;font-weight:700;color:#ff6b6b">${avgA}/10</div><div style="font-size:10px;color:#bbb">ansiedade</div></div>
-        <div style="flex:1"><div style="font-size:22px;font-weight:700;color:#4ecb8d">${logs.length}</div><div style="font-size:10px;color:#bbb">registros</div></div>
-      </div>
-    </div>`;
-
-    if(goodSleepMood) html+=`<div class="ins-card" style="background:#eaf5f1">
-      <div class="ins-tag" style="background:#e0dcfe;color:#1f6450">Padrão identificado</div>
-      <div class="ins-text">Seu humor chega a <strong>${goodSleepMood}/5</strong> nos dias com boa qualidade de sono — acima da sua média. Dormir bem é um investimento real na sua saúde mental.</div>
-    </div>`;
-
-    if(topT) html+=`<div class="ins-card" style="background:#fef0ee">
-      <div class="ins-tag" style="background:#fde0dc;color:#c0392b">Gatilho frequente</div>
-      <div class="ins-text">"<strong>${topT[0]}</strong>" aparece em <strong>${topT[1]}</strong> registros seus. Prestar atenção nesse padrão pode ajudar a antecipar dias difíceis.</div>
-    </div>`;
-
-    if(friendMood && parseFloat(friendMood)>parseFloat(avgM)) html+=`<div class="ins-card" style="background:#e8fdf3">
-      <div class="ins-tag" style="background:#c3f0da;color:#1a6b44">Ponto positivo</div>
-      <div class="ins-text">Tempo com amigos eleva seu humor para <strong>${friendMood}/5</strong>. Conexão social é uma das melhores ferramentas naturais contra ansiedade.</div>
-    </div>`;
-
-    html+=`<div class="ins-card" style="background:#faf5e8">
-      <div class="ins-tag" style="background:#fef0c0;color:#5c3d00">Dica</div>
-      <div class="ins-text">Continue registrando manhã, tarde e noite para descobrir em que parte do dia você se sente melhor ou pior.</div>
-    </div>`;
-
-    body.innerHTML=html;
 
   } else if (moreCurrentTab==='conta') {
     const u = S.user || {};
