@@ -11,6 +11,7 @@ rules_version = '2';
 //   habitDone/{uid}      — { <data>: [ids...], uid }
 //   logs/{autoId}        — { uid, date, mood, anxiety, sleep, triggers[], note, time }
 //   gratitude/{autoId}   — { uid, date, text }
+//   thoughts/{id}        — registro de pensamento (TCC) { uid, date, situation, thought, emotions[], ... }
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -53,6 +54,11 @@ service cloud.firestore {
       allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
     }
     match /gratitude/{gratId} {
+      allow read, update, delete: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    match /thoughts/{thoughtId} {
       allow read, update, delete: if signedIn() && resource.data.uid == request.auth.uid;
       allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
     }

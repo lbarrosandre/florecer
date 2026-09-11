@@ -104,6 +104,69 @@ body{background:#151520;min-height:100vh;display:flex;align-items:center;justify
 .hab-cmp{width:100%;font-size:11px;color:#999}
 .grat-quote{font-size:14px;color:#1f6450;font-style:italic;line-height:1.5;margin-top:6px}
 .home-wsum{font-size:12px;color:#666;line-height:1.55;margin-top:10px;padding-top:10px;border-top:1px solid #f3f3f3}
+/* ── Cuidar ── */
+.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{padding:8px 12px;border:1.5px solid #e8e8e8;border-radius:20px;background:#fff;font-size:12px;color:#555;cursor:pointer;font-family:'DM Sans',sans-serif}
+.chip.sel{border-color:#2a7d63;background:#eaf5f1;color:#1f6450;font-weight:600}
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tool-tile{background:#fff;border:1px solid #f0f0f0;border-radius:16px;padding:14px;text-align:left;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 1px 4px #0000000a}
+.tool-tile .tt-e{font-size:24px;display:block;margin-bottom:8px}
+.tool-tile b{display:block;font-size:13px;color:#1a1a1a;font-weight:600}
+.tool-tile small{display:block;font-size:11px;color:#aaa;margin-top:2px;line-height:1.35}
+.tool-row{display:flex;align-items:center;gap:12px;width:100%;background:#fff;border:1px solid #e9f1ed;border-radius:14px;padding:11px 14px;margin-bottom:8px;cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif}
+.tool-row .tr-e{font-size:20px;width:26px;text-align:center;flex-shrink:0}
+.tool-row .tr-t{flex:1;min-width:0}
+.tool-row b{display:block;font-size:13px;font-weight:600;color:#1a1a1a}
+.tool-row small{display:block;font-size:11px;color:#999;margin-top:1px}
+.tool-row .tr-go{color:#2a7d63;font-size:18px}
+.art-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #f3f3f3;cursor:pointer}
+.art-row:last-child{border-bottom:none}
+.art-row .ar-t{flex:1;font-size:13px;color:#333}
+.art-row small{font-size:11px;color:#bbb;white-space:nowrap}
+.art-row small.read{color:#2a7d63}
+.art-hero{font-size:40px;margin:6px 0 8px}
+.art-title{font-size:20px;font-weight:700;color:#1a1a1a;line-height:1.3;margin-bottom:4px}
+.art-meta{font-size:11px;color:#bbb;margin-bottom:16px}
+.art-body p{font-size:15px;color:#3a3a3a;line-height:1.75;margin-bottom:14px}
+.art-body ul{margin:0 0 14px 18px}
+.art-body li{font-size:14px;color:#3a3a3a;line-height:1.65;margin-bottom:6px}
+.art-src{font-size:11px;color:#aaa;line-height:1.5;border-top:1px solid #f0f0f0;padding-top:12px;margin-top:10px}
+.med-run{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:6px}
+.med-ring{position:relative;width:200px;height:200px;margin:10px 0 16px}
+.med-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.med-time{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:32px;font-weight:600;color:#1f6450;font-variant-numeric:tabular-nums}
+.med-time small{font-size:11px;color:#aaa;font-weight:500;margin-top:2px}
+.med-step{font-size:16px;color:#333;line-height:1.7;min-height:130px;max-width:330px;transition:opacity .4s}
+.med-ctrl{display:flex;gap:8px;width:100%;margin-top:16px}
+.med-ctrl .btn{padding:12px;font-size:14px}
+.btn-soft{background:#f2f2f2;color:#555}
+.med-dots{display:flex;gap:5px;justify-content:center;margin-top:10px}
+.med-dots i{width:6px;height:6px;border-radius:50%;background:#e2e2e2}
+.med-dots i.on{background:#2a7d63}
+.tr-prog{height:4px;background:#eee;border-radius:4px;margin:6px 0 16px;overflow:hidden}
+.tr-prog div{height:100%;background:#2a7d63;border-radius:4px;transition:width .3s}
+.tr-step{font-size:10px;color:#aaa;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.tr-q{font-size:18px;font-weight:600;color:#1a1a1a;line-height:1.35;margin:6px 0}
+.tr-help{font-size:13px;color:#888;line-height:1.55;margin-bottom:12px}
+.tr-hints{font-size:12px;color:#6a7a73;line-height:1.7;background:#f4faf7;border-radius:10px;padding:10px 12px;margin:10px 0}
+.tr-slider{margin:14px 0 4px}
+.tr-slider label{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:#444;margin-bottom:6px}
+.tr-slider label b{color:#1f6450;font-variant-numeric:tabular-nums}
+.tr-slider input[type=range]{width:100%;accent-color:#2a7d63}
+.tr-lbl{font-size:12px;font-weight:600;color:#555;margin:14px 0 6px}
+.tr-warn{font-size:12px;color:#b08a3e;min-height:16px;margin-top:8px}
+.tr-nav{display:flex;gap:8px;margin-top:8px}
+.trap{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid #eee;border-radius:12px;padding:10px 12px;margin-bottom:6px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.trap b{display:block;font-size:13px;color:#1a1a1a}
+.trap small{font-size:12px;color:#888;line-height:1.4}
+.trap.sel{border-color:#2a7d63;background:#eaf5f1}
+.cmp-row{margin:12px 0}
+.cmp-l{font-size:13px;color:#444;margin-bottom:5px;display:flex;justify-content:space-between}
+.cmp-l span:last-child{color:#888;font-variant-numeric:tabular-nums}
+.cmp-bar{height:7px;border-radius:5px;background:#f2f2f2;margin-top:3px;overflow:hidden}
+.cmp-bar div{height:100%;border-radius:5px}
+.th-lbl{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.05em;margin-top:10px}
+.th-txt{font-size:13px;color:#333;line-height:1.55;margin-top:2px;white-space:pre-wrap;word-break:break-word}
 .side-info{color:#ffffff25;font-size:11px;letter-spacing:.06em;text-transform:uppercase;line-height:2;text-align:center;max-width:120px}
 .phone-frame{width:390px;height:844px;background:#0d0d0d;border-radius:54px;padding:12px;box-shadow:0 0 0 1px #2a2a2a,0 40px 100px #00000090,inset 0 0 0 1px #1e1e1e;position:relative;flex-shrink:0}
 .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:36px;background:#0d0d0d;border-radius:0 0 22px 22px;z-index:20}
@@ -251,7 +314,7 @@ textarea.inp{resize:none;min-height:76px}
 .empathy-overlay{position:absolute;inset:0;background:#00000055;z-index:200;display:flex;align-items:flex-end;animation:fadeOv .2s ease}
 @keyframes fadeOv{from{opacity:0}to{opacity:1}}
 @keyframes twinkle{from{opacity:.2;transform:scale(1)}to{opacity:1;transform:scale(1.4)}}
-.empathy-sheet{background:#fff;border-radius:28px 28px 0 0;padding:28px 24px 40px;width:100%;animation:slideUp3 .3s ease}
+.empathy-sheet{background:#fff;border-radius:28px 28px 0 0;padding:28px 24px 40px;width:100%;max-height:94%;overflow-y:auto;animation:slideUp3 .3s ease}
 @keyframes slideUp3{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .emp-emoji{font-size:52px;text-align:center;display:block;margin-bottom:14px}
 .emp-title{font-size:19px;font-weight:600;color:#1a1a1a;text-align:center;margin-bottom:10px;line-height:1.35}
@@ -629,6 +692,7 @@ textarea.inp{resize:none;min-height:76px}
       window.S.habits = JSON.parse(localStorage.getItem('fl_habits_default') || '[{"id":1,"name":"Beber 2L de água","icon":"💧","streak":0},{"id":2,"name":"Exercício físico","icon":"🏃","streak":0},{"id":3,"name":"Meditação","icon":"🧘","streak":0}]');
       window.S.gratitude = [];
       window.S.habitDone = {};
+      window.S.thoughts = [];
       localStorage.clear();
     };
 
@@ -692,8 +756,29 @@ textarea.inp{resize:none;min-height:76px}
       } catch (e) {
         console.log('Sync adiado, mantendo dados locais:', e && e.message);
       }
+      // Registros de pensamento em bloco separado: se as regras ainda não
+      // liberarem a coleção, o resto do sync não é afetado.
+      try {
+        const tSnap = await db.collection('thoughts').where('uid','==',uid).get();
+        const T = mergeById(tSnap.docs.map((d) => d.data()), window.S.thoughts);
+        window.S.thoughts = T.merged.sort(byDateDesc);
+        T.localOnly.forEach((t) => db.collection('thoughts').doc(String(t.id)).set({ ...t, uid }).catch(() => {}));
+        window.save();
+      } catch (e) {
+        console.log('Sync de registros de pensamento adiado:', e && e.message);
+      }
     }
     window.syncFromCloud = syncFromCloud;
+
+    window.saveThoughtCloud = async (t) => {
+      const uid = window.S.user?.uid;
+      if (!uid) return;
+      try { await db.collection('thoughts').doc(String(t.id)).set({ ...t, uid }); } catch(e) { console.log(e); }
+    };
+    window.deleteThoughtCloud = async (id) => {
+      if (!window.S.user?.uid) return;
+      try { await db.collection('thoughts').doc(String(id)).delete(); } catch(e) { console.log(e); }
+    };
 
     window.saveLogCloud = async (log) => {
       const uid = window.S.user?.uid;
@@ -970,7 +1055,7 @@ textarea.inp{resize:none;min-height:76px}
       <div class="bnav">
         <div class="bni active" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
         <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
-        <div class="bni" onclick="goTo('breath')"><span class="bni-icon">🫁</span><span class="bni-lbl">Respirar</span></div>
+        <div class="bni" onclick="goTo('care')"><span class="bni-icon">🌿</span><span class="bni-lbl">Cuidar</span></div>
         <div class="bni" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
         <div class="bni" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
       </div>
@@ -1060,7 +1145,7 @@ textarea.inp{resize:none;min-height:76px}
     <div class="screen" id="s-breath">
       <div class="status"><span>9:41</span><span>100%</span></div>
       <div style="padding:8px 16px 4px;display:flex;align-items:center;gap:10px;flex-shrink:0">
-        <button onclick="goTo('home')" style="background:none;border:none;font-size:22px;cursor:pointer">‹</button>
+        <button onclick="goTo('care')" style="background:none;border:none;font-size:22px;cursor:pointer">‹</button>
         <span style="font-size:15px;font-weight:600">Respiração guiada</span>
       </div>
       <div class="breath-container">
@@ -1086,10 +1171,33 @@ textarea.inp{resize:none;min-height:76px}
       <div class="bnav">
         <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
         <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
-        <div class="bni active" onclick="goTo('breath')"><span class="bni-icon">🫁</span><span class="bni-lbl">Respirar</span></div>
+        <div class="bni active" onclick="goTo('care')"><span class="bni-icon">🌿</span><span class="bni-lbl">Cuidar</span></div>
         <div class="bni" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
         <div class="bni" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
       </div>
+    </div>
+
+    <!-- ══════════════════════════════ CUIDAR ══ -->
+    <div class="screen" id="s-care">
+      <div class="status"><span>9:41</span><span>100%</span></div>
+      <div class="scroll pad" id="care-body"></div>
+      <div class="bnav">
+        <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
+        <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
+        <div class="bni active" onclick="goTo('care')"><span class="bni-icon">🌿</span><span class="bni-lbl">Cuidar</span></div>
+        <div class="bni" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
+        <div class="bni" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ FERRAMENTA (meditar, pensamento, leitura) ══ -->
+    <div class="screen" id="s-tool">
+      <div class="status"><span>9:41</span><span>100%</span></div>
+      <div style="padding:8px 16px 4px;display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <button onclick="toolBack()" style="background:none;border:none;font-size:22px;cursor:pointer;padding:0" aria-label="Voltar">‹</button>
+        <span style="font-size:15px;font-weight:600;color:#1a1a1a" id="tool-title"></span>
+      </div>
+      <div class="scroll pad" style="padding-top:4px" id="tool-body"></div>
     </div>
 
     <!-- ══════════════════════════════ HISTORY ══ -->
@@ -1107,7 +1215,7 @@ textarea.inp{resize:none;min-height:76px}
       <div class="bnav">
         <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
         <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
-        <div class="bni" onclick="goTo('breath')"><span class="bni-icon">🫁</span><span class="bni-lbl">Respirar</span></div>
+        <div class="bni" onclick="goTo('care')"><span class="bni-icon">🌿</span><span class="bni-lbl">Cuidar</span></div>
         <div class="bni active" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
         <div class="bni" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
       </div>
@@ -1129,7 +1237,7 @@ textarea.inp{resize:none;min-height:76px}
       <div class="bnav">
         <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
         <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
-        <div class="bni" onclick="goTo('breath')"><span class="bni-icon">🫁</span><span class="bni-lbl">Respirar</span></div>
+        <div class="bni" onclick="goTo('care')"><span class="bni-icon">🌿</span><span class="bni-lbl">Cuidar</span></div>
         <div class="bni" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
         <div class="bni active" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
       </div>
@@ -1170,6 +1278,7 @@ textarea.inp{resize:none;min-height:76px}
             <b>2</b> que você <b>cheira</b><br>
             <b>1</b> que você <b>saboreia</b>
           </div>
+          <button class="btn btn-p" style="margin-top:10px;padding:10px;font-size:13px" onclick="runTool('ground')">Fazer passo a passo →</button>
         </div>
 
         <div class="sos-technique">
@@ -1207,7 +1316,7 @@ textarea.inp{resize:none;min-height:76px}
       <div class="bnav">
         <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
         <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
-        <div class="bni" onclick="goTo('breath')"><span class="bni-icon">🫁</span><span class="bni-lbl">Respirar</span></div>
+        <div class="bni" onclick="goTo('care')"><span class="bni-icon">🌿</span><span class="bni-lbl">Cuidar</span></div>
         <div class="bni" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
         <div class="bni" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
       </div>
@@ -1220,7 +1329,7 @@ textarea.inp{resize:none;min-height:76px}
   Navegue<br>pelas telas<br><br>
   🏠 Início<br>
   ✏️ Registrar<br>
-  🫁 Respirar<br>
+  🌿 Cuidar<br>
   📅 Histórico<br>
   ☰ Mais<br><br>
   🆘 SOS<br>no Início
@@ -1237,14 +1346,16 @@ const S = {
   ])),
   gratitude: JSON.parse(localStorage.getItem('fl_grat') || '[]'),
   habitDone: JSON.parse(localStorage.getItem('fl_hdone') || '{}'),
+  thoughts: JSON.parse(localStorage.getItem('fl_thoughts') || '[]'),
   progress: (function(){
-    const d = {careDays:[], badges:{}, breathSessions:0, sosOpens:0, lastActive:null, seenStage:0};
+    const d = {careDays:[], badges:{}, breathSessions:0, sosOpens:0, lastActive:null, seenStage:0, meditSessions:0, meditMinutes:0, readArticles:[]};
     try {
       const p = JSON.parse(localStorage.getItem('fl_progress') || '{}');
       if (p && typeof p === 'object') Object.assign(d, p);
     } catch (e) {}
     if (!Array.isArray(d.careDays)) d.careDays = [];
     if (!d.badges || typeof d.badges !== 'object') d.badges = {};
+    if (!Array.isArray(d.readArticles)) d.readArticles = [];
     return d;
   })(),
   logForm: {mood:null,anx:null,sleep:null,triggers:[],emotions:[],prompt:'',note:'',time:'Manhã'},
@@ -1271,6 +1382,7 @@ function save() {
   localStorage.setItem('fl_habits', JSON.stringify(S.habits));
   localStorage.setItem('fl_grat', JSON.stringify(S.gratitude));
   localStorage.setItem('fl_hdone', JSON.stringify(S.habitDone));
+  localStorage.setItem('fl_thoughts', JSON.stringify(S.thoughts || []));
   localStorage.setItem('fl_progress', JSON.stringify(S.progress));
 }
 
@@ -1304,6 +1416,10 @@ const BADGES = [
   {id:'recomeco',        emoji:'🔄', nome:'Recomeço',         dica:'Voltar depois de um tempo longe também conta.', check:()=> false},
   {id:'dia-inteiro',     emoji:'🌙', nome:'Dia inteiro',      dica:'Registre manhã, tarde e noite no mesmo dia.',   check:()=> hasFullDay()},
   {id:'autoconhecimento',emoji:'📊', nome:'Autoconhecimento', dica:'Faça 3 registros e veja seu relatório.',      check:()=> S.logs.length >= 3},
+  {id:'mente-quieta',    emoji:'🪷', nome:'Mente quieta',     dica:'5 sessões de meditação.',                check:(p)=> (p.meditSessions||0) >= 5},
+  {id:'presenca',        emoji:'🕯️', nome:'Presença',         dica:'60 minutos de meditação no total.',      check:(p)=> (p.meditMinutes||0) >= 60},
+  {id:'outro-olhar',     emoji:'🔍', nome:'Outro olhar',      dica:'Faça 3 registros de pensamento.',        check:()=> (S.thoughts||[]).length >= 3},
+  {id:'curiosidade',     emoji:'📖', nome:'Curiosidade',      dica:'Leia 5 conteúdos em Cuidar.',            check:(p)=> (p.readArticles||[]).length >= 5},
 ];
 
 function hasFullDay(){
@@ -1363,6 +1479,16 @@ function bumpBreathSession(){
   progressSave();
   markCareDay();
 }
+function bumpMeditation(min){
+  const p = S.progress;
+  p.meditSessions = (p.meditSessions || 0) + 1;
+  p.meditMinutes = (p.meditMinutes || 0) + min;
+  const wk = weekKey();
+  if (!p.meditWeek || p.meditWeek.week !== wk) p.meditWeek = { week: wk, count: 0 };
+  p.meditWeek.count++;
+  progressSave();
+  markCareDay();
+}
 function bumpSos(){
   S.progress.sosOpens = (S.progress.sosOpens || 0) + 1;
   progressSave();
@@ -1375,6 +1501,10 @@ function mergeProgress(cloud, local){
     careDays: days,
     badges: { ...(local.badges||{}), ...(cloud.badges||{}) },
     breathSessions: Math.max(cloud.breathSessions||0, local.breathSessions||0),
+    meditSessions: Math.max(cloud.meditSessions||0, local.meditSessions||0),
+    meditMinutes: Math.max(cloud.meditMinutes||0, local.meditMinutes||0),
+    meditWeek: local.meditWeek || cloud.meditWeek || null,
+    readArticles: [...new Set([...(cloud.readArticles||[]), ...(local.readArticles||[])])],
     sosOpens: Math.max(cloud.sosOpens||0, local.sosOpens||0),
     lastActive: [cloud.lastActive, local.lastActive].filter(Boolean).sort().pop() || null,
     seenStage: Math.max(cloud.seenStage||0, local.seenStage||0, plantStageIndex(days.length)),
@@ -1579,6 +1709,7 @@ const CHALLENGES = [
   { id:'grat3', text:'Escrever 3 gratidões esta semana',     target:3, count:()=> gratThisWeek().length },
   { id:'noite', text:'Fazer 1 registro à noite esta semana', target:1, count:()=> logsThisWeek().filter(l => l.time === 'Noite').length },
   { id:'resp3', text:'Fazer 3 sessões de respiração',        target:3, count:()=> (S.progress.breathWeek && S.progress.breathWeek.week === weekKey()) ? S.progress.breathWeek.count : 0 },
+  { id:'medit2', text:'Meditar 2 vezes esta semana',         target:2, count:()=> (S.progress.meditWeek && S.progress.meditWeek.week === weekKey()) ? S.progress.meditWeek.count : 0 },
 ];
 function currentChallenge(){
   const wk = weekKey();
@@ -1647,12 +1778,13 @@ function renderJornada(){
 // ═══════════ NAVIGATION ═══════════
 function goTo(screen) {
   // Bloquear acesso às telas internas sem autenticação
-  const protectedScreens = ['home','log','breath','history','more','sos','jornada'];
+  const protectedScreens = ['home','log','breath','history','more','sos','jornada','care','tool'];
   if (protectedScreens.includes(screen) && !S.user) {
     console.warn('Acesso bloqueado: usuário não autenticado');
     return;
   }
   stopBreath();
+  stopMed();
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('s-' + screen).classList.add('active');
   if (screen === 'home') renderHome();
@@ -1660,6 +1792,8 @@ function goTo(screen) {
   if (screen === 'history') renderHistory();
   if (screen === 'more') renderMore();
   if (screen === 'jornada') renderJornada();
+  if (screen === 'care') renderCare();
+  if (screen === 'tool') renderTool();
   if (screen === 'sos') bumpSos();
 }
 
@@ -2021,7 +2155,7 @@ function saveLog() {
   save();
   if (window.saveLogCloud) window.saveLogCloud(newLog);
   markCareDay();
-  showEmpathy(S.logForm.mood, S.logForm.anx, S.logForm.triggers);
+  showEmpathy(newLog);
 }
 
 // ═══════════ COVER / LOGIN ═══════════
@@ -2126,7 +2260,8 @@ const ANXIETY_EXTRA = {
   medium: '\n\nUm pouco de ansiedade é normal. Se quiser, o exercício de respiração guiada pode ajudar a baixar esse nível.'
 };
 
-function showEmpathy(mood, anxiety, triggers) {
+function showEmpathy(log) {
+  const mood = log.mood, anxiety = log.anxiety;
   const e = EMPATHY[mood] || EMPATHY[3];
   let text = e.text;
   if (anxiety >= 7) text += ANXIETY_EXTRA.high;
@@ -2140,11 +2275,9 @@ function showEmpathy(mood, anxiety, triggers) {
       <span class="emp-emoji">${e.emoji}</span>
       <div class="emp-title">${e.title}</div>
       <div class="emp-text">${text.replace(/\n\n/g,'<br><br>')}</div>
-      <div class="emp-tip">
-        <div class="emp-tip-lbl">💡 Uma sugestão gentil</div>
-        ${e.tip}
-      </div>
-      <button class="btn btn-p" onclick="closeEmpathy()">Entendi, obrigado 🙏</button>
+      <div class="emp-tip-lbl" style="margin-bottom:8px">Se quiser, experimente agora</div>
+      ${suggestionsFor(log).map(k => toolRow(k, 'empAct')).join('')}
+      <button class="btn btn-soft" style="margin-top:8px" onclick="closeEmpathy()">Voltar ao início</button>
       ${anxiety >= 6 ? `<button class="btn" style="background:#fef0ee;color:#c0392b;margin-top:8px" onclick="closeEmpathy();goTo('sos')">Preciso de ajuda agora</button>` : ''}
     </div>
   `;
@@ -2252,6 +2385,610 @@ function runBreathPhase() {
       if (breathRunning) runBreathPhase();
     }
   }, 1000);
+}
+
+// ═══════════ CUIDAR — ferramentas práticas ═══════════
+// Textos das práticas e leituras: revisar com psicólogo(a) antes do lançamento (DP-C2).
+
+const PRACTICES = {
+  resp: {emoji:'🌬️', title:'Respiração consciente', min:3, desc:'Acompanhar a respiração e voltar com gentileza.', steps:[
+    {x:'Encontre uma posição confortável, sentando ou deitando. Se quiser, feche os olhos.', d:20},
+    {x:'Perceba o ar entrando pelo nariz… e saindo. Não precisa mudar nada.', d:30},
+    {x:'Escolha um ponto para acompanhar: a barriga subindo e descendo, ou o ar passando pelas narinas.', d:30},
+    {x:'Se a mente fugir para outro pensamento, tudo bem — isso é normal. Perceba para onde ela foi e volte com gentileza para a respiração.', d:40},
+    {x:'Continue acompanhando cada respiração, uma de cada vez.', d:40},
+    {x:'Aos poucos, amplie a atenção para o corpo inteiro e para os sons ao redor. Quando quiser, abra os olhos.', d:20},
+  ]},
+  bodyscan: {emoji:'🧘', title:'Escaneamento corporal', min:6, desc:'Percorrer o corpo com atenção, soltando tensões.', steps:[
+    {x:'Deite ou sente de forma confortável. Feche os olhos se quiser e faça três respirações mais lentas.', d:30},
+    {x:'Leve a atenção aos pés. Perceba o contato com o chão, a temperatura, qualquer sensação — sem julgar.', d:40},
+    {x:'Suba para as pernas: panturrilhas, joelhos, coxas. Se encontrar tensão, só perceba. Na expiração, deixe soltar um pouco.', d:45},
+    {x:'Agora o quadril e a barriga. Perceba a barriga se movendo com a respiração.', d:40},
+    {x:'O peito e as costas. Sinta o apoio das costas e o ritmo da respiração.', d:45},
+    {x:'As mãos, os braços e os ombros. Os ombros costumam guardar tensão — deixe que desçam um pouco.', d:45},
+    {x:'O pescoço, o rosto, a mandíbula, a testa. Deixe a mandíbula soltar, os dentes sem encostar.', d:45},
+    {x:'Agora sinta o corpo inteiro de uma vez, respirando. Ele carregou você até aqui hoje.', d:40},
+    {x:'Mexa devagar os dedos das mãos e dos pés. Quando quiser, abra os olhos.', d:30},
+  ]},
+  compaixao: {emoji:'💛', title:'Pausa de autocompaixão', min:4, desc:'Tratar a si com a gentileza que daria a quem ama.', steps:[
+    {x:'Pense em uma situação que está pesando para você agora. Não a mais difícil de todas — algo moderado.', d:30},
+    {x:'Perceba onde isso aparece no corpo: aperto no peito, nó na garganta, tensão nos ombros.', d:30},
+    {x:'Diga para si, em silêncio: <b>“Este é um momento difícil.”</b> Ou com suas palavras: “Isso dói.” “Está pesado.”', d:30},
+    {x:'Agora lembre: <b>“Dificuldade faz parte da vida.”</b> Outras pessoas também se sentem assim. Você não está só nisso.', d:40},
+    {x:'Se quiser, coloque a mão no peito ou em outro lugar que traga conforto. Sinta o calor da mão.', d:30},
+    {x:'Diga para si: <b>“Que eu possa ser gentil comigo neste momento.”</b> Ou pergunte: o que eu diria a alguém que amo nesta situação?', d:50},
+    {x:'Fique mais um pouco com essa gentileza. Respire. Quando quiser, volte devagar.', d:30},
+  ]},
+  folhas: {emoji:'🍃', title:'Folhas no rio', min:4, desc:'Observar os pensamentos passando, sem entrar em cada um.', steps:[
+    {x:'Sente de forma confortável e feche os olhos, se quiser. Respire algumas vezes com calma.', d:25},
+    {x:'Imagine um rio calmo, com folhas passando devagar sobre a água.', d:25},
+    {x:'Cada vez que surgir um pensamento — uma palavra, uma imagem, uma preocupação — coloque-o sobre uma folha e deixe o rio levar.', d:45},
+    {x:'Não precisa empurrar a folha nem segurá-la. Pensamentos agradáveis e desagradáveis vão no mesmo rio.', d:45},
+    {x:'Se perceber que entrou no pensamento e esqueceu do rio, tudo bem. Isso acontece. Só volte para a margem e continue.', d:50},
+    {x:'Você é quem observa o rio — não o rio. Os pensamentos passam; você continua aqui.', d:30},
+    {x:'Aos poucos, deixe a imagem do rio sumir. Perceba o corpo e os sons ao redor, e abra os olhos.', d:20},
+  ]},
+  pmr: {emoji:'🌙', title:'Relaxamento muscular', min:6, desc:'Contrair e soltar os músculos. Bom antes de dormir.', steps:[
+    {x:'Deite ou sente de forma confortável. Você vai contrair um grupo de músculos por 5 segundos e depois soltar. Com firmeza, sem dor.', d:30},
+    {x:'<b>Mãos:</b> feche os punhos com força… segure… e solte. Perceba a diferença entre tensão e relaxamento.', d:35},
+    {x:'<b>Braços:</b> dobre os cotovelos e contraia os braços… segure… e solte, deixando-os pesados.', d:35},
+    {x:'<b>Ombros:</b> suba os ombros em direção às orelhas… segure… e deixe cair.', d:35},
+    {x:'<b>Rosto:</b> aperte os olhos e franza a testa… segure… e solte. Deixe a mandíbula relaxar.', d:35},
+    {x:'<b>Barriga:</b> contraia o abdômen… segure… e solte, respirando fundo.', d:35},
+    {x:'<b>Pernas:</b> estique as pernas e puxe a ponta dos pés na sua direção… segure… e solte.', d:35},
+    {x:'<b>Pés:</b> curve os dedos dos pés para baixo… segure… e solte.', d:30},
+    {x:'Percorra o corpo com a atenção. Se algum lugar ainda estiver tenso, contraia e solte mais uma vez.', d:40},
+    {x:'Fique aqui, respirando devagar, sentindo o corpo pesado e apoiado. Se for hora de dormir, pode simplesmente continuar assim.', d:50},
+  ]},
+  ground: {emoji:'👁️', title:'Aterramento 5-4-3-2-1', min:0, desc:'Voltar ao presente pelos sentidos.', steps:[
+    {x:'Pare por um instante. Você está aqui, agora. Vamos trazer a atenção para os sentidos, um de cada vez.'},
+    {x:'Olhe ao redor e nomeie <b>5 coisas que você vê</b>. Pode ser em voz baixa: uma cor, um objeto, uma luz.'},
+    {x:'Agora <b>4 coisas que você pode tocar</b>. A roupa na pele, o chão sob os pés, a textura de algo perto.'},
+    {x:'<b>3 coisas que você ouve</b>. Sons perto, sons longe, até o som da própria respiração.'},
+    {x:'<b>2 cheiros</b> que você percebe. Se nada vier, lembre de dois cheiros de que você gosta.'},
+    {x:'<b>1 gosto</b> — o da sua boca agora, ou um gole de água prestando atenção nele.'},
+    {x:'Respire fundo uma vez. Perceba se algo mudou, mesmo que pouco. Você voltou para o presente.'},
+  ]},
+};
+
+const ARTICLES = [
+  {id:'ansiedade', emoji:'🌀', title:'O que é ansiedade (e por que ela existe)', try:'breath478', body:[
+    'Ansiedade é o sistema de alarme do corpo. Diante de algo que parece ameaça, ele acelera o coração e a respiração e deixa os músculos prontos para agir. Esse mecanismo protegeu a nossa espécie por muito tempo.',
+    'O problema é que o alarme não diferencia um perigo real de um e-mail difícil ou de um pensamento sobre o futuro. Às vezes ele dispara alto demais, por tempo demais — e aí pesa.',
+    'Sentir ansiedade não significa que há algo errado com você. Tentar “não sentir” costuma aumentar a sensação. O que ajuda é dar ao corpo sinais de segurança — como expirar devagar — e olhar com calma para o pensamento que acendeu o alarme.',
+    'Se a ansiedade atrapalha seu dia a dia com frequência, conversar com um profissional de saúde mental faz muita diferença.'],
+    src:'Base: resposta de estresse (“luta ou fuga”) e modelos de ansiedade da Terapia Cognitivo-Comportamental.'},
+  {id:'emocoes', emoji:'🎨', title:'Emoções não são boas ou ruins', try:'compaixao', body:[
+    'Tristeza, raiva, medo e culpa costumam ser chamadas de “emoções negativas”. Mas todas têm função: a tristeza pede pausa e acolhimento; o medo protege; a raiva sinaliza que um limite foi ultrapassado; a culpa ajuda a reparar.',
+    'Algumas emoções são desconfortáveis — isso é diferente de serem erradas. Quando brigamos com o que sentimos, somamos uma segunda camada de sofrimento: “estou triste” vira “estou triste e não deveria estar”.',
+    'Dar nome ao que se sente já ajuda. Pesquisas mostram que nomear a emoção (“isso é frustração”) tende a diminuir a intensidade dela. É por isso que o Florescer pede palavras, não só um número.'],
+    src:'Base: pesquisas sobre rotulação de afeto (affect labeling) e aceitação emocional.'},
+  {id:'sono', emoji:'😴', title:'Sono e humor andam juntos', try:'pmr', body:[
+    'Uma noite mal dormida deixa as áreas do cérebro ligadas às emoções mais reativas e diminui a capacidade de frear impulsos. Por isso tudo parece mais pesado e irritante no dia seguinte.',
+    'O caminho inverso também existe: ansiedade e tristeza atrapalham o sono. Um alimenta o outro — e cuidar de um costuma ajudar o outro.',
+    'Algumas bases simples: acordar em horário parecido todos os dias, pegar luz natural pela manhã, diminuir telas na última hora, cafeína só até o começo da tarde. Se o sono não vier em uns 20 minutos, levante e faça algo calmo até sentir sono.',
+    'No seu relatório, a seção “Sono e humor” mostra como isso aparece nos seus dias.'],
+    src:'Base: pesquisas sobre sono e regulação emocional; orientações de higiene do sono e da TCC para insônia.'},
+  {id:'pensamentos', emoji:'💭', title:'Pensamentos não são fatos', try:'thought', body:[
+    'A mente produz pensamentos o tempo todo — muitos automáticos, rápidos e convincentes: “vou falhar”, “ninguém se importa”, “fiz tudo errado”.',
+    'A Terapia Cognitivo-Comportamental (TCC) parte de uma ideia simples: não é só o que acontece que nos afeta, mas a interpretação que fazemos. E interpretações podem ser examinadas.',
+    'Examinar não é “pensar positivo”. É perguntar: que evidências eu tenho? Existe outra explicação? O que eu diria a alguém que amo nessa situação? O objetivo é um pensamento mais justo — não necessariamente mais alegre.'],
+    src:'Base: modelo cognitivo de Aaron Beck, que fundamenta a TCC.'},
+  {id:'armadilhas', emoji:'🪤', title:'Armadilhas de pensamento', try:'thought', body:[
+    'Quando estamos mal, a mente cai em atalhos previsíveis. A TCC chama esses atalhos de distorções cognitivas. Algumas das mais comuns:',
+    '<ul><li><b>Catastrofizar</b> — imaginar o pior cenário como se fosse certo.</li><li><b>Leitura mental</b> — ter certeza do que o outro está pensando.</li><li><b>Tudo ou nada</b> — “se não foi perfeito, foi um fracasso”.</li><li><b>Generalizar</b> — “sempre dá errado”, “nunca consigo”.</li><li><b>Rotular</b> — “sou um fracasso” em vez de “errei nisso”.</li><li><b>“Deveria”</b> — regras rígidas sobre como você ou os outros têm que ser.</li></ul>',
+    'Perceber a armadilha já tira um pouco da força dela. No registro de pensamento, você pode marcar as que aparecerem.'],
+    src:'Base: distorções cognitivas descritas por Aaron Beck e David Burns.'},
+  {id:'respirar', emoji:'🫁', title:'Por que respirar devagar acalma', try:'calm', body:[
+    'A respiração é uma das poucas funções automáticas que também podemos controlar — e ela conversa direto com o sistema nervoso.',
+    'Ao inspirar, o coração acelera um pouco; ao expirar, desacelera. Quando a expiração fica mais longa que a inspiração, o corpo recebe um sinal de segurança e o sistema de “descanso” (parassimpático) ganha espaço.',
+    'Poucos minutos de respiração lenta já costumam mudar os batimentos e a sensação de calma. Não precisa ser perfeito: se ficar desconfortável, volte ao normal e tente de novo com um ritmo mais curto.'],
+    src:'Base: estudos sobre respiração lenta, variabilidade da frequência cardíaca e nervo vago.'},
+  {id:'autocompaixao', emoji:'💛', title:'Autocompaixão não é autopiedade', try:'compaixao', body:[
+    'Autocompaixão é tratar a si com a mesma gentileza que você teria com alguém querido passando por um momento difícil.',
+    'Não é passar a mão na cabeça nem desistir de melhorar. As pesquisas apontam o contrário: quem é mais autocompassivo tende a se recuperar melhor de erros e a manter a motivação, porque o medo de falhar pesa menos.',
+    'Ela tem três partes: perceber que dói (atenção plena), lembrar que dificuldade faz parte da vida de todo mundo (humanidade compartilhada) e oferecer a si uma palavra gentil (bondade).'],
+    src:'Base: pesquisas de Kristin Neff e Christopher Germer sobre autocompaixão.'},
+  {id:'ruminacao', emoji:'🔁', title:'Quando pensar vira andar em círculos', try:'folhas', body:[
+    'Ruminar é repassar a mesma preocupação ou lembrança várias vezes, sem chegar a uma solução. Parece que estamos resolvendo — mas o efeito costuma ser o contrário: mais tristeza e ansiedade.',
+    'Um teste simples: depois de 10 minutos pensando nisso, surgiu algum próximo passo concreto? Se sim, é resolução de problema — anote o passo. Se não, provavelmente é ruminação.',
+    'O que ajuda: levar a atenção para o corpo e os sentidos, fazer algo com as mãos, se movimentar, ou observar os pensamentos passando sem entrar em cada um.'],
+    src:'Base: pesquisas de Susan Nolen-Hoeksema sobre ruminação; técnicas de desfusão da Terapia de Aceitação e Compromisso (ACT).'},
+  {id:'movimento', emoji:'🚶', title:'Movimento e humor', try:'bodyscan', body:[
+    'Atividade física é uma das estratégias mais estudadas para o humor. Ela melhora o sono, reduz a tensão do corpo e está associada a menos sintomas de ansiedade e depressão.',
+    'Não precisa ser academia. Caminhar 10 a 20 minutos, dançar uma música, subir escadas, alongar — tudo conta. Regularidade importa mais que intensidade.',
+    'Quando falta energia, a motivação costuma vir depois da ação, não antes. Começar pequeno — “só 5 minutos” — é uma estratégia usada na terapia, chamada ativação comportamental.'],
+    src:'Base: revisões sobre exercício físico e saúde mental; ativação comportamental.'},
+  {id:'ajuda', emoji:'🤝', title:'Quando procurar ajuda profissional', try:null, body:[
+    'O Florescer é um apoio para o dia a dia, mas não substitui acompanhamento com profissionais de psicologia ou psiquiatria.',
+    'Vale procurar ajuda quando a tristeza ou a ansiedade duram semanas e atrapalham trabalho, estudos ou relações; quando o sono ou o apetite mudaram muito; quando você tem se isolado; ou quando usa álcool ou outras substâncias para aguentar.',
+    '<b>Se surgirem pensamentos de se machucar ou de não querer viver, procure ajuda agora:</b> CVV pelo telefone 188 (24 horas, gratuito) ou em cvv.org.br. Em emergência, SAMU 192 ou o pronto-socorro mais próximo.',
+    'Pelo SUS, as Unidades Básicas de Saúde e os CAPS oferecem atendimento em saúde mental. Muitas faculdades de psicologia têm clínicas-escola com valores acessíveis.'],
+    src:'Base: orientações do CVV e da rede de atenção psicossocial do SUS.'},
+];
+
+// Registro único de ferramentas — usado no hub, nas sugestões pós-registro e nas leituras.
+function toolDef(key){
+  if (key.startsWith('art:')) {
+    const a = ARTICLES.find(x => x.id === key.slice(4));
+    return a && {emoji:'📖', title:a.title, sub:'Leitura de 1 minuto'};
+  }
+  if (PRACTICES[key]) {
+    const p = PRACTICES[key];
+    return {emoji:p.emoji, title:p.title, sub: p.min ? p.min + ' min · prática guiada' : 'No seu tempo · passo a passo'};
+  }
+  return ({
+    breath478: {emoji:'🫁', title:'Respiração 4-7-8', sub:'2 min · reduz a ativação do corpo'},
+    calm:      {emoji:'🫁', title:'Respiração para acalmar', sub:'2 min · expiração mais longa'},
+    thought:   {emoji:'🧠', title:'Registro de pensamento', sub:'5–10 min · olhar o pensamento de outro ângulo'},
+    gratidao:  {emoji:'🙏', title:'Guardar em gratidão', sub:'Anotar o que fez bem hoje'},
+    meditate:  {emoji:'🧘', title:'Meditar', sub:'Timer e práticas guiadas'},
+  })[key] || null;
+}
+function toolRow(key, handler){
+  const t = toolDef(key);
+  if (!t) return '';
+  return `<button class="tool-row" onclick="${handler || 'runTool'}('${key}')"><span class="tr-e">${t.emoji}</span>
+    <span class="tr-t"><b>${t.title}</b><small>${t.sub}</small></span><span class="tr-go">›</span></button>`;
+}
+
+function currentScreen(){ const el = document.querySelector('.screen.active'); return el ? el.id.slice(2) : 'home'; }
+
+let TOOL = {kind:null, arg:null, back:null};
+function openTool(kind, arg){
+  const from = currentScreen();
+  TOOL = {kind, arg, back: from === 'tool' ? {kind: TOOL.kind, arg: TOOL.arg, back: TOOL.back} : {screen: from}};
+  goTo('tool');
+}
+function runTool(key){
+  if (key.startsWith('art:')) return openTool('learn', key.slice(4));
+  if (PRACTICES[key]) return openTool('practice', key);
+  if (key === 'breath478' || key === 'calm') {
+    goTo('breath');
+    const idx = {'478':0, box:1, calm:2}[key === 'calm' ? 'calm' : '478'];
+    const tab = document.querySelectorAll('.breath-tab')[idx];
+    if (tab) selBreath(key === 'calm' ? 'calm' : '478', tab);
+    return;
+  }
+  if (key === 'thought') { TR = newTR(); return openTool('thought'); }
+  if (key === 'timer') return openTool('practice', 'timer');
+  if (key === 'gratidao') { moreTab('gratitude'); goTo('more'); return; }
+  if (key === 'meditate') return openTool('meditate');
+  if (key === 'thoughts') return openTool('thoughts');
+}
+// Ação vinda do modal pós-registro: fecha o modal sem voltar para a Home.
+function empAct(key){
+  const el = document.getElementById('empathy-overlay');
+  if (el) el.remove();
+  if (key === 'thought') {
+    const last = S.logs[S.logs.length - 1];
+    const pre = last ? (last.emotions || []).filter(k => EMO_INDEX[k] && (EMO_INDEX[k].q === 'pesadas' || EMO_INDEX[k].q === 'agitadas')) : [];
+    TR = newTR(pre);
+    return openTool('thought');
+  }
+  runTool(key);
+}
+
+function toolBack(){
+  if (TOOL.kind === 'thought' && TR && TR.step >= 2 && TR.step <= TR_STEPS) { trPrev(); return; }
+  if (TOOL.kind === 'thought' && TR && TR.step === 1 && (TR.situation.trim() || TR.thought.trim())
+      && !confirm('Sair sem salvar este registro?')) return;
+  if (TOOL.kind === 'practice' && MED && MED.started && !MED.finished) {
+    if (medOverall() >= 60000) { medFinish(false); return; }
+    if (!confirm('Encerrar a prática?')) return;
+  }
+  stopMed();
+  const b = TOOL.back || {screen:'care'};
+  if (b.kind) { TOOL = {kind:b.kind, arg:b.arg, back:b.back}; goTo('tool'); }
+  else goTo(b.screen || 'care');
+}
+
+function renderTool(keepScroll){
+  const body = document.getElementById('tool-body');
+  const title = document.getElementById('tool-title');
+  if (!keepScroll) body.scrollTop = 0;
+  const k = TOOL.kind;
+  if (k === 'learn') { title.textContent = 'Aprender'; renderArticle(body, TOOL.arg); }
+  else if (k === 'meditate') { title.textContent = 'Meditar'; renderMeditate(body); }
+  else if (k === 'practice') { title.textContent = TOOL.arg === 'timer' ? 'Meditação livre' : (PRACTICES[TOOL.arg] || {}).title || ''; startPractice(body, TOOL.arg); }
+  else if (k === 'thought') { title.textContent = 'Registro de pensamento'; if (!TR) TR = newTR(); renderThought(body); }
+  else if (k === 'thoughts') { title.textContent = 'Seus registros de pensamento'; renderThoughtList(body); }
+}
+
+// ── Hub
+let CARE_NEED = null;
+const NEEDS = [
+  {k:'ansiedade', label:'Ansiedade alta', tools:['breath478','ground','art:ansiedade']},
+  {k:'mente',     label:'Cabeça a mil',   tools:['folhas','thought','art:ruminacao']},
+  {k:'triste',    label:'Tristeza',       tools:['compaixao','thought','art:emocoes']},
+  {k:'raiva',     label:'Raiva',          tools:['calm','thought','art:armadilhas']},
+  {k:'energia',   label:'Sem energia',    tools:['bodyscan','resp','art:movimento']},
+  {k:'dormir',    label:'Difícil dormir', tools:['pmr','breath478','art:sono']},
+];
+function selNeed(k){ CARE_NEED = CARE_NEED === k ? null : k; renderCare(); }
+
+function renderCare(){
+  const body = document.getElementById('care-body');
+  const need = NEEDS.find(n => n.k === CARE_NEED);
+  const read = S.progress.readArticles || [];
+  const th = S.thoughts || [];
+  body.innerHTML = `<h1>Cuidar</h1>
+    <p class="sub">Ferramentas práticas para o que você sente agora.</p>
+    <div class="card">
+      <div class="card-title">O que está pesando agora?</div>
+      <div class="chip-row">${NEEDS.map(n => `<button class="chip ${CARE_NEED === n.k ? 'sel' : ''}" onclick="selNeed('${n.k}')">${n.label}</button>`).join('')}</div>
+      ${need ? `<div style="margin-top:12px">${need.tools.map(k => toolRow(k)).join('')}</div>` : ''}
+    </div>
+    <div class="section-lbl">Práticas</div>
+    <div class="tool-grid">
+      <button class="tool-tile" onclick="goTo('breath')"><span class="tt-e">🫁</span><b>Respirar</b><small>Técnicas guiadas de 1 a 3 minutos</small></button>
+      <button class="tool-tile" onclick="runTool('meditate')"><span class="tt-e">🧘</span><b>Meditar</b><small>Timer e práticas guiadas</small></button>
+      <button class="tool-tile" onclick="runTool('thought')"><span class="tt-e">🧠</span><b>Registro de pensamento</b><small>Olhar o pensamento de outro ângulo</small></button>
+      <button class="tool-tile" onclick="runTool('ground')"><span class="tt-e">👁️</span><b>Aterramento</b><small>5-4-3-2-1, para voltar ao presente</small></button>
+    </div>
+    ${th.length ? `<button class="tool-row" style="margin-top:10px" onclick="runTool('thoughts')"><span class="tr-e">📝</span>
+      <span class="tr-t"><b>Seus registros de pensamento</b><small>${th.length} ${pl(th.length, 'registro', 'registros')}</small></span><span class="tr-go">›</span></button>` : ''}
+    <div class="section-lbl">Aprender · leituras de 1 minuto</div>
+    <div class="card" style="padding:2px 16px">
+      ${ARTICLES.map(a => `<div class="art-row" onclick="runTool('art:${a.id}')"><span>${a.emoji}</span><span class="ar-t">${a.title}</span>
+        ${read.includes(a.id) ? '<small class="read">✓ lido</small>' : '<small>1 min</small>'}</div>`).join('')}
+    </div>
+    <div class="rep-foot" style="text-align:center;margin:6px 8px 12px">As práticas se baseiam em TCC, mindfulness e autocompaixão. O Florescer é um apoio e não substitui acompanhamento profissional.</div>`;
+}
+
+// ── Leitura
+function renderArticle(body, id){
+  const a = ARTICLES.find(x => x.id === id);
+  if (!a) { body.innerHTML = ''; return; }
+  const p = S.progress;
+  if (!p.readArticles.includes(id)) { p.readArticles.push(id); progressSave(); checkBadges(); }
+  body.innerHTML = `<div class="art-hero">${a.emoji}</div>
+    <div class="art-title">${a.title}</div>
+    <div class="art-meta">Leitura de 1 minuto</div>
+    <div class="art-body">${a.body.map(x => x.startsWith('<ul') ? x : `<p>${x}</p>`).join('')}</div>
+    ${a.try ? `<div class="section-lbl" style="margin-top:4px">Experimente agora</div>${toolRow(a.try)}`
+            : `<button class="btn" style="background:#fef0ee;color:#c0392b;margin-top:4px" onclick="goTo('sos')">Abrir o SOS</button>`}
+    <div class="art-src">${a.src}</div>`;
+}
+
+// ── Sino (Web Audio, sem arquivo de som)
+let _actx = null;
+function bell(vol){
+  try {
+    _actx = _actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (_actx.state === 'suspended') _actx.resume();
+    const t = _actx.currentTime;
+    [[528, 1], [1056, .3], [1584, .1]].forEach(([f, g]) => {
+      const o = _actx.createOscillator(), a = _actx.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      a.gain.setValueAtTime(0, t);
+      a.gain.linearRampToValueAtTime((vol || .3) * g, t + .02);
+      a.gain.exponentialRampToValueAtTime(.0001, t + 4);
+      o.connect(a); a.connect(_actx.destination);
+      o.start(t); o.stop(t + 4.1);
+    });
+  } catch (e) {}
+}
+
+// ── Meditar
+let MED_CFG = {min:5, interval:0};
+function renderMeditate(body){
+  const p = S.progress;
+  body.innerHTML = `<div class="card">
+      <div class="card-title">⏱️ Meditação livre</div>
+      <div class="card-sub">Silêncio, com sino suave no início e no fim.</div>
+      <div class="tr-lbl" style="margin-top:0">Duração</div>
+      <div class="chip-row">${[3,5,10,15,20].map(m => `<button class="chip ${MED_CFG.min === m ? 'sel' : ''}" onclick="MED_CFG.min=${m};renderTool(1)">${m} min</button>`).join('')}</div>
+      <div class="tr-lbl">Sino de intervalo</div>
+      <div class="chip-row">${[[0,'Sem sino'],[60,'A cada 1 min'],[300,'A cada 5 min']].map(([v,l]) => `<button class="chip ${MED_CFG.interval === v ? 'sel' : ''}" onclick="MED_CFG.interval=${v};renderTool(1)">${l}</button>`).join('')}</div>
+      <button class="btn btn-p" style="margin-top:16px" onclick="runTool('timer')">Começar</button>
+    </div>
+    <div class="section-lbl">Práticas guiadas</div>
+    ${['resp','bodyscan','compaixao','folhas','pmr'].map(k => toolRow(k)).join('')}
+    <div class="rep-foot" style="text-align:center;margin-top:10px">O texto avança sozinho, no ritmo da prática. Deixe o volume baixo para ouvir o sino.
+      ${p.meditSessions ? `<br>Você já meditou ${p.meditSessions} ${pl(p.meditSessions, 'vez', 'vezes')} · ${p.meditMinutes || 0} min no total.` : ''}</div>`;
+}
+
+let MED = null;
+const MED_C = 2 * Math.PI * 90;
+function startPractice(body, key){
+  stopMed();
+  const p = key === 'timer'
+    ? {title:'Meditação livre', interval: MED_CFG.interval, steps:[{x:'Sente de forma confortável e deixe a respiração seguir o próprio ritmo.<br><br>Quando a mente fugir — e ela vai fugir — perceba com gentileza e volte para a respiração.', d: MED_CFG.min * 60}]}
+    : PRACTICES[key];
+  if (!p) return;
+  MED = {key, steps:p.steps, idx:0, acc:0, run:null, doneMs:0, bells:0, started:false, finished:false, timer:null,
+         interval:p.interval || 0, total:p.steps.reduce((a, s) => a + (s.d || 0), 0) * 1000};
+  body.innerHTML = `<div class="med-run">
+    <div class="med-ring"><svg viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="90" fill="none" stroke="#eef3f0" stroke-width="8"/>
+      <circle id="med-arc" cx="100" cy="100" r="90" fill="none" stroke="#2a7d63" stroke-width="8" stroke-linecap="round" stroke-dasharray="${MED_C.toFixed(1)}" stroke-dashoffset="${MED_C.toFixed(1)}" style="transition:stroke-dashoffset .5s linear"/>
+    </svg><div class="med-time"><span id="med-time"></span><small id="med-sub"></small></div></div>
+    <div class="med-step" id="med-step">${p.steps[0].x}</div>
+    ${p.steps.length > 1 ? `<div class="med-dots" id="med-dots"></div>` : ''}
+    <div class="med-ctrl" id="med-ctrl"></div>
+  </div>`;
+  medCtrl(); medPaint();
+}
+function medStepMs(){ return MED.acc + (MED.run ? Date.now() - MED.run : 0); }
+function medOverall(){
+  if (!MED) return 0;
+  const st = MED.steps[MED.idx];
+  return MED.doneMs + (st && st.d ? Math.min(medStepMs(), st.d * 1000) : 0);
+}
+function mmss(ms){ const s = Math.ceil(ms / 1000); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
+function medPaint(){
+  if (!MED || MED.finished) return;
+  const n = MED.steps.length, ov = medOverall();
+  const prog = MED.total ? ov / MED.total : MED.idx / n;
+  const arc = document.getElementById('med-arc');
+  if (arc) arc.setAttribute('stroke-dashoffset', (MED_C * (1 - Math.min(1, prog))).toFixed(1));
+  const t = document.getElementById('med-time'), sub = document.getElementById('med-sub');
+  if (t) t.textContent = MED.total ? mmss(Math.max(0, MED.total - ov)) : (MED.idx + 1) + ' de ' + n;
+  if (sub) sub.textContent = !MED.started ? '' : MED.total ? (MED.run ? '' : 'pausado') : 'no seu tempo';
+  const dots = document.getElementById('med-dots');
+  if (dots) dots.innerHTML = MED.steps.map((_, i) => `<i class="${i <= MED.idx ? 'on' : ''}"></i>`).join('');
+}
+function medCtrl(){
+  const c = document.getElementById('med-ctrl');
+  if (!c || !MED) return;
+  const manual = !MED.steps[MED.idx].d;
+  if (!MED.started) c.innerHTML = `<button class="btn btn-p" onclick="medStart()">Começar</button>`;
+  else if (manual) c.innerHTML = `<button class="btn btn-soft" onclick="medEnd()">Encerrar</button>
+    <button class="btn btn-p" onclick="medNext()">${MED.idx === MED.steps.length - 1 ? 'Concluir' : 'Próximo ›'}</button>`;
+  else c.innerHTML = `<button class="btn btn-soft" onclick="medEnd()">Encerrar</button>
+    ${MED.run ? `<button class="btn btn-p" onclick="medPause()">Pausar</button>` : `<button class="btn btn-p" onclick="medResume()">Continuar</button>`}`;
+}
+function medStart(){
+  MED.started = true; MED.run = Date.now();
+  if (MED.total) bell();
+  MED.timer = setInterval(medTick, 500);
+  medCtrl(); medPaint();
+}
+function medPause(){ MED.acc = medStepMs(); MED.run = null; medCtrl(); medPaint(); }
+function medResume(){ MED.run = Date.now(); medCtrl(); medPaint(); }
+function medTick(){
+  if (!MED || !MED.run || MED.finished) return;
+  const st = MED.steps[MED.idx];
+  if (st.d && medStepMs() >= st.d * 1000) { medNext(); return; }
+  if (MED.interval && MED.total) {
+    const ov = medOverall(), k = Math.floor(ov / (MED.interval * 1000));
+    if (k > MED.bells) { MED.bells = k; if (ov < MED.total - 3000) bell(.18); }
+  }
+  medPaint();
+}
+function medNext(){
+  if (!MED) return;
+  MED.doneMs += (MED.steps[MED.idx].d || 0) * 1000;
+  MED.idx++; MED.acc = 0;
+  if (MED.run) MED.run = Date.now();
+  if (MED.idx >= MED.steps.length) { medFinish(true); return; }
+  const el = document.getElementById('med-step');
+  if (el) {
+    el.style.opacity = 0;
+    const x = MED.steps[MED.idx].x;
+    setTimeout(() => { el.innerHTML = x; el.style.opacity = 1; }, 400);
+  }
+  medCtrl(); medPaint();
+}
+function medEnd(){
+  if (!MED) return;
+  if (!MED.started || medOverall() < 60000) {
+    if (MED.started && MED.total && !confirm('Encerrar a prática?')) return;
+    stopMed(); toolBack(); return;
+  }
+  medFinish(false);
+}
+function medFinish(completed){
+  clearInterval(MED.timer);
+  const ms = medOverall(), min = Math.round(ms / 60000), key = MED.key;
+  MED.finished = true; MED.run = null;
+  if (completed && MED.total) { bell(); try { navigator.vibrate && navigator.vibrate(150); } catch (e) {} }
+  if (key === 'ground') { if (completed) markCareDay(); }
+  else if (ms >= 60000) bumpMeditation(Math.max(1, min));
+  const mh = S.habits.find(h => /medita/i.test(h.name));
+  const offerHabit = key !== 'ground' && ms >= 60000 && mh && !(S.habitDone[new Date().toDateString()] || []).includes(mh.id);
+  document.getElementById('tool-body').innerHTML = `<div class="med-run">
+    <div style="font-size:48px;margin:28px 0 8px">🌱</div>
+    <div class="tr-q">${completed ? 'Prática concluída' : 'Tudo bem parar antes'}</div>
+    <div class="tr-help" style="max-width:300px">${min >= 1 ? min + ' min de presença. ' : ''}${completed
+      ? 'Perceba como você está agora — sem precisar que algo tenha mudado.'
+      : 'Qualquer minuto dedicado a você conta.'}</div>
+    ${offerHabit ? `<button class="btn btn-soft" style="margin-bottom:8px" onclick="toggleHabit(${mh.id});this.remove()">Marcar o hábito ${esc(mh.icon)} ${esc(mh.name)} de hoje</button>` : ''}
+    <button class="btn btn-p" onclick="toolBack()">Voltar</button>
+  </div>`;
+}
+function stopMed(){ if (MED) { clearInterval(MED.timer); MED = null; } }
+
+// ── Registro de pensamento (TCC)
+const TR_STEPS = 7;
+const TRAPS = [
+  {k:'catastrofizar', l:'Catastrofizar',        d:'Imaginar o pior como se fosse certo.'},
+  {k:'leitura',       l:'Leitura mental',       d:'Ter certeza do que o outro está pensando.'},
+  {k:'futuro',        l:'Prever o futuro',      d:'Tratar uma previsão ruim como fato.'},
+  {k:'tudo-nada',     l:'Tudo ou nada',         d:'Se não foi perfeito, foi um fracasso.'},
+  {k:'generalizar',   l:'Generalizar',          d:'“Sempre”, “nunca”, “todo mundo”.'},
+  {k:'rotular',       l:'Rotular',              d:'“Sou um fracasso” em vez de “errei nisso”.'},
+  {k:'deveria',       l:'“Deveria”',            d:'Regras rígidas sobre como as coisas têm que ser.'},
+  {k:'filtro',        l:'Filtro negativo',      d:'Ver só o que deu errado e ignorar o resto.'},
+  {k:'emocional',     l:'Raciocínio emocional', d:'“Sinto que é verdade, então é.”'},
+  {k:'personalizar',  l:'Tomar para si',        d:'Assumir a culpa por algo que não depende só de você.'},
+];
+let TR = null;
+function newTR(pre){
+  return {step:1, situation:'', thought:'', beliefBefore:50, beliefAfter:50, beliefAlt:50,
+    emotions:(pre || []).slice(0, 3).map(k => ({k, before:50, after:50})),
+    traps:[], evFor:'', evAgainst:'', alt:'', afterInit:false, saved:null};
+}
+function trSlider(id, label, val, expr){
+  return `<div class="tr-slider"><label><span>${label}</span><b id="${id}">${val}%</b></label>
+    <input type="range" min="0" max="100" step="5" value="${val}" oninput="${expr}=+this.value;document.getElementById('${id}').textContent=this.value+'%'"></div>`;
+}
+function trArea(field, placeholder, rows){
+  return `<textarea class="inp" rows="${rows || 3}" oninput="TR.${field}=this.value" placeholder="${placeholder}">${esc(TR[field])}</textarea>`;
+}
+function renderThought(body){
+  const t = TR, s = t.step;
+  if (s > TR_STEPS) return renderThoughtDone(body);
+  let h = `<div class="tr-step">Passo ${s} de ${TR_STEPS}</div><div class="tr-prog"><div style="width:${s / TR_STEPS * 100}%"></div></div>`;
+  if (s === 1) {
+    h += `<div class="tr-hints" style="margin-top:0">Pensamentos não são fatos. Este exercício da TCC ajuda a olhar um pensamento difícil com mais calma — sem forçar positividade.
+      <button class="btn-link" style="padding:0;font-size:12px" onclick="runTool('art:pensamentos')">Saber mais</button></div>
+      <div class="tr-q">O que aconteceu?</div>
+      <div class="tr-help">Descreva a situação em poucas palavras, como uma câmera veria: onde, quando, com quem.</div>
+      ${trArea('situation', 'Ex.: Mandei uma mensagem e a pessoa respondeu só com “ok”.', 4)}`;
+  } else if (s === 2) {
+    h += `<div class="tr-q">O que passou pela sua cabeça?</div>
+      <div class="tr-help">O pensamento automático — a frase que veio na hora. Pode ser uma imagem ou um medo.</div>
+      ${trArea('thought', 'Ex.: “Ela está irritada comigo. Fiz alguma coisa errada.”', 4)}
+      ${trSlider('tr-bb', 'Quanto você acredita nisso agora?', t.beliefBefore, 'TR.beliefBefore')}`;
+  } else if (s === 3) {
+    h += `<div class="tr-q">O que você sentiu?</div>
+      <div class="tr-help">Escolha até 3 emoções e marque a intensidade de cada uma.</div>
+      <div class="chip-row">${EMOTIONS.flatMap(g => g.items.map(([k, l]) => {
+        const on = t.emotions.some(e => e.k === k);
+        return `<button class="emo-chip ${on ? 'sel' : ''}" style="${on ? `background:${g.color};border-color:${g.color}` : ''}" onclick="trTogEmo('${k}')">${l}</button>`;
+      })).join('')}</div>
+      ${t.emotions.map((e, i) => trSlider('tr-e' + i, esc(emoLabel(e.k)), e.before, `TR.emotions[${i}].before`)).join('')}`;
+  } else if (s === 4) {
+    h += `<div class="tr-q">Alguma armadilha de pensamento?</div>
+      <div class="tr-help">Opcional. Marque se reconhecer alguma — isso já tira um pouco da força do pensamento.</div>
+      ${TRAPS.map(x => `<button class="trap ${t.traps.includes(x.k) ? 'sel' : ''}" onclick="trTogTrap('${x.k}')"><b>${x.l}</b><small>${x.d}</small></button>`).join('')}`;
+  } else if (s === 5) {
+    h += `<div class="tr-q">Olhando as evidências</div>
+      <div class="tr-help">Pense como alguém de fora, justo e curioso.</div>
+      <div class="tr-lbl">O que apoia esse pensamento?</div>
+      ${trArea('evFor', 'Fatos, não impressões.')}
+      <div class="tr-lbl">O que não se encaixa nele?</div>
+      ${trArea('evAgainst', 'Algo que contradiz, ou outra explicação possível.')}
+      <div class="tr-hints">Perguntas que ajudam:<br>· Se alguém que eu amo pensasse isso, o que eu diria?<br>· Já passei por algo parecido? Como terminou?<br>· Daqui a um ano, isso vai pesar do mesmo jeito?</div>`;
+  } else if (s === 6) {
+    h += `<div class="tr-q">Um jeito mais equilibrado de ver</div>
+      <div class="tr-help">Não precisa ser positivo — só mais justo e completo, considerando o que você escreveu.</div>
+      ${trArea('alt', 'Ex.: “Ela pode estar ocupada. Se algo estiver errado, posso perguntar.”', 4)}
+      ${trSlider('tr-ba', 'Quanto você acredita nesse novo pensamento?', t.beliefAlt, 'TR.beliefAlt')}`;
+  } else if (s === 7) {
+    if (!t.afterInit) { t.emotions.forEach(e => e.after = e.before); t.beliefAfter = t.beliefBefore; t.afterInit = true; }
+    h += `<div class="tr-q">E agora, como você está?</div>
+      <div class="tr-help">Marque de novo. Não existe resposta certa — às vezes muda muito, às vezes pouco.</div>
+      ${t.emotions.map((e, i) => trSlider('tr-a' + i, esc(emoLabel(e.k)), e.after, `TR.emotions[${i}].after`)).join('')}
+      <div class="th-lbl" style="margin-top:16px">Pensamento original</div><div class="th-txt">“${esc(t.thought.trim())}”</div>
+      ${trSlider('tr-bA', 'Quanto você acredita nele agora?', t.beliefAfter, 'TR.beliefAfter')}`;
+  }
+  h += `<div class="tr-warn" id="tr-warn"></div>
+    <div class="tr-nav">${s > 1 ? `<button class="btn btn-soft" onclick="trPrev()">Voltar</button>` : ''}
+      <button class="btn btn-p" onclick="trNext()">${s === TR_STEPS ? 'Salvar registro' : 'Continuar'}</button></div>`;
+  body.innerHTML = h;
+}
+function trTogEmo(k){
+  const i = TR.emotions.findIndex(e => e.k === k);
+  if (i >= 0) TR.emotions.splice(i, 1);
+  else if (TR.emotions.length >= 3) { const w = document.getElementById('tr-warn'); if (w) w.textContent = 'Escolha no máximo 3 — as mais fortes.'; return; }
+  else TR.emotions.push({k, before:50, after:50});
+  renderThought(document.getElementById('tool-body'));
+}
+function trTogTrap(k){
+  TR.traps = TR.traps.includes(k) ? TR.traps.filter(x => x !== k) : [...TR.traps, k];
+  renderThought(document.getElementById('tool-body'));
+}
+function trPrev(){ if (TR.step > 1) { TR.step--; renderThought(document.getElementById('tool-body')); document.getElementById('tool-body').scrollTop = 0; } }
+function trNext(){
+  const t = TR, warn = (m) => { document.getElementById('tr-warn').textContent = m; };
+  if (t.step === 1 && !t.situation.trim()) return warn('Escreva ao menos uma frase sobre a situação.');
+  if (t.step === 2 && !t.thought.trim()) return warn('Qual foi o pensamento? Pode ser curto.');
+  if (t.step === 3 && !t.emotions.length) return warn('Escolha pelo menos uma emoção.');
+  if (t.step === TR_STEPS) return saveThought();
+  t.step++;
+  const body = document.getElementById('tool-body');
+  renderThought(body); body.scrollTop = 0;
+}
+function saveThought(){
+  const t = TR;
+  const rec = {id: Date.now(), date: new Date().toISOString(),
+    situation: t.situation.trim(), thought: t.thought.trim(), beliefBefore: t.beliefBefore, beliefAfter: t.beliefAfter,
+    emotions: t.emotions.map(e => ({k:e.k, before:e.before, after:e.after})), traps: [...t.traps],
+    evFor: t.evFor.trim(), evAgainst: t.evAgainst.trim(), alt: t.alt.trim(), beliefAlt: t.beliefAlt};
+  S.thoughts = [rec, ...(S.thoughts || [])];
+  save();
+  if (window.saveThoughtCloud) window.saveThoughtCloud(rec);
+  t.saved = rec; t.step = TR_STEPS + 1;
+  markCareDay();
+  const body = document.getElementById('tool-body');
+  renderThought(body); body.scrollTop = 0;
+}
+function cmpRows(rec){
+  const row = (label, a, b) => `<div class="cmp-row"><div class="cmp-l"><span>${label}</span><span>${a}% → ${b}%</span></div>
+    <div class="cmp-bar"><div style="width:${a}%;background:#d9d9d9"></div></div>
+    <div class="cmp-bar"><div style="width:${b}%;background:#2a7d63"></div></div></div>`;
+  return rec.emotions.map(e => row(esc(emoLabel(e.k)), e.before, e.after)).join('')
+    + row('Crença no pensamento original', rec.beliefBefore, rec.beliefAfter);
+}
+function renderThoughtDone(body){
+  const r = TR.saved;
+  const drop = r.emotions.reduce((a, e) => a + (e.before - e.after), 0) + (r.beliefBefore - r.beliefAfter);
+  body.innerHTML = `<div style="text-align:center;margin:10px 0 6px;font-size:44px">🌱</div>
+    <div class="tr-q" style="text-align:center">Registro salvo</div>
+    <div class="tr-help" style="text-align:center">${drop > 0
+      ? 'A intensidade diminuiu. Olhar o pensamento de outro ângulo fez diferença.'
+      : 'Nem sempre a intensidade muda na hora — e está tudo bem. Com a prática, esse exercício fica mais natural.'}</div>
+    <div class="card"><div class="card-title">Antes → depois</div>${cmpRows(r)}</div>
+    <div class="tr-nav"><button class="btn btn-soft" onclick="TR=null;goTo('care');runTool('thoughts')">Ver registros</button>
+      <button class="btn btn-p" onclick="TR=null;goTo('care')">Concluir</button></div>`;
+}
+
+let TH_OPEN = null;
+function renderThoughtList(body){
+  const list = [...(S.thoughts || [])].sort((a, b) => new Date(b.date) - new Date(a.date));
+  if (!list.length) {
+    body.innerHTML = `<div class="rep-empty" style="text-align:center;padding:30px 0">Nenhum registro de pensamento ainda.</div>${toolRow('thought')}`;
+    return;
+  }
+  body.innerHTML = toolRow('thought') + list.map(r => {
+    const open = TH_OPEN === r.id;
+    const d = new Date(r.date).toLocaleDateString('pt-BR', {day:'numeric', month:'short', year:'numeric'});
+    const emo = (r.emotions || []).map(e => `${esc(emoLabel(e.k))} ${e.before}→${e.after}%`).join(' · ');
+    return `<div class="card" onclick="TH_OPEN=${open ? 'null' : r.id};renderTool(1)" style="cursor:pointer">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#aaa"><span>${d}</span><span>${open ? '▲' : '▼'}</span></div>
+      <div class="th-txt" style="margin-top:6px;font-weight:600">“${esc(r.thought)}”</div>
+      ${r.alt ? `<div class="th-txt" style="color:#1f6450;margin-top:6px">→ ${esc(r.alt)}</div>` : ''}
+      <div style="font-size:11px;color:#999;margin-top:6px">${emo}</div>
+      ${open ? `<div onclick="event.stopPropagation()" style="cursor:default">
+        <div class="th-lbl">Situação</div><div class="th-txt">${esc(r.situation)}</div>
+        ${(r.traps || []).length ? `<div class="th-lbl">Armadilhas</div><div class="th-txt">${r.traps.map(k => (TRAPS.find(x => x.k === k) || {l:k}).l).join(' · ')}</div>` : ''}
+        ${r.evFor ? `<div class="th-lbl">O que apoia</div><div class="th-txt">${esc(r.evFor)}</div>` : ''}
+        ${r.evAgainst ? `<div class="th-lbl">O que não se encaixa</div><div class="th-txt">${esc(r.evAgainst)}</div>` : ''}
+        ${cmpRows(r)}
+        <button class="btn-link" style="color:#c0392b;font-size:12px" onclick="deleteThought(${r.id})">Apagar este registro</button>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+function deleteThought(id){
+  if (!confirm('Apagar este registro de pensamento? Não dá para desfazer.')) return;
+  S.thoughts = (S.thoughts || []).filter(t => t.id !== id);
+  save();
+  if (window.deleteThoughtCloud) window.deleteThoughtCloud(id);
+  TH_OPEN = null;
+  renderTool(1);
+}
+
+// Sugestões depois do registro, conforme o que foi marcado.
+function suggestionsFor(log){
+  const em = log.emotions || [], tr = log.triggers || [];
+  const has = (...k) => k.some(x => em.includes(x));
+  const out = [];
+  const add = (k) => { if (!out.includes(k)) out.push(k); };
+  const agitado = log.anxiety >= 7 || has('ansiedade', 'medo');
+  if (agitado) add('breath478');
+  if (has('culpa', 'inseguranca', 'frustracao', 'irritacao') || (log.mood <= 2 && has('tristeza', 'desanimo'))) add('thought');
+  if (agitado) add('ground');
+  if (has('solidao', 'vazio', 'tristeza', 'desanimo')) add('compaixao');
+  if (has('sobrecarga', 'cansaco')) add('bodyscan');
+  if (tr.includes('Pouco sono') || log.sleep === 'Péssimo' || log.sleep === 'Ruim') add('art:sono');
+  if (log.anxiety >= 5) add('calm');
+  if (log.mood >= 4 || has('gratidao', 'alegria', 'orgulho', 'satisfacao', 'calma', 'paz', 'alivio', 'aconchego', 'empolgacao', 'motivacao', 'confianca', 'carinho')) { add('gratidao'); add('resp'); }
+  if (!out.length) { add('resp'); add('art:emocoes'); }
+  return out.slice(0, 2);
 }
 
 // ═══════════ RELATÓRIO — semana / mês ═══════════

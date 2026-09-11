@@ -39,8 +39,9 @@ Público brasileiro, pt-BR. App **offline-first**: tudo funciona sem rede, a nuv
 | `users/{uid}` | `{ name, email, photo, createdAt, isPremium }` | registro / login Google |
 | `habits/{uid}` | `{ list: [{id, name, icon, streak}], uid }` | `saveHabitsCloud` |
 | `habitDone/{uid}` | `{ "<Date.toDateString()>": [habitId...], uid }` | `saveHabitsCloud` |
-| `logs/{autoId}` | `{ uid, date, mood(1-5), anxiety(0-10), sleep, triggers[], note, time }` | `saveLogCloud` |
+| `logs/{autoId}` | `{ uid, date, mood(1-5), anxiety(0-10), sleep, triggers[], emotions[], note, prompt, time }` | `saveLogCloud` |
 | `gratitude/{autoId}` | `{ uid, date, text }` | `saveGratitudeCloud` |
+| `thoughts/{id}` (id = `id` local) | `{ uid, id, date, situation, thought, beliefBefore, beliefAfter, emotions[{k,before,after}], traps[], evFor, evAgainst, alt, beliefAlt }` | `saveThoughtCloud` / `deleteThoughtCloud` |
 
 Consultas: `logs` e `gratitude` são lidos com `where('uid','==',uid).orderBy('date','desc')`
 → exigem índice composto (ver `firestore.indexes.json`).
