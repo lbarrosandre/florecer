@@ -188,6 +188,30 @@ body{background:#151520;min-height:100vh;display:flex;align-items:center;justify
 .switch span:before{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px #0003}
 .switch input:checked+span{background:#2a7d63}
 .switch input:checked+span:before{transform:translateX(18px)}
+/* ── Pilares / pequenos passos / ajuda / rede de apoio ── */
+.pil-row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.pil{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 2px 8px;border:1.5px solid #eee;border-radius:14px;background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.pil-e{font-size:20px;filter:grayscale(1);opacity:.5;transition:all .2s}
+.pil-l{font-size:9.5px;color:#999;line-height:1.2;text-align:center}
+.pil.on{border-color:#2a7d63;background:#eaf5f1}
+.pil.on .pil-e{filter:none;opacity:1}
+.pil.on .pil-l{color:#1f6450;font-weight:600}
+.pil-foot{font-size:11px;color:#888;margin-top:10px;line-height:1.5}
+.help-card{background:#f3f7f5;border:1px solid #dcebe4;border-radius:16px;padding:14px;margin-bottom:12px}
+.help-card.urgent{background:#fdf5f3;border-color:#f3dcd7}
+.call-row{display:flex;gap:8px;margin-top:10px}
+.call-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:12px;background:#fff;border:1.5px solid #ecd2cc;color:#b03a2e;font-weight:600;font-size:14px;text-decoration:none}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini-card{background:#fff;border:1px solid #f0f0f0;border-radius:14px;padding:12px;font-size:12px;color:#555;line-height:1.5}
+.mini-card b{display:block;font-size:13px;color:#1a1a1a;margin-bottom:4px}
+.check-list{margin:0 0 0 18px}
+.check-list li{font-size:13px;color:#444;line-height:1.6;margin-bottom:4px}
+.person{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #f3f3f3}
+.person:last-child{border-bottom:none}
+.person-n{flex:1;min-width:0;font-size:13px;color:#333;font-weight:600}
+.pbtn{padding:7px 10px;border-radius:10px;font-size:12px;font-weight:600;text-decoration:none;border:1.5px solid #e8e8e8;color:#2a7d63;background:#fff;font-family:'DM Sans',sans-serif;cursor:pointer}
+.pbtn-x{color:#bbb;border-color:#f0f0f0}
+.art-group{font-size:12px;font-weight:600;color:#666;margin:12px 2px 6px}
 .side-info{color:#ffffff25;font-size:11px;letter-spacing:.06em;text-transform:uppercase;line-height:2;text-align:center;max-width:120px}
 .phone-frame{width:390px;height:844px;background:#0d0d0d;border-radius:54px;padding:12px;box-shadow:0 0 0 1px #2a2a2a,0 40px 100px #00000090,inset 0 0 0 1px #1e1e1e;position:relative;flex-shrink:0}
 .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:36px;background:#0d0d0d;border-radius:0 0 22px 22px;z-index:20}
@@ -1063,7 +1087,9 @@ textarea.inp{resize:none;min-height:76px}
           <div style="display:flex;gap:4px" id="home-days"></div>
           <div id="home-week-sum"></div>
         </div>
+        <div id="home-help"></div>
         <div id="home-action"></div>
+        <div id="home-pillars"></div>
         <div id="home-trail"></div>
         <div class="section-lbl">Hábitos de hoje</div>
         <div class="card" id="home-habits-preview"></div>
@@ -1147,6 +1173,11 @@ textarea.inp{resize:none;min-height:76px}
             <span class="tag" onclick="togTag(this)">Família</span>
             <span class="tag" onclick="togTag(this)">Lazer</span>
           </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Hoje eu…</div>
+          <div class="card-sub">Opcional. Toque no que fez parte do seu dia — pequenas coisas contam.</div>
+          <div id="log-pillars"></div>
         </div>
         <div class="card">
           <div class="card-title">Quer refletir? ✍️</div>
@@ -1308,6 +1339,8 @@ textarea.inp{resize:none;min-height:76px}
           <div class="sos-title">🤲 Relaxamento muscular progressivo</div>
           <div class="sos-desc">Aperte os punhos com força por 5 segundos, depois solte completamente. Suba pelo corpo: panturrilha → coxa → barriga → ombros. A tensão intencional seguida de alívio engana o sistema nervoso de um jeito bom.</div>
         </div>
+
+        <div id="sos-people"></div>
 
         <div class="sos-technique" style="background:#fef0ee;border-color:#fdd">
           <div class="sos-title" style="color:#c0392b">📞 Você não precisa passar por isso sozinho</div>
@@ -1494,7 +1527,7 @@ function bumpBreathSession(){
   const wk = weekKey();
   if (!S.progress.breathWeek || S.progress.breathWeek.week !== wk) S.progress.breathWeek = { week: wk, count: 0 };
   S.progress.breathWeek.count++;
-  progressSave();
+  setPillar('pausa', true);
   markCareDay();
 }
 function bumpMeditation(min){
@@ -1504,7 +1537,7 @@ function bumpMeditation(min){
   const wk = weekKey();
   if (!p.meditWeek || p.meditWeek.week !== wk) p.meditWeek = { week: wk, count: 0 };
   p.meditWeek.count++;
-  progressSave();
+  setPillar('pausa', true);
   markCareDay();
 }
 function bumpSos(){
@@ -1526,6 +1559,9 @@ function mergeProgress(cloud, local){
     trails: mergeTrails(cloud.trails, local.trails),
     trailActive: local.trailActive !== undefined ? local.trailActive : (cloud.trailActive || null),
     trailsDone: [...new Set([...(cloud.trailsDone||[]), ...(local.trailsDone||[])])],
+    pillars: { ...(cloud.pillars||{}), ...(local.pillars||{}) },
+    planWeek: local.planWeek || cloud.planWeek || null,
+    helpNudgeAt: [cloud.helpNudgeAt, local.helpNudgeAt].filter(Boolean).sort().pop() || null,
     sosOpens: Math.max(cloud.sosOpens||0, local.sosOpens||0),
     lastActive: [cloud.lastActive, local.lastActive].filter(Boolean).sort().pop() || null,
     seenStage: Math.max(cloud.seenStage||0, local.seenStage||0, plantStageIndex(days.length)),
@@ -1827,7 +1863,7 @@ function goTo(screen) {
   if (screen === 'care') renderCare();
   if (screen === 'tool') renderTool();
   if (screen === 'onboard') renderOnboard();
-  if (screen === 'sos') bumpSos();
+  if (screen === 'sos') { bumpSos(); renderSosPeople(); }
 }
 
 // ═══════════ HOME ═══════════
@@ -1909,7 +1945,7 @@ function renderHome() {
   // habits preview
   const todayKey = new Date().toDateString();
   const doneToday = S.habitDone[todayKey] || [];
-  const habHtml = S.habits.slice(0,3).map(h=>`
+  const habHtml = [...S.habits].sort((a,b)=>(b.plan?1:0)-(a.plan?1:0)).slice(0,3).map(h=>`
     <div class="habit-item">
       <div class="habit-check ${doneToday.includes(h.id)?'done':''}" onclick="toggleHabit(${h.id})">${doneToday.includes(h.id)?'✓':''}</div>
       <span style="font-size:16px">${esc(h.icon)}</span>
@@ -1936,6 +1972,8 @@ function renderHome() {
   document.getElementById('home-grat-preview').innerHTML = gratHtml;
 
   renderHomeWeekSummary();
+  renderHomeHelp();
+  renderHomePillars();
   renderHomeTrail();
   renderHomePlant();
   // conquistas que já valem pelos dados existentes
@@ -1946,6 +1984,7 @@ function renderHome() {
 // ═══════════ LOG FORM ═══════════
 function resetLog() {
   S.logForm = {mood:null,anx:null,sleep:null,triggers:[],emotions:[],prompt:'',note:'',time:'Manhã'};
+  renderLogPillars();
   renderEmoWheel();
   updateReflection();
   document.querySelectorAll('#mood-row .mood-btn').forEach(b=>b.classList.remove('sel'));
@@ -2336,7 +2375,7 @@ function toggleHabit(id) {
   } else {
     S.habitDone[key].push(id);
     const h = S.habits.find(h=>h.id===id);
-    if (h) h.streak++;
+    if (h) { h.streak++; if (h.pillar) setPillar(h.pillar, true); }
     markCareDay();
   }
   save();
@@ -2534,12 +2573,58 @@ const ARTICLES = [
     'Não precisa ser academia. Caminhar 10 a 20 minutos, dançar uma música, subir escadas, alongar — tudo conta. Regularidade importa mais que intensidade.',
     'Quando falta energia, a motivação costuma vir depois da ação, não antes. Começar pequeno — “só 5 minutos” — é uma estratégia usada na terapia, chamada ativação comportamental.'],
     src:'Base: revisões sobre exercício físico e saúde mental; ativação comportamental.'},
-  {id:'ajuda', emoji:'🤝', title:'Quando procurar ajuda profissional', try:null, body:[
+  {id:'ajuda', emoji:'🤝', title:'Quando procurar ajuda profissional', try:'help', body:[
     'O Florescer é um apoio para o dia a dia, mas não substitui acompanhamento com profissionais de psicologia ou psiquiatria.',
     'Vale procurar ajuda quando a tristeza ou a ansiedade duram semanas e atrapalham trabalho, estudos ou relações; quando o sono ou o apetite mudaram muito; quando você tem se isolado; ou quando usa álcool ou outras substâncias para aguentar.',
     '<b>Se surgirem pensamentos de se machucar ou de não querer viver, procure ajuda agora:</b> CVV pelo telefone 188 (24 horas, gratuito) ou em cvv.org.br. Em emergência, SAMU 192 ou o pronto-socorro mais próximo.',
     'Pelo SUS, as Unidades Básicas de Saúde e os CAPS oferecem atendimento em saúde mental. Muitas faculdades de psicologia têm clínicas-escola com valores acessíveis.'],
     src:'Base: orientações do CVV e da rede de atenção psicossocial do SUS.'},
+  {id:'psi', emoji:'🩺', title:'Psicologia ou psiquiatria?', try:'help', body:[
+    'São profissões diferentes que muitas vezes trabalham juntas.',
+    '<b>Psicólogos</b> fazem psicoterapia. Na Terapia Cognitivo-Comportamental, por exemplo, você aprende a perceber padrões de pensamento e de comportamento e a construir ferramentas práticas para os momentos difíceis. Psicólogos não prescrevem remédios.',
+    '<b>Psiquiatras</b> são médicos. Avaliam os sintomas, investigam se há causas físicas envolvidas — como alterações de tireoide ou falta de vitaminas — e indicam se algum tratamento com medicação faz sentido, acompanhando os efeitos.',
+    'Não existe porta errada: qualquer um dos dois pode orientar o próximo passo. Remédio só deve ser usado com indicação e acompanhamento médico — nunca por conta própria.'],
+    src:'Base: orientações do Conselho Federal de Psicologia, do Conselho Federal de Medicina e do Ministério da Saúde.'},
+  {id:'alimentacao', emoji:'🥗', title:'Alimentação e humor', try:'plan', body:[
+    'O que comemos influencia a energia e a disposição ao longo do dia. Longos períodos sem comer e excesso de açúcar e ultraprocessados costumam trazer picos e quedas que se confundem com irritação e cansaço.',
+    'Pesquisas associam padrões alimentares mais naturais — frutas, verduras, legumes, grãos, feijões, peixes — a menos sintomas de depressão. A comida não substitui tratamento, mas faz parte da base.',
+    'Não precisa de dieta. Pequenos ajustes já contam: beber água, fazer refeições em horários parecidos, incluir algo fresco no prato, comer com atenção e sem tela quando der.',
+    'Álcool pode parecer que relaxa, mas costuma piorar o sono e o humor nos dias seguintes.'],
+    src:'Base: Guia Alimentar para a População Brasileira (Ministério da Saúde) e estudos sobre padrão alimentar e saúde mental.'},
+  {id:'conexao', emoji:'🤝', title:'Conexão faz bem', try:'apoio', body:[
+    'Sentir-se em conexão com outras pessoas é uma das bases mais fortes da saúde mental. Isolamento e solidão aumentam o risco de ansiedade e depressão — e, quando estamos mal, a tendência é justamente se afastar.',
+    'Conexão não precisa ser um grande encontro. Uma mensagem, uma ligação curta, um café, um “bom dia” de verdade já contam.',
+    'Se for difícil explicar o que você sente, o Florescer tem um texto pronto em “Como me apoiar” para você ajustar e mandar a alguém de confiança.'],
+    src:'Base: Organização Mundial da Saúde sobre isolamento social e solidão; pesquisas sobre apoio social e saúde mental.'},
+  {id:'ativacao', emoji:'👣', title:'Quando falta energia: comece pequeno', try:'passo', body:[
+    'Em períodos pesados, a energia e a vontade somem. A gente espera ter vontade para agir — e ela não vem.',
+    'A ativação comportamental, uma das abordagens mais estudadas para a depressão, inverte a ordem: primeiro uma ação pequena, depois a motivação. Fazer algo com sentido ou prazer, mesmo por poucos minutos, alimenta o humor aos poucos.',
+    'O segredo é o tamanho: 5 minutos, não 1 hora. Escolha passos possíveis no seu dia real e repare no efeito depois — sem se cobrar pelo que não deu.'],
+    src:'Base: ativação comportamental (Jacobson, Martell e colaboradores), recomendada em diretrizes clínicas para depressão.'},
+  {id:'escutar', emoji:'👂', title:'Como apoiar: escutar sem resolver', try:false, body:[
+    'Quando alguém querido está mal, a vontade é resolver: dar conselho, apontar o lado bom, sugerir soluções. Na maioria das vezes, o que mais ajuda é escutar.',
+    'Escuta ativa é prestar atenção de verdade, sem interromper e sem julgar. Repita com suas palavras o que entendeu (“parece que está sendo muito pesado”) e pergunte como pode ajudar.',
+    'Validar não é concordar com tudo — é reconhecer que o sentimento é real. “Faz sentido você se sentir assim” acolhe muito mais do que “não é para tanto”.'],
+    src:'Base: primeiros cuidados psicológicos (OMS) e orientações a familiares em saúde mental.'},
+  {id:'dizer', emoji:'💬', title:'O que dizer — e o que evitar', try:false, body:[
+    'Algumas frases, mesmo bem-intencionadas, machucam porque passam a ideia de culpa ou de exagero. Evite:',
+    '<ul><li>“É falta de força de vontade.”</li><li>“Você tem tudo, por que está assim?”</li><li>“Tem gente em situação pior.”</li><li>“Pensa positivo que passa.”</li></ul>',
+    'Prefira:',
+    '<ul><li>“Estou aqui com você.”</li><li>“Quer conversar ou prefere companhia em silêncio?”</li><li>“Você não precisa se explicar.”</li><li>“Posso ajudar com alguma coisa prática hoje?”</li></ul>',
+    'A depressão tira a iniciativa. Cobrar melhora gera mais culpa; oferecer presença abre espaço.'],
+    src:'Base: primeiros cuidados psicológicos (OMS) e orientações a familiares em saúde mental.'},
+  {id:'presenca', emoji:'🌿', title:'Presença sem pressão', try:false, body:[
+    'Ser uma presença constante mostra que a pessoa não está sozinha — e isso protege.',
+    'Convide para coisas leves: uma caminhada, um café, assistir algo juntos. Se ela recusar, respeite e convide de novo outro dia, sem cobrança.',
+    'Pequenos gestos contínuos valem mais que grandes intervenções: uma mensagem, levar uma comida, ajudar com uma tarefa prática.',
+    '<b>Se a pessoa falar em se machucar ou em não querer viver, leve a sério:</b> fique por perto, ajude a buscar atendimento e ligue para o CVV (188) ou o SAMU (192) se houver risco imediato.'],
+    src:'Base: primeiros cuidados psicológicos (OMS) e orientações do CVV.'},
+];
+const ART_GROUPS = [
+  ['Entender o que você sente', ['ansiedade', 'emocoes', 'pensamentos', 'armadilhas', 'ruminacao']],
+  ['Corpo e rotina', ['sono', 'respirar', 'movimento', 'alimentacao', 'conexao', 'ativacao']],
+  ['Cuidar de si e buscar ajuda', ['autocompaixao', 'ajuda', 'psi']],
+  ['Para quem apoia alguém', ['escutar', 'dizer', 'presenca']],
 ];
 
 // Registro único de ferramentas — usado no hub, nas sugestões pós-registro e nas leituras.
@@ -2560,6 +2645,10 @@ function toolDef(key){
     meditate:  {emoji:'🧘', title:'Meditar', sub:'Timer e práticas guiadas'},
     log:       {emoji:'✏️', title:'Fazer um registro', sub:'Humor, emoções e o que marcou o dia'},
     report:    {emoji:'📊', title:'Ver seu relatório', sub:'Semana, mês e descobertas'},
+    plan:      {emoji:'👣', title:'Pequenos passos', sub:'Até 3 ações pequenas para a semana'},
+    passo:     {emoji:'🌱', title:'Só 5 minutos', sub:'Uma ação pequena, agora'},
+    help:      {emoji:'🩺', title:'Onde buscar ajuda', sub:'Psicologia, psiquiatria, SUS e urgência'},
+    apoio:     {emoji:'💌', title:'Como me apoiar', sub:'Um texto para enviar a quem você confia'},
   })[key] || null;
 }
 function toolRow(key, handler){
@@ -2595,6 +2684,10 @@ function runTool(key){
   if (key.startsWith('trail:')) return openTool('trail', key.slice(6));
   if (key === 'log') { goTo('log'); return; }
   if (key === 'report') { histTab('relatorio'); goTo('history'); return; }
+  if (key === 'plan') return openTool('plan');
+  if (key === 'passo') { PASSO = null; return openTool('passo'); }
+  if (key === 'help') return openTool('help');
+  if (key === 'apoio') return openTool('apoio');
 }
 // Ação vinda do modal pós-registro: fecha o modal sem voltar para a Home.
 function empAct(key){
@@ -2634,6 +2727,10 @@ function renderTool(keepScroll){
   else if (k === 'thought') { title.textContent = 'Registro de pensamento'; if (!TR) TR = newTR(); renderThought(body); }
   else if (k === 'thoughts') { title.textContent = 'Seus registros de pensamento'; renderThoughtList(body); }
   else if (k === 'trail') { title.textContent = 'Trilha'; renderTrail(body, TOOL.arg); }
+  else if (k === 'plan') { title.textContent = 'Pequenos passos'; renderPlan(body); }
+  else if (k === 'passo') { title.textContent = 'Só 5 minutos'; renderPasso(body); }
+  else if (k === 'help') { title.textContent = 'Buscar ajuda'; renderHelp(body); }
+  else if (k === 'apoio') { title.textContent = 'Rede de apoio'; renderApoio(body); }
 }
 
 // ── Hub
@@ -2645,6 +2742,8 @@ const NEEDS = [
   {k:'raiva',     label:'Raiva',          tools:['calm','thought','art:armadilhas']},
   {k:'energia',   label:'Sem energia',    tools:['bodyscan','resp','art:movimento']},
   {k:'dormir',    label:'Difícil dormir', tools:['pmr','breath478','art:sono']},
+  {k:'parado',    label:'Sem vontade de nada', tools:['passo','compaixao','art:ativacao']},
+  {k:'sozinho',   label:'Solidão',        tools:['apoio','compaixao','art:conexao']},
 ];
 function selNeed(k){ CARE_NEED = CARE_NEED === k ? null : k; renderCare(); }
 
@@ -2667,9 +2766,13 @@ function renderCare(){
       <button class="tool-tile" onclick="runTool('meditate')"><span class="tt-e">🧘</span><b>Meditar</b><small>Timer e práticas guiadas</small></button>
       <button class="tool-tile" onclick="runTool('thought')"><span class="tt-e">🧠</span><b>Registro de pensamento</b><small>Olhar o pensamento de outro ângulo</small></button>
       <button class="tool-tile" onclick="runTool('ground')"><span class="tt-e">👁️</span><b>Aterramento</b><small>5-4-3-2-1, para voltar ao presente</small></button>
+      <button class="tool-tile" onclick="runTool('plan')"><span class="tt-e">👣</span><b>Pequenos passos</b><small>Rotina possível, uma ação por vez</small></button>
+      <button class="tool-tile" onclick="runTool('help')"><span class="tt-e">🩺</span><b>Buscar ajuda</b><small>Psicologia, psiquiatria e urgência</small></button>
     </div>
     ${th.length ? `<button class="tool-row" style="margin-top:10px" onclick="runTool('thoughts')"><span class="tr-e">📝</span>
       <span class="tr-t"><b>Seus registros de pensamento</b><small>${th.length} ${pl(th.length, 'registro', 'registros')}</small></span><span class="tr-go">›</span></button>` : ''}
+    <div class="section-lbl">Rede de apoio</div>
+    ${toolRow('apoio')}
     <div class="section-lbl">Trilhas · um passo por dia</div>
     ${TRAILS.map(t => {
       const d = trailDoneCount(t.id), n = t.days.length;
@@ -2678,10 +2781,10 @@ function renderCare(){
         <span class="tr-t"><b>${t.title}</b><small>${sub}</small></span><span class="tr-go">›</span></button>`;
     }).join('')}
     <div class="section-lbl">Aprender · leituras de 1 minuto</div>
-    <div class="card" style="padding:2px 16px">
-      ${ARTICLES.map(a => `<div class="art-row" onclick="runTool('art:${a.id}')"><span>${a.emoji}</span><span class="ar-t">${a.title}</span>
+    ${ART_GROUPS.map(([g, ids]) => `<div class="art-group">${g}</div><div class="card" style="padding:2px 16px">
+      ${ids.map(id => ARTICLES.find(a => a.id === id)).filter(Boolean).map(a => `<div class="art-row" onclick="runTool('art:${a.id}')"><span>${a.emoji}</span><span class="ar-t">${a.title}</span>
         ${read.includes(a.id) ? '<small class="read">✓ lido</small>' : '<small>1 min</small>'}</div>`).join('')}
-    </div>
+    </div>`).join('')}
     <div class="rep-foot" style="text-align:center;margin:6px 8px 12px">As práticas se baseiam em TCC, mindfulness e autocompaixão. O Florescer é um apoio e não substitui acompanhamento profissional.</div>`;
 }
 
@@ -2696,7 +2799,7 @@ function renderArticle(body, id){
     <div class="art-meta">Leitura de 1 minuto</div>
     <div class="art-body">${a.body.map(x => x.startsWith('<ul') ? x : `<p>${x}</p>`).join('')}</div>
     ${a.try ? `<div class="section-lbl" style="margin-top:4px">Experimente agora</div>${toolRow(a.try)}`
-            : `<button class="btn" style="background:#fef0ee;color:#c0392b;margin-top:4px" onclick="goTo('sos')">Abrir o SOS</button>`}
+      : a.try === false ? '' : `<button class="btn" style="background:#fef0ee;color:#c0392b;margin-top:4px" onclick="goTo('sos')">Abrir o SOS</button>`}
     <div class="art-src">${a.src}</div>`;
 }
 
@@ -2833,7 +2936,7 @@ function medFinish(completed){
   const ms = medOverall(), min = Math.round(ms / 60000), key = MED.key;
   MED.finished = true; MED.run = null;
   if (completed && MED.total) { bell(); try { navigator.vibrate && navigator.vibrate(150); } catch (e) {} }
-  if (key === 'ground') { if (completed) markCareDay(); }
+  if (key === 'ground') { if (completed) { setPillar('pausa', true); markCareDay(); } }
   else if (ms >= 60000) bumpMeditation(Math.max(1, min));
   const mh = S.habits.find(h => /medita/i.test(h.name));
   const offerHabit = key !== 'ground' && ms >= 60000 && mh && !(S.habitDone[new Date().toDateString()] || []).includes(mh.id);
@@ -3030,6 +3133,7 @@ function suggestionsFor(log){
   const agitado = log.anxiety >= 7 || has('ansiedade', 'medo');
   if (agitado) add('breath478');
   if (has('culpa', 'inseguranca', 'frustracao', 'irritacao') || (log.mood <= 2 && has('tristeza', 'desanimo'))) add('thought');
+  if (log.mood <= 2 || has('desanimo', 'vazio', 'cansaco')) add('passo');
   if (agitado) add('ground');
   if (has('solidao', 'vazio', 'tristeza', 'desanimo')) add('compaixao');
   if (has('sobrecarga', 'cansaco')) add('bodyscan');
@@ -3040,6 +3144,323 @@ function suggestionsFor(log){
   return out.slice(0, 2);
 }
 
+// ═══════════ PILARES DO CUIDADO ═══════════
+// Rotina que sustenta o humor. Registramos o que APARECEU no dia — nunca o que faltou.
+const PILLARS = [
+  {k:'movimento',   e:'🚶', l:'Movimento',   q:'Me movimentei'},
+  {k:'sono',        e:'😴', l:'Sono',        q:'Cuidei do sono'},
+  {k:'alimentacao', e:'🥗', l:'Alimentação', q:'Comi com cuidado'},
+  {k:'conexao',     e:'🤝', l:'Conexão',     q:'Falei com alguém'},
+  {k:'pausa',       e:'🧘', l:'Pausa',       q:'Fiz uma pausa'},
+];
+function pillarsOn(key){ return ((S.progress.pillars || {})[key || dateKey()]) || []; }
+// Devolve true quando o pilar acabou de ser ligado (para contar dia de cuidado).
+function setPillar(k, on, key){
+  const p = S.progress;
+  p.pillars = p.pillars || {};
+  key = key || dateKey();
+  const cur = new Set(p.pillars[key] || []);
+  const had = cur.has(k);
+  if (on === undefined) on = !had;
+  if (on) cur.add(k); else cur.delete(k);
+  if (cur.size) p.pillars[key] = [...cur]; else delete p.pillars[key];
+  progressSave();
+  return on && !had;
+}
+function pillarDaysIn(inR){
+  const out = {};
+  Object.keys((S.progress && S.progress.pillars) || {}).forEach(k => { if (inR(new Date(k + 'T12:00'))) out[k] = S.progress.pillars[k]; });
+  return out;
+}
+function pillarButtons(handler){
+  const today = pillarsOn();
+  return `<div class="pil-row">${PILLARS.map(p => { const on = today.includes(p.k);
+    return `<button class="pil ${on ? 'on' : ''}" aria-pressed="${on}" onclick="${handler}('${p.k}')"><span class="pil-e">${p.e}</span><span class="pil-l">${p.q}</span></button>`; }).join('')}</div>`;
+}
+function togPillar(k, where){
+  if (setPillar(k)) markCareDay();
+  if (where === 'log') renderLogPillars();
+  else if (where === 'plan') renderTool(1);
+  else renderHomePillars();
+}
+function togPillarHome(k){ togPillar(k, 'home'); }
+function togPillarLog(k){ togPillar(k, 'log'); }
+function togPillarPlan(k){ togPillar(k, 'plan'); }
+function renderLogPillars(){ const el = document.getElementById('log-pillars'); if (el) el.innerHTML = pillarButtons('togPillarLog'); }
+function renderHomePillars(){
+  const el = document.getElementById('home-pillars');
+  if (!el) return;
+  const c = {};
+  for (let i = 0; i < 7; i++) { const d = new Date(); d.setDate(d.getDate() - i); pillarsOn(dateKey(d)).forEach(k => c[k] = (c[k] || 0) + 1); }
+  const week = PILLARS.filter(p => c[p.k]).map(p => `${p.l} ${c[p.k]} ${pl(c[p.k], 'dia', 'dias')}`);
+  el.innerHTML = planReviewCard() + `<div class="section-lbl">Hoje eu…</div>
+    <div class="card">${pillarButtons('togPillarHome')}
+      <div class="pil-foot">${week.length ? 'Nos últimos 7 dias: ' + week.join(' · ') : 'Toque no que fez parte do seu dia. Pequenas coisas contam.'}</div>
+      <button class="btn-link" style="padding-bottom:0" onclick="runTool('plan')">Pequenos passos para a semana →</button>
+    </div>`;
+}
+
+// ═══════════ PEQUENOS PASSOS (ativação comportamental) ═══════════
+const MICRO = [
+  {id:'m-caminhar', p:'movimento', e:'🚶', t:'Caminhar 10 minutos'},
+  {id:'m-alongar',  p:'movimento', e:'🤸', t:'Alongar por 5 minutos'},
+  {id:'m-escada',   p:'movimento', e:'🪜', t:'Subir escadas em vez do elevador'},
+  {id:'m-dancar',   p:'movimento', e:'💃', t:'Dançar uma música'},
+  {id:'s-tela',     p:'sono', e:'📵', t:'Desligar telas 30 min antes de dormir'},
+  {id:'s-acordar',  p:'sono', e:'⏰', t:'Acordar no mesmo horário'},
+  {id:'s-luz',      p:'sono', e:'☀️', t:'Pegar 10 minutos de luz pela manhã'},
+  {id:'s-cafe',     p:'sono', e:'☕', t:'Sem café depois das 15h'},
+  {id:'a-agua',     p:'alimentacao', e:'💧', t:'Beber um copo de água ao acordar'},
+  {id:'a-fruta',    p:'alimentacao', e:'🍎', t:'Comer uma fruta'},
+  {id:'a-semtela',  p:'alimentacao', e:'🍽️', t:'Uma refeição sem tela'},
+  {id:'a-verde',    p:'alimentacao', e:'🥦', t:'Algo verde no prato'},
+  {id:'c-mensagem', p:'conexao', e:'💬', t:'Mandar mensagem para alguém querido'},
+  {id:'c-ligar',    p:'conexao', e:'📞', t:'Ligar para alguém da família'},
+  {id:'c-cafe',     p:'conexao', e:'🫖', t:'Tomar um café com alguém'},
+  {id:'c-agradecer',p:'conexao', e:'🙌', t:'Agradecer alguém'},
+  {id:'p-respirar', p:'pausa', e:'🌬️', t:'3 minutos de respiração'},
+  {id:'p-arlivre',  p:'pausa', e:'🌳', t:'5 minutos ao ar livre'},
+  {id:'p-musica',   p:'pausa', e:'🎧', t:'Ouvir uma música com atenção'},
+  {id:'p-semcel',   p:'pausa', e:'📴', t:'10 minutos sem celular'},
+];
+const PLAN_MAX = 3;
+function planHabits(){ return S.habits.filter(h => h.plan); }
+function toggleMicro(id, btn){
+  const m = MICRO.find(x => x.id === id);
+  if (!m) return;
+  const cur = S.habits.find(h => h.micro === id);
+  if (cur) S.habits = S.habits.filter(h => h !== cur);
+  else {
+    if (planHabits().length >= PLAN_MAX) {
+      const w = document.getElementById('plan-warn');
+      if (w) w.textContent = 'Até 3 passos por semana — menos é mais. Tire um para trocar.';
+      return;
+    }
+    S.habits.push({id: Date.now(), name: m.t, icon: m.e, streak: 0, pillar: m.p, micro: m.id, plan: true});
+  }
+  S.progress.planWeek = weekKey();
+  save(); progressSave();
+  if (window.saveHabitsCloud) window.saveHabitsCloud();
+  if (btn) { btn.textContent = '✓ Adicionado aos seus hábitos de hoje'; btn.disabled = true; }
+  else renderTool(1);
+}
+function renderPlan(body){
+  const chosen = planHabits();
+  if (chosen.length && S.progress.planWeek !== weekKey()) { S.progress.planWeek = weekKey(); progressSave(); }
+  body.innerHTML = `<div class="tr-hints" style="margin-top:0">Quando a energia está baixa, a vontade costuma vir <b>depois</b> da ação. Escolha até 3 passos pequenos para esta semana — eles aparecem nos seus hábitos de hoje, na tela inicial.
+      <button class="btn-link" style="padding:0;font-size:12px" onclick="runTool('art:ativacao')">Por que funciona</button></div>
+    <div class="section-lbl" style="margin-top:6px">Hoje eu…</div>
+    <div class="card">${pillarButtons('togPillarPlan')}</div>
+    <div class="section-lbl">Seu plano da semana · ${chosen.length} de ${PLAN_MAX}</div>
+    ${chosen.length
+      ? `<div class="card" style="padding:4px 14px">${chosen.map(h => `<div class="person"><span style="font-size:18px">${esc(h.icon)}</span>
+          <span class="person-n" style="font-weight:500">${esc(h.name)}</span><button class="pbtn" onclick="toggleMicro('${h.micro}')">Tirar</button></div>`).join('')}</div>`
+      : `<div class="rep-empty" style="margin-bottom:6px">Nenhum passo escolhido ainda. Comece por um só.</div>`}
+    <div class="tr-warn" id="plan-warn"></div>
+    ${PILLARS.map(p => `<div class="section-lbl">${p.e} ${p.l}</div>
+      ${MICRO.filter(m => m.p === p.k).map(m => { const on = S.habits.some(h => h.micro === m.id);
+        return `<button class="trap ${on ? 'sel' : ''}" onclick="toggleMicro('${m.id}')"><b>${m.e} ${m.t}</b><small>${on ? '✓ No seu plano' : 'Adicionar ao plano'}</small></button>`; }).join('')}`).join('')}`;
+}
+// Revisão gentil quando começa uma semana nova.
+function planReviewCard(){
+  const chosen = planHabits(), p = S.progress;
+  if (!chosen.length || !p.planWeek || p.planWeek === weekKey()) return '';
+  const end = weekStart(), start = new Date(end); start.setDate(start.getDate() - 7);
+  const rows = chosen.map(h => {
+    const n = Object.keys(S.habitDone || {}).filter(k => { const d = new Date(k);
+      return !isNaN(d) && d >= start && d < end && Array.isArray(S.habitDone[k]) && S.habitDone[k].includes(h.id); }).length;
+    return `<div class="th-txt">${esc(h.icon)} ${esc(h.name)} — ${n ? `${n} ${pl(n, 'dia', 'dias')}` : 'não rolou, e tudo bem'}</div>`;
+  }).join('');
+  return `<div class="section-lbl">A semana que passou</div>
+    <div class="card">
+      <div class="card-title">O que foi possível?</div>
+      <div class="card-sub">Sem cobrança: olhar o que deu certo ajuda a ajustar o próximo passo.</div>
+      ${rows}
+      <div class="tr-nav" style="margin-top:12px"><button class="btn btn-soft" style="padding:11px;font-size:13px" onclick="runTool('plan')">Rever passos</button>
+        <button class="btn btn-p" style="padding:11px;font-size:13px" onclick="keepPlan()">Manter</button></div>
+    </div>`;
+}
+function keepPlan(){ S.progress.planWeek = weekKey(); progressSave(); renderHomePillars(); }
+
+let PASSO = null;
+function renderPasso(body){
+  if (PASSO) {
+    const m = MICRO.find(x => x.id === PASSO);
+    body.innerHTML = `<div class="med-run"><div style="font-size:46px;margin:26px 0 8px">${m.e}</div>
+      <div class="tr-q">${m.t}</div>
+      <div class="tr-help" style="max-width:300px">Combinado. Faça agora, no seu ritmo. Quando terminar, volte aqui e toque em “Fiz”.</div>
+      <div class="tr-nav" style="width:100%"><button class="btn btn-soft" onclick="PASSO=null;renderTool(1)">Trocar</button>
+        <button class="btn btn-p" onclick="passoFeito()">Fiz 🌱</button></div></div>`;
+    return;
+  }
+  const n = Math.floor(Date.now() / 864e5);
+  const pick = ['movimento', 'conexao', 'pausa'].map((p, i) => { const list = MICRO.filter(m => m.p === p); return list[(n + i) % list.length]; });
+  body.innerHTML = `<div class="art-hero">🌱</div><div class="art-title">Só 5 minutos</div>
+    <div class="tr-help">Não precisa ter vontade antes. Escolha uma coisa pequena para fazer agora — depois repare se algo mudou, mesmo que pouco.</div>
+    ${pick.map(m => `<button class="trap" onclick="PASSO='${m.id}';renderTool(1)"><b>${m.e} ${m.t}</b><small>${PILLARS.find(p => p.k === m.p).l}</small></button>`).join('')}
+    <button class="btn-link" onclick="runTool('plan')">Ver todos os pequenos passos →</button>`;
+}
+function passoFeito(){
+  const m = MICRO.find(x => x.id === PASSO);
+  PASSO = null;
+  if (!m) return;
+  setPillar(m.p, true);
+  markCareDay();
+  const inPlan = S.habits.some(h => h.micro === m.id);
+  document.getElementById('tool-body').innerHTML = `<div class="med-run"><div style="font-size:48px;margin:28px 0 8px">🌱</div>
+    <div class="tr-q">Você saiu do lugar</div>
+    <div class="tr-help" style="max-width:300px">Isso conta — e muito. Como você está agora, mesmo que só um pouco diferente?</div>
+    ${!inPlan && planHabits().length < PLAN_MAX ? `<button class="btn btn-soft" style="margin-bottom:8px" onclick="toggleMicro('${m.id}', this)">Repetir nos próximos dias</button>` : ''}
+    <button class="btn btn-p" onclick="toolBack()">Voltar</button></div>`;
+}
+
+// ═══════════ CAMINHO ATÉ A AJUDA PROFISSIONAL ═══════════
+// Sinal gentil: 2 semanas pesadas nos registros. Nunca alarmista, dispensável, no máx. 1x a cada 14 dias.
+function helpSignal(){
+  const since = new Date(); since.setDate(since.getDate() - 14);
+  const logs = S.logs.filter(l => new Date(l.date) >= since);
+  if (logs.length < 5) return false;
+  const mood = avgOf(logs.map(l => l.mood));
+  const high = logs.filter(l => l.anxiety >= 7).length / logs.length;
+  return mood <= 2.2 || high >= 0.5;
+}
+function renderHomeHelp(){
+  const el = document.getElementById('home-help');
+  if (!el) return;
+  const last = S.progress.helpNudgeAt;
+  const wait = last && (Date.now() - new Date(last + 'T12:00')) < 14 * 864e5;
+  if (wait || !helpSignal()) { el.innerHTML = ''; return; }
+  const terapia = PROFILE && PROFILE.therapy === 'sim';
+  el.innerHTML = `<div class="help-card">
+    <div class="card-title">Tem sido um período pesado</div>
+    <div style="font-size:13px;color:#555;line-height:1.55;margin:4px 0 12px">${terapia
+      ? 'Seus registros das últimas duas semanas mostram dias difíceis. Vale levar isso para a sua próxima sessão — o PDF do relatório pode ajudar.'
+      : 'Seus registros das últimas duas semanas mostram dias difíceis. Você não precisa atravessar isso sem apoio: conversar com um profissional pode ajudar.'}</div>
+    <div class="tr-nav" style="margin-top:0">
+      <button class="btn btn-soft" style="padding:11px;font-size:13px" onclick="dismissHelp()">Agora não</button>
+      <button class="btn btn-p" style="padding:11px;font-size:13px" onclick="dismissHelp(true);${terapia ? 'openReportPdf()' : "runTool('help')"}">${terapia ? 'Gerar PDF' : 'Onde buscar ajuda'}</button>
+    </div></div>`;
+}
+function dismissHelp(silent){ S.progress.helpNudgeAt = dateKey(); progressSave(); if (!silent) renderHomeHelp(); }
+function openReportPdf(){
+  reportMode = 'month'; reportOffset = 0;
+  histTab('relatorio'); goTo('history');
+  setTimeout(() => { const b = document.getElementById('pdf-btn'); if (b) b.scrollIntoView({block:'center', behavior:'smooth'}); }, 80);
+}
+function renderHelp(body){
+  const places = [
+    ['🏥', 'Pelo SUS', 'Procure a Unidade Básica de Saúde (UBS) do seu bairro. Ela é a porta de entrada e encaminha para o CAPS (Centro de Atenção Psicossocial) quando necessário.'],
+    ['🎓', 'Clínicas-escola', 'Faculdades de psicologia oferecem atendimento gratuito ou com valor social, com supervisão de professores.'],
+    ['💳', 'Plano de saúde', 'Planos de saúde costumam cobrir consultas de psiquiatria e sessões de psicologia. Consulte a rede credenciada.'],
+    ['💻', 'Atendimento online', 'É permitido e regulamentado. Confira se a pessoa tem registro ativo no CRP (psicologia) ou no CRM (psiquiatria).'],
+  ];
+  body.innerHTML = `<div class="art-hero">🩺</div>
+    <div class="art-title">Onde buscar ajuda</div>
+    <div class="art-meta">Procurar ajuda é um passo de cuidado, não de fraqueza.</div>
+    <div class="help-card urgent">
+      <div class="card-title" style="color:#b03a2e">Se for urgente</div>
+      <div style="font-size:13px;color:#555;line-height:1.55;margin-top:4px">Se você está pensando em se machucar ou em não querer mais viver, fale com alguém agora.</div>
+      <div class="call-row"><a class="call-btn" href="tel:188">📞 CVV · 188</a><a class="call-btn" href="tel:192">🚑 SAMU · 192</a></div>
+      <div class="rep-foot" style="margin-top:8px">CVV: 24 horas, gratuito, também em cvv.org.br. Em risco imediato, vá ao pronto-socorro ou à UPA mais próxima.</div>
+    </div>
+    <div class="section-lbl">Psicologia ou psiquiatria?</div>
+    <div class="two-col">
+      <div class="mini-card"><b>Psicologia</b>Faz psicoterapia: ajuda a entender padrões de pensamento e comportamento e a criar ferramentas para os momentos difíceis. Não prescreve remédios.</div>
+      <div class="mini-card"><b>Psiquiatria</b>Especialidade médica: avalia os sintomas, investiga causas físicas (como tireoide ou falta de vitaminas) e indica se medicação faz sentido.</div>
+    </div>
+    <div class="rep-foot">Muitas vezes as duas trabalham juntas. Não existe porta errada — qualquer uma orienta o próximo passo.</div>
+    <div class="section-lbl">Onde encontrar</div>
+    <div class="card" style="padding:4px 16px">${places.map(([e, t, x]) => `<div class="disc"><span style="font-size:18px">${e}</span><span><b>${t}</b><br><span style="color:#666">${x}</span></span></div>`).join('')}</div>
+    <div class="section-lbl">Antes da primeira consulta</div>
+    <div class="card">
+      <div class="card-sub" style="margin-bottom:6px">Anotar ajuda a não esquecer nada na hora:</div>
+      <ul class="check-list">
+        <li>O que você tem sentido e desde quando</li>
+        <li>O que piora e o que melhora</li>
+        <li>Como estão o sono, o apetite e a energia</li>
+        <li>Remédios, álcool ou outras substâncias que usa</li>
+        <li>O que você espera do atendimento</li>
+      </ul>
+      <button class="btn btn-p" style="margin-top:10px" onclick="openReportPdf()">Gerar PDF do seu mês</button>
+    </div>
+    ${toolRow('art:psi')}
+    <div class="rep-foot" style="text-align:center;margin:10px 8px">O Florescer não faz diagnóstico nem indica tratamento.</div>`;
+}
+
+// ═══════════ REDE DE APOIO ═══════════
+let CONTACTS = (function(){ try { const c = JSON.parse(localStorage.getItem('fl_contacts') || '[]'); return Array.isArray(c) ? c : []; } catch (e) { return []; } })();
+let PEOPLE_FORM = false;
+function saveContacts(){ try { localStorage.setItem('fl_contacts', JSON.stringify(CONTACTS)); } catch (e) {} }
+function phoneDigits(p){ return String(p || '').replace(/\D/g, ''); }
+function waLink(p){
+  let d = phoneDigits(p);
+  if (d.length <= 11) d = '55' + d;
+  return 'https://wa.me/' + d + '?text=' + encodeURIComponent('Oi, não estou num bom momento. Pode falar comigo?');
+}
+function renderSosPeople(){
+  const el = document.getElementById('sos-people');
+  if (!el) return;
+  el.innerHTML = `<div class="sos-technique">
+    <div class="sos-title">🤝 Minhas pessoas</div>
+    <div class="sos-desc">${CONTACTS.length ? 'Alguém de confiança para chamar agora.' : 'Guarde até 3 pessoas de confiança para chamar num momento difícil. Fica salvo só neste aparelho.'}</div>
+    ${CONTACTS.map((c, i) => `<div class="person"><span class="person-n">${esc(c.name)}</span>
+      <a class="pbtn" href="tel:${phoneDigits(c.phone)}">Ligar</a>
+      <a class="pbtn" href="${waLink(c.phone)}" target="_blank" rel="noopener">WhatsApp</a>
+      <button class="pbtn pbtn-x" onclick="removeContact(${i})" aria-label="Remover">✕</button></div>`).join('')}
+    ${PEOPLE_FORM ? `<div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+        <input class="inp" id="pp-name" placeholder="Nome" maxlength="30">
+        <input class="inp" id="pp-phone" placeholder="Telefone com DDD" inputmode="tel" maxlength="20">
+        <div class="tr-warn" id="pp-warn" style="margin:0"></div>
+        <div class="tr-nav" style="margin:0"><button class="btn btn-soft" style="padding:10px;font-size:13px" onclick="PEOPLE_FORM=false;renderSosPeople()">Cancelar</button>
+          <button class="btn btn-p" style="padding:10px;font-size:13px" onclick="addContact()">Salvar</button></div></div>`
+      : CONTACTS.length < 3 ? `<button class="btn-link" onclick="PEOPLE_FORM=true;renderSosPeople()">+ Adicionar pessoa</button>` : ''}
+    <button class="btn-link" style="display:block" onclick="runTool('apoio')">Enviar “Como me apoiar” para alguém →</button>
+  </div>`;
+}
+function addContact(){
+  const n = document.getElementById('pp-name').value.trim(), ph = document.getElementById('pp-phone').value.trim();
+  if (!n || phoneDigits(ph).length < 10) { document.getElementById('pp-warn').textContent = 'Preencha o nome e o telefone com DDD.'; return; }
+  CONTACTS.push({name: n.slice(0, 30), phone: ph});
+  saveContacts(); PEOPLE_FORM = false; renderSosPeople();
+}
+function removeContact(i){
+  if (!confirm('Remover ' + CONTACTS[i].name + ' das suas pessoas?')) return;
+  CONTACTS.splice(i, 1); saveContacts(); renderSosPeople();
+}
+
+const APOIO_PADRAO = `Oi. Queria te contar que tenho passado por um período difícil emocionalmente. Se você quiser me ajudar, algumas coisas fazem diferença para mim:
+
+• Me escutar sem tentar resolver na hora. Às vezes eu só preciso falar.
+• Evitar frases como "é falta de força de vontade" ou "você tem tudo, por que está assim?". Elas aumentam a culpa.
+• Me convidar para coisas leves, como uma caminhada ou um café — e entender se eu disser não.
+• Continuar por perto, mesmo quando eu sumir um pouco.
+
+Agradeço por estar comigo.`;
+function renderApoio(body){
+  let txt = null;
+  try { txt = localStorage.getItem('fl_apoio'); } catch (e) {}
+  body.innerHTML = `<div class="art-hero">💌</div><div class="art-title">Como me apoiar</div>
+    <div class="tr-help">Às vezes é difícil explicar o que ajuda. Ajuste este texto do seu jeito e envie para alguém de confiança.</div>
+    <textarea class="inp" id="apoio-txt" rows="14" oninput="try{localStorage.setItem('fl_apoio',this.value)}catch(e){}">${esc(txt || APOIO_PADRAO)}</textarea>
+    <button class="btn btn-p" style="margin-top:10px" onclick="shareApoio()">Enviar para alguém</button>
+    <button class="btn-link" style="display:block;margin:6px auto" onclick="try{localStorage.removeItem('fl_apoio')}catch(e){};renderTool(1)">Voltar ao texto original</button>
+    <div class="section-lbl">Para quem apoia alguém</div>
+    ${['art:escutar', 'art:dizer', 'art:presenca'].map(k => toolRow(k)).join('')}`;
+}
+async function shareApoio(){
+  const text = document.getElementById('apoio-txt').value.trim();
+  if (!text) return;
+  const C = window.Capacitor;
+  const P = C && C.isNativePlatform && C.isNativePlatform() ? C.Plugins : null;
+  try {
+    if (P && P.Share) await P.Share.share({title: 'Como me apoiar', text, dialogTitle: 'Enviar para'});
+    else if (navigator.share) await navigator.share({title: 'Como me apoiar', text});
+    else { await navigator.clipboard.writeText(text); alert('Texto copiado. É só colar na conversa.'); }
+  } catch (e) {
+    if (!/cancel|abort/i.test((e && e.message) || '')) alert('Não deu para abrir o compartilhamento. Copie o texto e cole na conversa.');
+  }
+}
+
 // ═══════════ PERFIL (onboarding) ═══════════
 const GOALS = [
   {k:'ansiedade', e:'🌀', l:'Lidar com a ansiedade'},
@@ -3048,13 +3469,15 @@ const GOALS = [
   {k:'estresse',  e:'🧯', l:'Estresse e sobrecarga'},
   {k:'gentileza', e:'💛', l:'Ser mais gentil comigo'},
   {k:'habitos',   e:'🌱', l:'Criar hábitos de cuidado'},
+  {k:'energia',   e:'👣', l:'Recuperar energia e disposição'},
 ];
 const GOAL_TOOLS = {
   ansiedade:['breath478','ground','art:ansiedade'], humor:['art:emocoes','report','bodyscan'],
   sono:['pmr','art:sono','folhas'], estresse:['bodyscan','thought','art:ruminacao'],
-  gentileza:['compaixao','art:autocompaixao','thought'], habitos:['art:movimento','resp','gratidao'],
+  gentileza:['compaixao','art:autocompaixao','thought'], habitos:['plan','art:alimentacao','art:movimento'],
+  energia:['passo','plan','art:ativacao'],
 };
-const GOAL_TRAIL = {ansiedade:'ansiedade', estresse:'ansiedade', sono:'sono', gentileza:'gentileza', humor:'emocoes', habitos:'emocoes'};
+const GOAL_TRAIL = {ansiedade:'ansiedade', estresse:'ansiedade', sono:'sono', gentileza:'gentileza', humor:'emocoes', habitos:'rotina', energia:'passos'};
 const THERAPY = [['sim','Faço'],['antes','Já fiz'],['nao','Não faço'],['pref','Prefiro não dizer']];
 
 let PROFILE = (function(){ try { return JSON.parse(localStorage.getItem('fl_profile') || 'null'); } catch (e) { return null; } })();
@@ -3066,7 +3489,7 @@ window.applyCloudProfile = function(p){
   }
 };
 window.needsOnboarding = () => !PROFILE;
-window.resetProfile = () => { PROFILE = null; };
+window.resetProfile = () => { PROFILE = null; CONTACTS = []; };
 
 let OB = {goals:[], therapy:null, rem:undefined, edit:false};
 function openOnboard(edit){
@@ -3152,6 +3575,24 @@ const TRAILS = [
     {t:'Quando o pensamento gira', x:'Às vezes a emoção passa, mas o pensamento continua girando. Leia sobre ruminação.', a:'art:ruminacao'},
     {t:'Só respirar', x:'Uma prática curta de respiração consciente, sem objetivo além de estar aqui.', a:'resp'},
     {t:'Seus padrões', x:'Abra seu relatório e procure um padrão: um gatilho, um horário, uma relação com o sono.', a:'report', ask:'O que você descobriu sobre você?'},
+  ]},
+  {id:'rotina', emoji:'🌿', title:'Rotina que sustenta', desc:'Os cinco pilares do cuidado, um por dia.', days:[
+    {t:'Os pilares do cuidado', x:'Movimento, sono, alimentação, conexão e pausa sustentam o humor. Hoje, só observe: quais deles apareceram no seu dia? Marque em “Hoje eu…”.', a:'plan'},
+    {t:'Movimento gentil', x:'Escolha um movimento de até 10 minutos e faça hoje: caminhar, alongar, dançar uma música.', a:'art:movimento'},
+    {t:'Preparar o sono', x:'Escolha um horário para desligar as telas hoje à noite e tente cumprir.', ask:'Que horário você escolheu?'},
+    {t:'Comer com cuidado', x:'Sem dieta: só um ajuste pequeno hoje, como beber água, incluir algo fresco ou comer sem tela.', a:'art:alimentacao'},
+    {t:'Uma conexão', x:'Mande uma mensagem para alguém de quem você gosta. Não precisa falar de como você está.', a:'art:conexao'},
+    {t:'Uma pausa de verdade', x:'Três minutos só para você, sem tela e sem tarefa.', a:'resp'},
+    {t:'Sua rotina possível', x:'Qual pilar fez mais diferença nesta semana? Escolha até 3 pequenos passos para a próxima.', a:'plan', ask:'Qual pilar fez mais diferença para você?'},
+  ]},
+  {id:'passos', emoji:'👣', title:'Sair do lugar', desc:'Para dias sem energia: pequenas ações antes da vontade.', days:[
+    {t:'Comece pequeno', x:'Quando a energia some, esperar a vontade chegar costuma não funcionar. Leia por que agir primeiro — em doses bem pequenas — ajuda.', a:'art:ativacao'},
+    {t:'O que já fez bem', x:'Pense em atividades que já fizeram bem a você, mesmo que hoje pareçam difíceis. Não precisa fazer nenhuma agora.', ask:'Liste até 3 atividades que já fizeram bem a você.'},
+    {t:'Só 5 minutos', x:'Escolha uma ação pequena e faça agora. Depois, repare se algo mudou.', a:'passo'},
+    {t:'Perceber o efeito', x:'Depois de alguma atividade do seu dia, faça um registro. Repare no humor, mesmo que a diferença seja pequena.', a:'log'},
+    {t:'Uma pessoa', x:'Isolamento pesa. Mande uma mensagem curta para alguém — pode ser só um “oi”.', a:'art:conexao'},
+    {t:'Planejar a semana', x:'Escolha até 3 passos pequenos para os próximos dias. Menos é mais.', a:'plan'},
+    {t:'Olhar para trás', x:'O que foi possível nesta semana? Se a falta de energia já dura semanas, conversar com um profissional ajuda — e não é sinal de fraqueza.', a:'help', ask:'O que foi possível nesta semana?'},
   ]},
 ];
 function trailDef(id){ return TRAILS.find(t => t.id === id); }
@@ -3451,6 +3892,10 @@ async function exportReportPdf(){
       const sleepRows = SLEEP_ORDER.filter(s => st.sleep[s].length).map(s => `${s}: ${fmt1(avgOf(st.sleep[s]))}`);
       if (sleepRows.length) { h2('Sono e humor'); para('Humor médio conforme a qualidade da noite anterior: ' + sleepRows.join(' · ') + '.'); }
 
+      const pcs = {};
+      Object.values(st.pillarDays || {}).forEach(arr => arr.forEach(k => pcs[k] = (pcs[k] || 0) + 1));
+      if (Object.keys(pcs).length) { h2('Pilares do cuidado'); para(PILLARS.filter(p => pcs[p.k]).map(p => `${p.l}: ${pcs[p.k]} ${pl(pcs[p.k], 'dia', 'dias')}`).join(' · ') + '.'); }
+
       if (S.habits.length) {
         h2('Hábitos');
         para(S.habits.map(h => `${h.name}: ${Object.keys(st.habitDays).filter(k => st.habitDays[k].includes(h.id)).length} dias`).join(' · ') + '.');
@@ -3583,7 +4028,7 @@ function reportStats(start, end){
     habitDays[dateKey(d)] = S.habitDone[k];
   });
   return {
-    logs, dayMood, emo, trig, quad, sleep, habitDays,
+    logs, dayMood, emo, trig, quad, sleep, habitDays, pillarDays: pillarDaysIn(inR),
     grats: S.gratitude.filter(g => inR(g.date)),
     mood: avgOf(logs.map(l => l.mood)),
     anx: avgOf(logs.map(l => l.anxiety)),
@@ -3629,6 +4074,16 @@ function discoveries(st){
     if (Math.abs(a - b) < 0.5) return;
     out.push({score: Math.abs(a - b) * Math.min(w.length, 6),
       html: `Nos dias em que você marcou <b>${esc(h.icon)} ${esc(h.name)}</b>, seu humor médio foi <b>${fmt1(a)}</b> — e <b>${fmt1(b)}</b> nos outros dias.`});
+  });
+
+  PILLARS.forEach(p => {
+    const w = [], o = [];
+    dayKeys.forEach(k => ((st.pillarDays[k] || []).includes(p.k) ? w : o).push(st.dayMood[k]));
+    if (w.length < 2 || o.length < 2) return;
+    const a = avgOf(w), b = avgOf(o);
+    if (Math.abs(a - b) < 0.5) return;
+    out.push({score: Math.abs(a - b) * Math.min(w.length, 6) + 0.5,
+      html: `Nos dias em que você marcou <b>${p.q.toLowerCase()}</b>, seu humor médio foi <b>${fmt1(a)}</b> — e <b>${fmt1(b)}</b> nos outros dias.`});
   });
 
   Object.entries(st.emo).forEach(([e, c]) => {
@@ -3823,6 +4278,15 @@ function renderReport(body){
     <div class="card-title">Sono e humor</div>
     <div class="card-sub">Humor médio conforme a noite anterior.</div>
     ${hbars(sleepRows, 5, (s) => ({'Péssimo':'#c9b3d6','Ruim':'#b9c3dc','Ok':'#c9d8c0','Bom':'#8fc9b0','Ótimo':'#4fa488'})[s], fmt1)}
+  </div>`;
+
+  // ── Pilares do cuidado
+  const pc = {};
+  Object.values(st.pillarDays || {}).forEach(arr => arr.forEach(k => pc[k] = (pc[k] || 0) + 1));
+  if (Object.keys(pc).length) html += `<div class="card">
+    <div class="card-title">Pilares do cuidado</div>
+    <div class="card-sub">Em quantos dias cada pilar fez parte da sua rotina.</div>
+    ${hbars(PILLARS.filter(p => pc[p.k]).map(p => [p.e + ' ' + p.l, pc[p.k]]), r.elapsed, () => '#8fc9b0', (v) => v + 'd')}
   </div>`;
 
   // ── Hábitos e humor
