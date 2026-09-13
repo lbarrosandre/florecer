@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0d3d2e">
+<meta name="theme-color" content="#F4F7F5">
 <title>Florescer — Diário de Bem-Estar</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#151520;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;padding:24px;gap:24px}
+body{background:#151520;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:inherit;padding:24px;gap:24px}
 @media (max-width: 1024px) {
   body {
     padding: 0 !important;
@@ -66,13 +66,13 @@ body{background:#151520;min-height:100vh;display:flex;align-items:center;justify
 .emo-glabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;display:flex;align-items:center;gap:6px}
 .emo-glabel i{width:8px;height:8px;border-radius:50%;display:inline-block}
 .emo-chips{display:flex;flex-wrap:wrap;gap:6px}
-.emo-chip{padding:7px 12px;border:1.5px solid #e8e8e8;border-radius:20px;font-size:12px;cursor:pointer;color:#555;background:#fff;font-family:'DM Sans',sans-serif;transition:background .15s,border-color .15s,color .15s}
+.emo-chip{padding:7px 12px;border:1.5px solid #e8e8e8;border-radius:20px;font-size:12px;cursor:pointer;color:#555;background:#fff;font-family:inherit;transition:background .15s,border-color .15s,color .15s}
 .emo-chip.sel{font-weight:600;color:#fff}
 .emo-count{font-size:11px;color:#999;margin-top:10px}
 .reflect-q{font-size:14px;font-weight:600;color:#1f6450;line-height:1.45;margin:6px 0 4px;transition:opacity .2s}
 /* ── Relatório ── */
 .rep-seg{display:flex;background:#f0f0f0;border-radius:12px;padding:3px;margin-bottom:8px}
-.rep-seg button{flex:1;padding:8px;border:none;background:none;border-radius:10px;font-size:12px;font-weight:600;color:#999;font-family:'DM Sans',sans-serif;cursor:pointer}
+.rep-seg button{flex:1;padding:8px;border:none;background:none;border-radius:10px;font-size:12px;font-weight:600;color:#999;font-family:inherit;cursor:pointer}
 .rep-seg button.on{background:#fff;color:#1a1a1a;box-shadow:0 1px 4px #0000001a}
 .rep-nav{display:flex;align-items:center;justify-content:space-between;margin:2px 0 10px}
 .rep-nav button{background:none;border:none;font-size:24px;color:#2a7d63;cursor:pointer;padding:0 10px;line-height:1}
@@ -106,14 +106,14 @@ body{background:#151520;min-height:100vh;display:flex;align-items:center;justify
 .home-wsum{font-size:12px;color:#666;line-height:1.55;margin-top:10px;padding-top:10px;border-top:1px solid #f3f3f3}
 /* ── Cuidar ── */
 .chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-.chip{padding:8px 12px;border:1.5px solid #e8e8e8;border-radius:20px;background:#fff;font-size:12px;color:#555;cursor:pointer;font-family:'DM Sans',sans-serif}
+.chip{padding:8px 12px;border:1.5px solid #e8e8e8;border-radius:20px;background:#fff;font-size:12px;color:#555;cursor:pointer;font-family:inherit}
 .chip.sel{border-color:#2a7d63;background:#eaf5f1;color:#1f6450;font-weight:600}
 .tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tool-tile{background:#fff;border:1px solid #f0f0f0;border-radius:16px;padding:14px;text-align:left;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 1px 4px #0000000a}
+.tool-tile{background:#fff;border:1px solid #f0f0f0;border-radius:16px;padding:14px;text-align:left;cursor:pointer;font-family:inherit;box-shadow:0 1px 4px #0000000a}
 .tool-tile .tt-e{font-size:24px;display:block;margin-bottom:8px}
 .tool-tile b{display:block;font-size:13px;color:#1a1a1a;font-weight:600}
 .tool-tile small{display:block;font-size:11px;color:#aaa;margin-top:2px;line-height:1.35}
-.tool-row{display:flex;align-items:center;gap:12px;width:100%;background:#fff;border:1px solid #e9f1ed;border-radius:14px;padding:11px 14px;margin-bottom:8px;cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif}
+.tool-row{display:flex;align-items:center;gap:12px;width:100%;background:#fff;border:1px solid #e9f1ed;border-radius:14px;padding:11px 14px;margin-bottom:8px;cursor:pointer;text-align:left;font-family:inherit}
 .tool-row .tr-e{font-size:20px;width:26px;text-align:center;flex-shrink:0}
 .tool-row .tr-t{flex:1;min-width:0}
 .tool-row b{display:block;font-size:13px;font-weight:600;color:#1a1a1a}
@@ -156,7 +156,7 @@ body{background:#151520;min-height:100vh;display:flex;align-items:center;justify
 .tr-lbl{font-size:12px;font-weight:600;color:#555;margin:14px 0 6px}
 .tr-warn{font-size:12px;color:#b08a3e;min-height:16px;margin-top:8px}
 .tr-nav{display:flex;gap:8px;margin-top:8px}
-.trap{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid #eee;border-radius:12px;padding:10px 12px;margin-bottom:6px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.trap{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid #eee;border-radius:12px;padding:10px 12px;margin-bottom:6px;cursor:pointer;font-family:inherit}
 .trap b{display:block;font-size:13px;color:#1a1a1a}
 .trap small{font-size:12px;color:#888;line-height:1.4}
 .trap.sel{border-color:#2a7d63;background:#eaf5f1}
@@ -190,7 +190,7 @@ body{background:#151520;min-height:100vh;display:flex;align-items:center;justify
 .switch input:checked+span:before{transform:translateX(18px)}
 /* ── Pilares / pequenos passos / ajuda / rede de apoio ── */
 .pil-row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.pil{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 2px 8px;border:1.5px solid #eee;border-radius:14px;background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.pil{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 2px 8px;border:1.5px solid #eee;border-radius:14px;background:#fff;cursor:pointer;font-family:inherit;transition:all .15s}
 .pil-e{font-size:20px;filter:grayscale(1);opacity:.5;transition:all .2s}
 .pil-l{font-size:9.5px;color:#999;line-height:1.2;text-align:center}
 .pil.on{border-color:#2a7d63;background:#eaf5f1}
@@ -209,7 +209,7 @@ body{background:#151520;min-height:100vh;display:flex;align-items:center;justify
 .person{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #f3f3f3}
 .person:last-child{border-bottom:none}
 .person-n{flex:1;min-width:0;font-size:13px;color:#333;font-weight:600}
-.pbtn{padding:7px 10px;border-radius:10px;font-size:12px;font-weight:600;text-decoration:none;border:1.5px solid #e8e8e8;color:#2a7d63;background:#fff;font-family:'DM Sans',sans-serif;cursor:pointer}
+.pbtn{padding:7px 10px;border-radius:10px;font-size:12px;font-weight:600;text-decoration:none;border:1.5px solid #e8e8e8;color:#2a7d63;background:#fff;font-family:inherit;cursor:pointer}
 .pbtn-x{color:#bbb;border-color:#f0f0f0}
 .art-group{font-size:12px;font-weight:600;color:#666;margin:12px 2px 6px}
 .side-info{color:#ffffff25;font-size:11px;letter-spacing:.06em;text-transform:uppercase;line-height:2;text-align:center;max-width:120px}
@@ -246,18 +246,18 @@ h2{font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:12px}
 .section-lbl{font-size:11px;font-weight:600;color:#bbb;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 10px}
 
 /* Buttons */
-.btn{width:100%;padding:15px;border:none;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn{width:100%;padding:15px;border:none;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
 .btn-p{background:#2a7d63;color:#fff}
 .btn-p:active{opacity:.85}
 .btn-s{background:#fff;color:#2a7d63;border:1.5px solid #2a7d63}
 .btn-g{background:#f0f0f0;color:#555;margin-top:8px}
-.btn-sm{padding:9px 18px;font-size:13px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
+.btn-sm{padding:9px 18px;font-size:13px;border-radius:10px;border:none;cursor:pointer;font-family:inherit;font-weight:500}
 .btn-sm-p{background:#2a7d63;color:#fff}
 .btn-sm-s{background:#f0f0f0;color:#555}
-.btn-link{background:none;border:none;color:#2a7d63;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;padding:6px 0}
+.btn-link{background:none;border:none;color:#2a7d63;font-size:13px;cursor:pointer;font-family:inherit;padding:6px 0}
 
 /* Input */
-.inp{width:100%;padding:13px;border:1.5px solid #eee;border-radius:12px;font-size:14px;font-family:'DM Sans',sans-serif;color:#1a1a1a;outline:none;background:#fff;transition:border-color .15s}
+.inp{width:100%;padding:13px;border:1.5px solid #eee;border-radius:12px;font-size:14px;font-family:inherit;color:#1a1a1a;outline:none;background:#fff;transition:border-color .15s}
 .inp:focus{border-color:#2a7d63}
 .inp-lbl{font-size:12px;font-weight:500;color:#666;margin-bottom:5px;display:block}
 .inp-group{margin-bottom:14px}
@@ -279,12 +279,12 @@ textarea.inp{resize:none;min-height:76px}
 
 /* Scale */
 .scale-row{display:flex;flex-wrap:wrap;gap:5px}
-.sc-btn{padding:6px 10px;border:1.5px solid #eee;border-radius:8px;font-size:12px;cursor:pointer;background:#fff;color:#666;font-family:'DM Sans',sans-serif;transition:all .15s}
+.sc-btn{padding:6px 10px;border:1.5px solid #eee;border-radius:8px;font-size:12px;cursor:pointer;background:#fff;color:#666;font-family:inherit;transition:all .15s}
 .sc-btn.sel{background:#e8fdf3;border-color:#4ecb8d;color:#1a6b44;font-weight:600}
 
 /* Tags */
 .tags{display:flex;flex-wrap:wrap;gap:6px}
-.tag{padding:6px 12px;border:1.5px solid #eee;border-radius:20px;font-size:11px;cursor:pointer;color:#666;background:#fff;transition:all .15s;font-family:'DM Sans',sans-serif}
+.tag{padding:6px 12px;border:1.5px solid #eee;border-radius:20px;font-size:11px;cursor:pointer;color:#666;background:#fff;transition:all .15s;font-family:inherit}
 .tag.sel{background:#faf5e8;border-color:#c9a84c;color:#5c3d00;font-weight:500}
 
 /* Metrics */
@@ -344,12 +344,12 @@ textarea.inp{resize:none;min-height:76px}
 .breath-instr{font-size:18px;font-weight:600;color:#1a1a1a;margin-bottom:6px;text-align:center}
 .breath-sub{font-size:13px;color:#bbb;margin-bottom:24px;text-align:center}
 .breath-tabs{display:flex;gap:8px;margin-bottom:24px;width:100%}
-.breath-tab{flex:1;padding:10px;border:1.5px solid #eee;border-radius:10px;text-align:center;cursor:pointer;font-size:12px;font-weight:500;color:#888;background:#fff;font-family:'DM Sans',sans-serif;transition:all .15s}
+.breath-tab{flex:1;padding:10px;border:1.5px solid #eee;border-radius:10px;text-align:center;cursor:pointer;font-size:12px;font-weight:500;color:#888;background:#fff;font-family:inherit;transition:all .15s}
 .breath-tab.active{border-color:#2a7d63;background:#eaf5f1;color:#1f6450}
 .breath-cycles{font-size:13px;color:#bbb;text-align:center;margin-top:12px}
 
 /* SOS */
-.sos-btn{background:linear-gradient(135deg,#ff4757,#c0392b);color:#fff;border:none;border-radius:50%;width:72px;height:72px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px #ff475740;transition:transform .15s;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex-shrink:0}
+.sos-btn{background:linear-gradient(135deg,#ff4757,#c0392b);color:#fff;border:none;border-radius:50%;width:72px;height:72px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px #ff475740;transition:transform .15s;font-family:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex-shrink:0}
 .sos-btn:active{transform:scale(.95)}
 .sos-technique{background:#fff;border:1px solid #f0f0f0;border-radius:14px;padding:14px;margin-bottom:10px}
 .sos-title{font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:6px}
@@ -406,7 +406,7 @@ textarea.inp{resize:none;min-height:76px}
 
 /* Tab bar for top */
 .top-tabs{display:flex;background:#f0f0f0;border-radius:12px;padding:3px;margin-bottom:14px}
-.top-tab{flex:1;padding:8px;text-align:center;border:none;background:none;border-radius:10px;font-size:12px;font-weight:500;color:#999;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.top-tab{flex:1;padding:8px;text-align:center;border:none;background:none;border-radius:10px;font-size:12px;font-weight:500;color:#999;cursor:pointer;font-family:inherit;transition:all .15s}
 .top-tab.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 4px #0000001a}
 
 /* Insight cards */
@@ -416,7 +416,7 @@ textarea.inp{resize:none;min-height:76px}
 
 /* Time of day selector */
 .time-row{display:flex;gap:6px;margin-bottom:4px}
-.time-btn{flex:1;padding:8px 4px;border:1.5px solid #eee;border-radius:10px;text-align:center;cursor:pointer;background:#fff;font-family:'DM Sans',sans-serif;transition:all .15s}
+.time-btn{flex:1;padding:8px 4px;border:1.5px solid #eee;border-radius:10px;text-align:center;cursor:pointer;background:#fff;font-family:inherit;transition:all .15s}
 .time-btn.sel{border-color:#2a7d63;background:#eaf5f1}
 .time-em{font-size:18px;display:block}
 .time-lbl{font-size:10px;color:#bbb;margin-top:2px;font-weight:500}
@@ -447,18 +447,18 @@ textarea.inp{resize:none;min-height:76px}
 .cover-card{background:#fff;border-radius:32px 32px 0 0;padding:32px 28px 16px;animation:slideUpCard .5s ease .1s both;flex-shrink:0}
 @keyframes slideUpCard{from{opacity:0;transform:translateY(60px)}to{opacity:1;transform:translateY(0)}}
 .cover-tabs{display:flex;background:#f0f0f0;border-radius:14px;padding:4px;margin-bottom:20px}
-.cover-tab{flex:1;padding:14px;border:none;background:none;border-radius:11px;font-size:clamp(16px,4.5vw,18px);font-weight:500;color:#aaa;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.cover-tab{flex:1;padding:14px;border:none;background:none;border-radius:11px;font-size:clamp(16px,4.5vw,18px);font-weight:500;color:#aaa;cursor:pointer;font-family:inherit;transition:all .2s}
 .cover-tab.active{background:#fff;color:#1a1a1a;box-shadow:0 2px 8px #0000001a;font-weight:600}
 .cover-inp-wrap{display:flex;align-items:center;gap:12px;background:#f8f8f8;border:1.5px solid #eee;border-radius:16px;padding:4px 16px;transition:border-color .15s;margin-bottom:12px}
 .cover-inp-wrap:focus-within{border-color:#2a7d63;background:#fff}
 .cover-inp-icon{font-size:22px;flex-shrink:0}
-.cover-inp{flex:1;padding:16px 0;border:none;background:none;font-size:clamp(16px,4.5vw,18px);font-family:'DM Sans',sans-serif;color:#1a1a1a;outline:none}
+.cover-inp{flex:1;padding:16px 0;border:none;background:none;font-size:clamp(16px,4.5vw,18px);font-family:inherit;color:#1a1a1a;outline:none}
 .cover-inp::placeholder{color:#ccc}
-.cover-btn-main{width:100%;padding:19px;background:linear-gradient(135deg,#2a7d63,#1a5c42);color:#fff;border:none;border-radius:16px;font-size:clamp(17px,5vw,20px);font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 6px 24px #2a7d6345;transition:all .15s;margin-bottom:14px}
+.cover-btn-main{width:100%;padding:19px;background:linear-gradient(135deg,#2a7d63,#1a5c42);color:#fff;border:none;border-radius:16px;font-size:clamp(17px,5vw,20px);font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 6px 24px #2a7d6345;transition:all .15s;margin-bottom:14px}
 .cover-btn-main:active{transform:scale(.97);opacity:.9}
-.cover-btn-google{width:100%;padding:17px;background:#fff;color:#333;border:1.5px solid #e0e0e0;border-radius:16px;font-size:clamp(16px,4.5vw,18px);font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:12px;transition:all .15s;margin-bottom:4px;box-shadow:0 2px 8px #00000010}
+.cover-btn-google{width:100%;padding:17px;background:#fff;color:#333;border:1.5px solid #e0e0e0;border-radius:16px;font-size:clamp(16px,4.5vw,18px);font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:12px;transition:all .15s;margin-bottom:4px;box-shadow:0 2px 8px #00000010}
 .cover-btn-google:active{background:#f5f5f5}
-.cover-link{background:none;border:none;color:#2a7d63;font-size:clamp(12px,3.5vw,14px);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
+.cover-link{background:none;border:none;color:#2a7d63;font-size:clamp(12px,3.5vw,14px);cursor:pointer;font-family:inherit;font-weight:500}
 .cover-divider{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .cover-divider::before,.cover-divider::after{content:'';flex:1;height:1px;background:#eee}
 .cover-divider span{font-size:clamp(11px,3vw,13px);color:#bbb;white-space:nowrap}
@@ -474,7 +474,7 @@ textarea.inp{resize:none;min-height:76px}
 .crop-zoom{width:min(280px,72vw);margin:18px 0 6px;accent-color:#2a7d63}
 .crop-hint{color:#ffffff90;font-size:11px;margin-bottom:16px}
 .crop-actions{display:flex;gap:10px;width:min(280px,72vw)}
-.crop-actions button{flex:1;padding:12px;border-radius:12px;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+.crop-actions button{flex:1;padding:12px;border-radius:12px;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:inherit}
 .crop-cancel{background:#ffffff20;color:#fff}
 .crop-save{background:#2a7d63;color:#fff}
 .crop-save:disabled{opacity:.6}
@@ -553,6 +553,292 @@ textarea.inp{resize:none;min-height:76px}
   .plnt .foliage{animation:none}
   .pl-particle,.pl-drop{display:none!important}
 }
+/* ════════ TRAÇO FINO — sistema visual (set/2026) ════════
+   Fundo névoa, bordas de 1px, ícones de linha, Lexend, cor só em ação e seleção. */
+:root{--bg:#F4F7F5;--surface:#FFFFFF;--ink:#1E2A26;--muted:#6B7872;--faint:#98A49E;--line:#E1E8E4;--line-2:#CBD5D0;--leaf:#2F7A64;--leaf-soft:#E6F1EC;--pollen:#B8943F;--urgent:#B4574A;--urgent-soft:#F8EDEA}
+body{font-family:'Lexend',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+.phone-screen,.screen{background:var(--bg)}
+@media (max-width:1024px){body,.phone-frame,.phone-screen{background:var(--bg) !important}}
+button,input,textarea,select{font-family:inherit}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;display:inline-block;vertical-align:middle}
+:focus-visible{outline:2px solid var(--leaf);outline-offset:2px}
+.pad{padding:12px 18px 18px}
+.status{color:var(--muted)}
+h1{font-size:26px;font-weight:300;letter-spacing:-.01em;color:var(--ink);line-height:1.15;margin:0}
+h2{font-weight:400;color:var(--ink)}
+.sub{font-size:13px;color:var(--muted);margin:4px 0 14px;line-height:1.5}
+.section-lbl{font-size:10.5px;font-weight:500;color:var(--faint);letter-spacing:.1em;margin:22px 2px 8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:none;padding:16px;margin-bottom:10px}
+.card-title{font-size:15px;font-weight:500;color:var(--ink)}
+.card-sub{font-size:12px;color:var(--muted);line-height:1.45}
+.btn{min-height:50px;padding:0 18px;border-radius:14px;font-size:15px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn .ic{width:18px;height:18px}
+.btn:disabled{opacity:.45;cursor:default}
+.btn-p{background:var(--leaf);color:#fff}
+.btn-soft,.btn-g{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.btn-s{background:transparent;color:var(--leaf);border:1px solid var(--leaf)}
+.btn-sm{border-radius:12px;font-weight:500}
+.btn-sm-p{background:var(--leaf)}
+.btn-link{color:var(--leaf);font-weight:400;font-size:13px}
+.btn-link.danger{display:block;margin:14px auto 28px;color:var(--urgent);font-size:12px}
+.btn-text{background:none;border:none;color:var(--muted);font-size:14px;padding:0 14px;min-height:50px;cursor:pointer}
+.inp{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font-size:14px;padding:13px 14px}
+.inp::placeholder{color:var(--faint)}
+.inp:focus{border-color:var(--leaf)}
+textarea.inp{line-height:1.55}
+.chip,.tag,.emo-chip,.sc-btn{border:1px solid var(--line);color:var(--muted);background:var(--surface);font-weight:400;border-radius:999px;padding:8px 13px;font-size:12.5px;cursor:pointer}
+.chip.sel,.tag.sel,.sc-btn.sel{border-color:var(--leaf);background:var(--leaf-soft);color:var(--leaf);font-weight:500}
+.emo-chip.sel{border-color:var(--q,#2F7A64);background:var(--leaf-soft);background:color-mix(in srgb,var(--q,#2F7A64) 14%,#fff);color:var(--ink);font-weight:500}
+.top-tabs{background:transparent;border:1px solid var(--line);border-radius:12px;padding:3px;margin:14px 0 6px}
+.top-tab{font-weight:400;color:var(--muted);font-size:13px;padding:8px}
+.top-tab.active{background:var(--leaf-soft);color:var(--leaf);box-shadow:none;font-weight:500}
+.rep-seg{background:transparent;border:1px solid var(--line)}
+.rep-seg button{font-weight:400;color:var(--muted)}
+.rep-seg button.on{background:var(--leaf-soft);color:var(--leaf);box-shadow:none;font-weight:500}
+.rep-nav span{font-weight:500}
+.rep-kpi b{font-weight:300;font-size:26px}
+.rep-trend{background:var(--leaf-soft);color:var(--ink)}
+.hb-track,.cmp-bar,.trail-bar,.tr-prog{background:#EDF1EE}
+.disc-i{color:var(--pollen)}
+.tr-q{font-weight:400}
+.tr-hints{background:var(--leaf-soft)}
+.switch span{background:var(--line-2)}
+.switch input:checked+span{background:var(--leaf)}
+
+/* Navegação: cinco destinos */
+.bnav{display:grid;grid-template-columns:repeat(5,1fr);align-items:center;border-top:1px solid var(--line);background:var(--surface);padding:6px 4px 14px}
+.bni{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--faint);cursor:pointer}
+.bni .bni-ic{width:23px;height:23px}
+.bni-lbl{font-size:10px;color:inherit;font-weight:400;letter-spacing:.01em}
+.bni.active{color:var(--leaf)}
+.bni.active .bni-lbl{color:var(--leaf);font-weight:500}
+.bni-circle{width:46px;height:46px;border-radius:50%;background:var(--leaf);color:#fff;display:grid;place-items:center}
+.bni-circle .ic{width:22px;height:22px;stroke-width:1.8}
+
+/* Cabeçalhos */
+.head-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:40px}
+.scr-head{padding:10px 18px 0;flex-shrink:0}
+.tool-head{display:flex;align-items:center;gap:4px;padding:4px 12px;flex-shrink:0;min-height:48px}
+.tool-head span{font-size:15px;font-weight:500;color:var(--ink)}
+.back{background:none;border:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:var(--ink);cursor:pointer;flex-shrink:0}
+.back .ic{width:22px;height:22px}
+.help-pill{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px 0 10px;border:1px solid #E6CFC9;border-radius:999px;background:var(--surface);color:var(--urgent);font-size:12px;cursor:pointer;white-space:nowrap}
+.help-pill .ic{width:16px;height:16px}
+
+/* Listas com linhas finas */
+.list{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:0 14px}
+.row{display:flex;align-items:center;gap:12px;width:100%;padding:11px 0;background:none;border:none;text-align:left;cursor:pointer;color:var(--ink);min-height:58px;font-size:14px}
+div.row{cursor:default}
+.list > * + *{border-top:1px solid var(--line)}
+.r-ic{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--leaf);flex-shrink:0;background:var(--surface)}
+.r-ic .ic{width:18px;height:18px}
+.r-ic.pollen{color:var(--pollen)}
+.r-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.r-t b{font-size:14px;font-weight:500;color:var(--ink)}
+.r-t small{font-size:12px;color:var(--muted);line-height:1.4}
+.r-meta{font-size:12px;color:var(--faint);white-space:nowrap;font-variant-numeric:tabular-nums}
+.ic.chev{width:16px;height:16px;color:var(--faint)}
+.tool-row{display:flex;align-items:center;gap:12px;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:10px 12px;margin-bottom:8px;text-align:left;cursor:pointer;color:var(--ink)}
+.list .tool-row{border-radius:0;margin:0;padding:12px 0;background:none;border-left:none;border-right:none;border-bottom:none}
+.list .tool-row:first-child{border-top:none}
+.tool-row b{font-size:14px;font-weight:500;color:var(--ink)}
+.tool-row small{font-size:12px;color:var(--muted)}
+.trap{border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.trap b{font-weight:500;display:flex;align-items:center;gap:8px}
+.trap b .ic{color:var(--leaf);width:18px;height:18px}
+.trap small{color:var(--muted)}
+.trap.sel{border-color:var(--leaf);background:var(--leaf-soft)}
+.pbtn{border:1px solid var(--line);font-weight:500;border-radius:10px;display:inline-flex;align-items:center;gap:4px}
+.pbtn .ic{width:14px;height:14px}
+.hero-ic{width:56px;height:56px;border-radius:50%;background:var(--leaf-soft);color:var(--leaf);display:grid;place-items:center;margin:6px 0 12px}
+.hero-ic .ic{width:26px;height:26px}
+.hero-ic.big{width:72px;height:72px;margin:24px auto 10px}
+.hero-ic.big .ic{width:34px;height:34px}
+.trail-hero .hero-ic{margin-left:auto;margin-right:auto}
+.art-title{font-size:22px;font-weight:300;letter-spacing:-.005em}
+.art-body p{color:#34403B}
+.empty{text-align:center;padding:36px 12px;color:var(--muted);font-size:14px;line-height:1.6}
+
+/* Hoje */
+.home-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 14px}
+.seal{display:inline-flex;align-items:center;gap:8px;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;padding:0;text-align:left}
+.seal-ic{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--pollen);flex-shrink:0}
+.seal-ic .ic{width:19px;height:19px}
+.seal.grew{color:var(--pollen);font-weight:500}
+.seal.grew .seal-ic{border-color:var(--pollen);background:#FAF4E6}
+.home-date{font-size:12px;color:var(--muted)}
+.home-hello{font-size:28px;margin:2px 0 16px}
+.now-card{padding:16px 16px 12px}
+.faces{display:flex;justify-content:space-between;margin:14px 0 4px}
+.face{width:50px;height:50px;border-radius:50%;border:none;background:none;display:grid;place-items:center;color:var(--muted);cursor:pointer;transition:background .15s,color .15s}
+.face .ic{width:40px;height:40px;stroke-width:1.25}
+.face:active,.face:hover{background:var(--leaf-soft);color:var(--leaf)}
+.faces-lbl{display:flex;justify-content:space-between;font-size:10.5px;color:var(--faint);padding:0 8px}
+.now-hint{font-size:12px;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.now-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.habit-check{width:28px;height:28px;border:1px solid var(--line-2);border-radius:50%;background:var(--surface);display:grid;place-items:center;color:#fff;padding:0;cursor:pointer;flex-shrink:0}
+.habit-check .ic{width:15px;height:15px;stroke-width:2}
+.habit-check.done{background:var(--leaf);border-color:var(--leaf)}
+.add-row{display:flex;gap:8px;margin-top:10px}
+.add-row .btn{width:auto;min-height:46px}
+
+/* Pilares com traço */
+.pil-row{gap:4px}
+.pil{border:none;background:none;padding:2px 0;gap:6px}
+.pil .pc{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--faint);transition:all .15s}
+.pil .pc .ic{width:21px;height:21px}
+.pil-l{font-size:10px;color:var(--muted)}
+.pil.on{background:none}
+.pil.on .pc{border-color:var(--leaf);background:var(--leaf-soft);color:var(--leaf)}
+.pil.on .pil-l{color:var(--leaf);font-weight:500}
+.pil-foot{color:var(--muted)}
+
+/* Diário */
+.entry{display:flex;gap:12px;padding:12px 0}
+.entry + .entry{border-top:1px solid var(--line)}
+.entry-face{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.entry-face .ic{width:30px;height:30px;stroke-width:1.3}
+.entry-face.m1,.entry-face.m2{background:#EEF0F6;color:#56607A}
+.entry-face.m3{background:#F1F2EC;color:#66695A}
+.entry-face.m4,.entry-face.m5{background:var(--leaf-soft);color:var(--leaf)}
+.entry-b{flex:1;min-width:0}
+.entry-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.entry-top b{font-size:14px;font-weight:500}
+.entry-top span{font-size:11.5px;color:var(--faint);white-space:nowrap}
+.entry-emo{font-size:13px;color:var(--ink);margin-top:2px}
+.entry-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.entry-prompt{font-size:12px;color:var(--leaf);margin-top:8px}
+.entry-note{font-size:13.5px;color:#34403B;line-height:1.6;margin-top:4px;white-space:pre-wrap;word-break:break-word}
+.entry-note.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal}
+.day-h{display:flex;align-items:baseline;gap:8px;margin:18px 2px 8px}
+.day-h b{font-size:15px;font-weight:500}
+.day-h span{font-size:12px;color:var(--faint)}
+.day-card{padding:0 16px}
+.day-card > * + *{border-top:1px solid var(--line)}
+.day-grat{display:flex;gap:10px;padding:12px 0;font-size:13px;color:var(--ink);line-height:1.5}
+.day-grat .ic{color:var(--pollen);width:18px;height:18px;margin-top:1px}
+.day-pils{display:flex;flex-wrap:wrap;gap:6px 14px;padding:10px 0 12px}
+.day-pils span{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--leaf)}
+.day-pils .ic{width:15px;height:15px}
+.week-line{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted);padding:8px 2px 0}
+.week-line b{font-weight:500;color:var(--ink)}
+
+/* Registro em passos */
+.log-head{display:flex;align-items:center;justify-content:space-between;padding:4px 10px 0;flex-shrink:0}
+.log-head-t{font-size:15px;font-weight:500}
+.log-head .lnk{background:none;border:none;color:var(--leaf);font-size:13px;padding:10px 8px;cursor:pointer}
+.log-head .lnk:disabled{color:var(--faint);cursor:default}
+.log-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px 18px 0;flex-shrink:0}
+.log-steps i{height:3px;border-radius:3px;background:var(--line)}
+.log-steps i.on{background:var(--leaf)}
+.log-step-lbl{font-size:11px;color:var(--faint);padding:8px 18px 0;flex-shrink:0}
+.log-q{font-size:24px;font-weight:300;letter-spacing:-.01em;line-height:1.2;margin:6px 0 8px;color:var(--ink)}
+.log-sub{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:14px}
+.log-block{margin-top:20px}
+.log-lbl{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:8px;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.log-lbl span{font-size:11px;color:var(--faint);font-weight:400}
+.log-foot{display:flex;align-items:center;gap:8px;padding:10px 18px 14px;border-top:1px solid var(--line);background:var(--bg);flex-shrink:0}
+.log-foot .btn{flex:1}
+@media (max-width:1024px){.log-foot{padding-bottom:max(env(safe-area-inset-bottom),14px) !important}}
+.time-row{display:flex;gap:6px;margin:8px 0 18px}
+.time-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-height:42px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);font-size:13px;cursor:pointer;padding:0}
+.time-btn .ic{width:16px;height:16px}
+.time-btn.sel{border-color:var(--leaf);background:var(--leaf-soft);color:var(--leaf);font-weight:500}
+.mood-row{display:flex;gap:6px}
+.mood-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 0 10px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--muted);cursor:pointer}
+.mood-btn .ic{width:34px;height:34px;stroke-width:1.3}
+.mood-btn .mood-lbl{font-size:11px;color:var(--muted)}
+.mood-btn.sel{border-color:var(--leaf);background:var(--leaf-soft);color:var(--leaf)}
+.mood-btn.sel .mood-lbl{color:var(--leaf);font-weight:500}
+.mood-hint{background:var(--leaf-soft) !important;color:var(--ink) !important;border-radius:14px;margin-top:14px;font-size:13px}
+.quads{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.quad{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface);cursor:pointer;color:var(--ink)}
+.quad i{width:9px;height:9px;border-radius:50%;background:var(--q);margin-bottom:5px}
+.quad b{font-size:14px;font-weight:500}
+.quad small{font-size:11px;color:var(--muted);line-height:1.35}
+.quad.has{border-color:var(--q)}
+.quad.open{border-color:var(--q);background:#FAFBFA;background:color-mix(in srgb,var(--q) 9%,#fff)}
+.emo-chips{display:flex;flex-wrap:wrap;gap:6px}
+.emo-count{font-size:12px;color:var(--muted);margin-top:14px}
+.scale-row{gap:6px}
+.scale-row.anx .sc-btn{width:calc((100% - 30px) / 6);padding:10px 0;text-align:center;border-radius:12px}
+.reflect-q{color:var(--leaf);font-weight:400;font-size:14px;margin:0 0 8px}
+
+/* Preciso de ajuda */
+.help-sheet{padding:10px 18px 22px;display:flex;flex-direction:column;gap:10px}
+.grab{width:38px;height:4px;border-radius:4px;background:var(--line);align-self:center;margin:2px auto 8px;display:block}
+.hs-ic{width:44px;height:44px;border-radius:50%;background:var(--urgent-soft);color:var(--urgent);display:grid;place-items:center}
+.hs-ic .ic{width:22px;height:22px}
+.hs-title{font-size:23px;font-weight:300;color:var(--ink);letter-spacing:-.01em}
+.hs-sub{font-size:13px;color:var(--muted);margin-top:-6px}
+.big-act{display:flex;align-items:center;gap:12px;width:100%;min-height:62px;padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:var(--surface);text-align:left;color:var(--ink);text-decoration:none;cursor:pointer;font-size:14px}
+.big-act .r-ic{width:38px;height:38px}
+.big-act.urgent{border-color:#E8D2CC}
+.big-act.urgent .r-ic{color:var(--urgent);border-color:#E8D2CC}
+.hs-more{align-self:center}
+.sos-hero{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.sos-hero-t{font-size:20px;font-weight:300;color:var(--ink)}
+.sos-hero p{font-size:13.5px;color:var(--muted);line-height:1.6}
+.sos-tip{font-size:12.5px;color:var(--muted);line-height:1.55;margin:12px 4px 0}
+.sos-tip b{color:var(--ink);font-weight:500}
+.help-card{background:var(--surface);border:1px solid var(--line);border-radius:18px}
+.help-card.urgent{background:#FDF8F6;border-color:#EFDCD7}
+.call-btn{border:1px solid #E8D2CC;font-weight:500;border-radius:14px}
+.call-btn .ic{width:17px;height:17px}
+
+/* Pós-registro */
+.empathy-overlay{background:rgba(20,32,27,.38)}
+.empathy-sheet{border-radius:26px 26px 0 0;padding:14px 20px 26px}
+.emp-ic{width:56px;height:56px;border-radius:50%;background:var(--leaf-soft);color:var(--leaf);display:grid;place-items:center;margin:6px auto 12px}
+.emp-ic .ic{width:26px;height:26px}
+.emp-title{font-size:21px;font-weight:300;color:var(--ink)}
+.emp-text{color:var(--muted);font-size:13.5px;line-height:1.65}
+.emp-tip-lbl{color:var(--faint);font-weight:500;letter-spacing:.1em}
+
+/* Você */
+.me{display:flex;align-items:center;gap:14px;margin:16px 0 14px}
+.me-photo{width:60px;height:60px;border-radius:50%;object-fit:cover;display:grid;place-items:center;border:1px solid var(--line)}
+.me-photo.empty{background:var(--leaf-soft);color:var(--leaf)}
+.me-photo.empty .ic{width:28px;height:28px}
+.me-t{min-width:0}
+.me-name{font-size:18px;font-weight:400;color:var(--ink)}
+.me-mail{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.conta-avatar-edit{background:var(--leaf);width:24px;height:24px;border:2px solid var(--bg);color:#fff}
+.conta-avatar-edit .ic{width:12px;height:12px;stroke-width:2}
+.time-inp{width:118px;padding:8px 10px}
+
+/* Jornada, conquistas, desafio */
+.jor-stage-name{font-weight:400;font-size:20px}
+.badge-cell{border:1px solid var(--line);border-radius:14px}
+.chal-card{background:var(--surface);border:1px solid var(--line);border-radius:18px}
+.chal-title{color:var(--leaf);font-weight:500;letter-spacing:.1em}
+.chal-bar{background:#EDF1EE}
+.jbadge-title{font-weight:400}
+
+/* Respirar */
+.breath-ring{background:radial-gradient(circle,#9CCBB8,#2F7A64);opacity:.12}
+.breath-ring-2{background:radial-gradient(circle,#CFE4DA,#8FC2AE);opacity:.25}
+.breath-inner{background:var(--leaf);box-shadow:none}
+.breath-text{font-weight:400}
+.breath-instr{font-weight:300;font-size:22px}
+.breath-tab{border:1px solid var(--line);border-radius:999px;font-weight:400;color:var(--muted)}
+.breath-tab.active{border-color:var(--leaf);background:var(--leaf-soft);color:var(--leaf);font-weight:500}
+.breath-container{justify-content:flex-start;padding-top:12px}
+
+/* Capa / login */
+.cover-bg{background:linear-gradient(180deg,#1E4A3C 0%,#2F7A64 100%)}
+.cover-circle{display:none}
+.cover-tagline{font-weight:300}
+.cover-tabs{background:transparent;border:1px solid var(--line);border-radius:14px}
+.cover-tab{font-weight:400;font-size:16px;padding:12px}
+.cover-tab.active{background:var(--leaf-soft);color:var(--leaf);box-shadow:none;font-weight:500}
+.cover-inp-wrap{background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.cover-inp-icon{color:var(--faint);display:grid;place-items:center}
+.cover-inp-icon .ic{width:20px;height:20px}
+.cover-inp{font-size:16px}
+.cover-btn-main{background:var(--leaf);box-shadow:none;border-radius:14px;font-weight:500;font-size:17px;padding:16px}
+.cover-btn-google{border:1px solid var(--line);box-shadow:none;border-radius:14px;font-weight:400;font-size:16px;padding:15px}
+.cover-link{color:var(--leaf);font-weight:400}
 </style>
 
   <!-- Firebase SDK (versão compat - mais estável) -->
@@ -969,6 +1255,51 @@ textarea.inp{resize:none;min-height:76px}
 
 <div class="phone-frame">
   <div class="phone-screen" id="app">
+    <!-- Ícones de linha (1,5 px). Uso: <svg class="ic"><use href="#i-nome"/></svg> ou ico('nome') no JS -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-hoje" viewBox="0 0 24 24"><path d="M3.5 17.5h17"/><path d="M7 17.5a5 5 0 0 1 10 0"/><path d="M12 6.5v2.2M6.3 9.2l1.5 1.5M17.7 9.2l-1.5 1.5"/></symbol>
+        <symbol id="i-sol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.6"/><path d="M12 4v2M12 18v2M4 12h2M18 12h2M6.3 6.3l1.4 1.4M16.3 16.3l1.4 1.4M6.3 17.7l1.4-1.4M16.3 7.7l1.4-1.4"/></symbol>
+        <symbol id="i-cuidar" viewBox="0 0 24 24"><path d="M5.5 18.5C5.5 10.5 10.5 5.5 19 5c-.3 8.7-5.3 13.5-13.5 13.5z"/><path d="M5.5 18.5L13 11"/></symbol>
+        <symbol id="i-mais" viewBox="0 0 24 24"><path d="M12 6.5v11M6.5 12h11"/></symbol>
+        <symbol id="i-diario" viewBox="0 0 24 24"><path d="M6.5 3.5h10.5a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5H6.5z"/><path d="M9.5 3.5v17"/><path d="M12.5 8h3.5M12.5 11h2.5"/></symbol>
+        <symbol id="i-relatorio" viewBox="0 0 24 24"><path d="M4 19.5h16"/><path d="M5.5 15l4-4.2 3.2 3 5.8-6"/></symbol>
+        <symbol id="i-voce" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 19.5c1.3-3.4 3.9-5 7-5s5.7 1.6 7 5"/></symbol>
+        <symbol id="i-coracao" viewBox="0 0 24 24"><path d="M12 19.5s-7-4.2-7-9.4A3.9 3.9 0 0 1 12 7.8a3.9 3.9 0 0 1 7 2.3c0 5.2-7 9.4-7 9.4z"/></symbol>
+        <symbol id="i-broto" viewBox="0 0 24 24"><path d="M12 20v-7"/><path d="M12 13c0-3.5-2.5-5.5-6-5.5 0 3.5 2.5 5.5 6 5.5z"/><path d="M12 11c0-3 2.2-5 5.5-5 0 3-2.2 5-5.5 5z"/><path d="M8 20h8"/></symbol>
+        <symbol id="i-flor" viewBox="0 0 24 24"><circle cx="12" cy="11" r="2.2"/><path d="M12 8.8c-1.7-2.4-1.1-4.9 0-5.8 1.1.9 1.7 3.4 0 5.8zM12 13.2c1.7 2.4 1.1 4.9 0 5.8-1.1-.9-1.7-3.4 0-5.8zM9.8 11c-2.4 1.7-4.9 1.1-5.8 0 .9-1.1 3.4-1.7 5.8 0zM14.2 11c2.4-1.7 4.9-1.1 5.8 0-.9 1.1-3.4 1.7-5.8 0z"/><path d="M12 19v2"/></symbol>
+        <symbol id="i-vento" viewBox="0 0 24 24"><path d="M3.5 9.5h10a2.8 2.8 0 1 0-2.8-2.8"/><path d="M3.5 14h13.5a2.8 2.8 0 1 1-2.8 2.8"/></symbol>
+        <symbol id="i-mov" viewBox="0 0 24 24"><circle cx="13.5" cy="4.8" r="1.6"/><path d="M10.5 20.5l2-5.5-2.5-3 1.5-3.5 3 2.8H18"/><path d="M10 11.8L7.5 15"/><path d="M12.5 15l2.5 5.5"/></symbol>
+        <symbol id="i-sono" viewBox="0 0 24 24"><path d="M18.5 14.8A7 7 0 0 1 9.2 5.5a7 7 0 1 0 9.3 9.3z"/></symbol>
+        <symbol id="i-comida" viewBox="0 0 24 24"><path d="M4 12.5h16a8 8 0 0 1-16 0z"/><path d="M12 12.5c0-3.2 1.8-5.5 5-6"/><path d="M9 12.5c-.4-2-1.6-3.3-3.5-3.8"/></symbol>
+        <symbol id="i-conexao" viewBox="0 0 24 24"><path d="M4 5.5h10.5v7H9l-5 3.5z"/><path d="M14.5 9.5H20v7.5l-3.5-2.5h-5.5v-2"/></symbol>
+        <symbol id="i-pausa" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M10 9.2v5.6M14 9.2v5.6"/></symbol>
+        <symbol id="i-pensamento" viewBox="0 0 24 24"><path d="M7 17a4.5 4.5 0 0 1-.4-9A5.6 5.6 0 0 1 17.4 9 4 4 0 0 1 17 17z"/><circle cx="8" cy="20" r=".9"/></symbol>
+        <symbol id="i-olho" viewBox="0 0 24 24"><path d="M2.8 12S6.2 6.5 12 6.5 21.2 12 21.2 12 17.8 17.5 12 17.5 2.8 12 2.8 12z"/><circle cx="12" cy="12" r="2.6"/></symbol>
+        <symbol id="i-passos" viewBox="0 0 24 24"><path d="M8.5 13.5c-1.9 0-3-1.9-3-4.5s1.1-4.5 3-4.5 3 1.9 3 4.5-1.1 4.5-3 4.5z"/><path d="M6.7 16.5h3.6"/><path d="M15.5 19.5c-1.9 0-3-1.9-3-4.5s1.1-4.5 3-4.5 3 1.9 3 4.5-1.1 4.5-3 4.5z"/></symbol>
+        <symbol id="i-livro" viewBox="0 0 24 24"><path d="M4 5.5h5.5A2.5 2.5 0 0 1 12 8v11a2 2 0 0 0-2-2H4z"/><path d="M20 5.5h-5.5A2.5 2.5 0 0 0 12 8v11a2 2 0 0 1 2-2h6z"/></symbol>
+        <symbol id="i-trilha" viewBox="0 0 24 24"><path d="M7 18.2c0-4.2 10-3.4 10-7.2S7 7.2 7 5.8"/><circle cx="7" cy="19.5" r="1.3"/><circle cx="7" cy="4.5" r="1.3"/></symbol>
+        <symbol id="i-meditar" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="1.8"/><path d="M12 8.5v4"/><path d="M6 12.5c2 1.5 4 2 6 2s4-.5 6-2"/><path d="M5 18.5c2.5-1.8 4.8-2.5 7-2.5s4.5.7 7 2.5"/></symbol>
+        <symbol id="i-estetoscopio" viewBox="0 0 24 24"><path d="M6.5 4v4.5a3.5 3.5 0 0 0 7 0V4"/><path d="M10 12v2.5a4.5 4.5 0 0 0 9 0v-2"/><circle cx="19" cy="10.5" r="2"/></symbol>
+        <symbol id="i-carta" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="M4 7l8 6 8-6"/></symbol>
+        <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3.5h7l4 4v13H7z"/><path d="M14 3.5v4h4"/><path d="M9.5 13h6M9.5 16h4"/></symbol>
+        <symbol id="i-sino" viewBox="0 0 24 24"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol>
+        <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 3.5l7 3v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9v-5z"/></symbol>
+        <symbol id="i-cadeado" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
+        <symbol id="i-sair" viewBox="0 0 24 24"><path d="M14 4.5h4.5v15H14"/><path d="M10 8l-4 4 4 4M6 12h9"/></symbol>
+        <symbol id="i-editar" viewBox="0 0 24 24"><path d="M5 19l3.5-.8L18 8.7a1.8 1.8 0 0 0-2.6-2.6L6 15.6z"/></symbol>
+        <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9.5 6.5l5.5 5.5-5.5 5.5"/></symbol>
+        <symbol id="i-chevL" viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-8.5"/></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></symbol>
+        <symbol id="i-tel" viewBox="0 0 24 24"><path d="M7 4h2.6l1.4 3.8-1.8 1.3a10.5 10.5 0 0 0 5.7 5.7l1.3-1.8L20 14.4V17a2 2 0 0 1-2.2 2A15 15 0 0 1 5 6.2 2 2 0 0 1 7 4z"/></symbol>
+        <symbol id="i-f1" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.2 10.2h.01M14.8 10.2h.01" stroke-width="2.2"/><path d="M8.8 16.2c.9-1.3 2-1.9 3.2-1.9s2.3.6 3.2 1.9"/></symbol>
+        <symbol id="i-f2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.2 10.2h.01M14.8 10.2h.01" stroke-width="2.2"/><path d="M9.2 15.6c.8-.6 1.8-.9 2.8-.9s2 .3 2.8.9"/></symbol>
+        <symbol id="i-f3" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.2 10.2h.01M14.8 10.2h.01" stroke-width="2.2"/><path d="M9.2 15h5.6"/></symbol>
+        <symbol id="i-f4" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.2 10.2h.01M14.8 10.2h.01" stroke-width="2.2"/><path d="M9.2 14.4c.8.7 1.8 1 2.8 1s2-.3 2.8-1"/></symbol>
+        <symbol id="i-f5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.2 10.2h.01M14.8 10.2h.01" stroke-width="2.2"/><path d="M8.8 13.8c.9 1.6 2 2.3 3.2 2.3s2.3-.7 3.2-2.3"/></symbol>
+      </defs>
+    </svg>
 
 
 
@@ -978,7 +1309,7 @@ textarea.inp{resize:none;min-height:76px}
         <div style="font-size:13px;font-weight:600;color:#fff">Instalar Florescer</div>
         <div style="font-size:11px;color:#ffffff90;margin-top:2px">Adicione à tela inicial como um app</div>
       </div>
-      <button onclick="installApp()" style="background:#c9a84c;color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">Instalar</button>
+      <button onclick="installApp()" style="background:#c9a84c;color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">Instalar</button>
       <button onclick="this.parentElement.style.display='none'" style="background:none;border:none;color:#ffffff70;font-size:20px;cursor:pointer;padding:0 4px">×</button>
     </div>
 
@@ -989,7 +1320,7 @@ textarea.inp{resize:none;min-height:76px}
         <div class="cover-circle c1"></div>
         <div class="cover-circle c2"></div>
         <div class="cover-circle c3"></div>
-        <div class="cover-leaves">🌿</div>
+
       </div>
 
       <!-- Conteúdo -->
@@ -1013,20 +1344,20 @@ textarea.inp{resize:none;min-height:76px}
           <!-- Campo nome (só cadastro) -->
           <div id="cover-name-field" style="display:none;margin-bottom:12px">
             <div class="cover-inp-wrap">
-              <span class="cover-inp-icon">👤</span>
+              <span class="cover-inp-icon"><svg class="ic" aria-hidden="true"><use href="#i-voce"/></svg></span>
               <input class="cover-inp" type="text" id="cover-name" placeholder="Seu nome completo">
             </div>
           </div>
 
           <!-- Email -->
           <div class="cover-inp-wrap" style="margin-bottom:12px">
-            <span class="cover-inp-icon">✉️</span>
+            <span class="cover-inp-icon"><svg class="ic" aria-hidden="true"><use href="#i-carta"/></svg></span>
             <input class="cover-inp" type="email" id="cover-email" placeholder="Seu e-mail">
           </div>
 
           <!-- Senha -->
           <div class="cover-inp-wrap" style="margin-bottom:6px">
-            <span class="cover-inp-icon">🔑</span>
+            <span class="cover-inp-icon"><svg class="ic" aria-hidden="true"><use href="#i-cadeado"/></svg></span>
             <input class="cover-inp" type="password" id="cover-pass" placeholder="Senha">
           </div>
 
@@ -1072,130 +1403,117 @@ textarea.inp{resize:none;min-height:76px}
     <div class="screen" id="s-home">
       <div class="status"><span>9:41</span><span>100%</span></div>
       <div class="scroll pad">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
-          <div>
-            <h1 id="home-hi">Olá! 👋</h1>
-            <p class="sub" style="margin-bottom:0" id="home-date"></p>
-          </div>
-          <button class="sos-btn" onclick="goTo('sos')"><span style="font-size:18px">🆘</span><span style="font-size:9px">SOS</span></button>
+        <div class="home-top">
+          <button class="seal" id="home-seal" onclick="goTo('jornada')"></button>
+          <button class="help-pill" onclick="openHelpSheet()"><svg class="ic" aria-hidden="true"><use href="#i-coracao"/></svg>Preciso de ajuda</button>
         </div>
-        <div id="home-plant"></div>
-        <div class="metrics" id="home-metrics"></div>
-        <div class="section-lbl">Esta semana</div>
-        <div class="card" style="padding:14px">
-          <div class="week-bars" id="home-bars"></div>
-          <div style="display:flex;gap:4px" id="home-days"></div>
-          <div id="home-week-sum"></div>
-        </div>
+        <p class="home-date" id="home-date"></p>
+        <h1 class="home-hello" id="home-hi">Olá</h1>
         <div id="home-help"></div>
-        <div id="home-action"></div>
+        <div id="home-now"></div>
         <div id="home-pillars"></div>
         <div id="home-trail"></div>
-        <div class="section-lbl">Hábitos de hoje</div>
-        <div class="card" id="home-habits-preview"></div>
-        <div class="section-lbl">Gratidão de hoje</div>
-        <div class="card" id="home-grat-preview"></div>
+        <div id="home-habits"></div>
       </div>
-      <div class="bnav">
-        <div class="bni active" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
-        <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
-        <div class="bni" onclick="goTo('care')"><span class="bni-icon">🌿</span><span class="bni-lbl">Cuidar</span></div>
-        <div class="bni" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
-        <div class="bni" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
-      </div>
+      <nav class="bnav" data-tab="home"></nav>
     </div>
 
-    <!-- ══════════════════════════════ LOG ══ -->
+    <!-- ══════════════════════════════ LOG — registro em 4 passos ══ -->
     <div class="screen" id="s-log">
-      <div class="status"><span>9:41</span><span class="status-center">Registro do dia</span><span></span></div>
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 16px 4px;flex-shrink:0;position:relative;z-index:1">
-        <button onclick="goTo('home')" style="background:none;border:none;font-size:22px;cursor:pointer;padding:0">‹</button>
-        <span id="log-header-text" style="font-size:15px;font-weight:600;color:#1a1a1a">Como você está?</span>
+      <div class="status"><span>9:41</span><span>100%</span></div>
+      <div class="log-head">
+        <button class="back" onclick="closeLog()" aria-label="Fechar registro"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+        <span class="log-head-t">Registro</span>
+        <button class="lnk" id="log-save-now" onclick="saveLog()" disabled>Salvar agora</button>
       </div>
-      <div style="padding:4px 20px 10px;font-size:12px;flex-shrink:0;position:relative;z-index:1" id="log-hint-text">Sem julgamentos aqui. Só você e seus sentimentos.</div>
-      <div class="scroll pad" style="padding-top:8px;position:relative;z-index:1">
-        <div class="card">
-          <div class="card-title">Momento do dia</div>
-          <div class="card-sub">Você pode registrar até 3x por dia</div>
+      <div class="log-steps" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+      <div class="log-step-lbl" id="log-step-lbl">Passo 1 de 4 · como você está</div>
+      <div class="scroll pad" id="log-body">
+        <section class="log-step" data-step="1">
+          <h2 class="log-q">Como você está agora?</h2>
           <div class="time-row" id="time-row">
-            <div class="time-btn sel" onclick="selTime(this,'Manhã')"><span class="time-em">🌅</span><span class="time-lbl">Manhã</span></div>
-            <div class="time-btn" onclick="selTime(this,'Tarde')"><span class="time-em">☀️</span><span class="time-lbl">Tarde</span></div>
-            <div class="time-btn" onclick="selTime(this,'Noite')"><span class="time-em">🌙</span><span class="time-lbl">Noite</span></div>
+            <button class="time-btn" data-t="Manhã" onclick="selTime(this,'Manhã')"><svg class="ic" aria-hidden="true"><use href="#i-hoje"/></svg>Manhã</button>
+            <button class="time-btn" data-t="Tarde" onclick="selTime(this,'Tarde')"><svg class="ic" aria-hidden="true"><use href="#i-sol"/></svg>Tarde</button>
+            <button class="time-btn" data-t="Noite" onclick="selTime(this,'Noite')"><svg class="ic" aria-hidden="true"><use href="#i-sono"/></svg>Noite</button>
           </div>
-        </div>
-        <div class="card">
-          <div class="card-title">Humor geral</div>
-          <div class="card-sub">Como você está se sentindo?</div>
           <div class="mood-row" id="mood-row">
-            <div class="mood-btn" onclick="selMood(1)"><span class="mood-em">😞</span><span class="mood-lbl">Péssimo</span></div>
-            <div class="mood-btn" onclick="selMood(2)"><span class="mood-em">😕</span><span class="mood-lbl">Mal</span></div>
-            <div class="mood-btn" onclick="selMood(3)"><span class="mood-em">😐</span><span class="mood-lbl">Ok</span></div>
-            <div class="mood-btn" onclick="selMood(4)"><span class="mood-em">🙂</span><span class="mood-lbl">Bem</span></div>
-            <div class="mood-btn" onclick="selMood(5)"><span class="mood-em">😄</span><span class="mood-lbl">Ótimo</span></div>
+            <button class="mood-btn" onclick="selMood(1)"><svg class="ic" aria-hidden="true"><use href="#i-f1"/></svg><span class="mood-lbl">Péssimo</span></button>
+            <button class="mood-btn" onclick="selMood(2)"><svg class="ic" aria-hidden="true"><use href="#i-f2"/></svg><span class="mood-lbl">Mal</span></button>
+            <button class="mood-btn" onclick="selMood(3)"><svg class="ic" aria-hidden="true"><use href="#i-f3"/></svg><span class="mood-lbl">Ok</span></button>
+            <button class="mood-btn" onclick="selMood(4)"><svg class="ic" aria-hidden="true"><use href="#i-f4"/></svg><span class="mood-lbl">Bem</span></button>
+            <button class="mood-btn" onclick="selMood(5)"><svg class="ic" aria-hidden="true"><use href="#i-f5"/></svg><span class="mood-lbl">Ótimo</span></button>
           </div>
-        </div>
-        <div class="card">
-          <div class="card-title">O que você está sentindo?</div>
-          <div class="card-sub">Escolha quantas quiser. Nenhuma emoção é certa ou errada.</div>
+        </section>
+        <section class="log-step" data-step="2" hidden>
+          <h2 class="log-q">O que você está sentindo?</h2>
+          <p class="log-sub">Comece pelo tom. Depois, se quiser, dê nome. Nenhuma emoção é certa ou errada.</p>
           <div id="emo-wheel"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Ansiedade agora</div>
-          <div class="card-sub">0 = bem tranquilo · 10 = muito intenso. Não tem resposta errada.</div>
-          <div class="scale-row" id="anx-row">
-            <button class="sc-btn" onclick="selSc('anx',0,this)">0</button><button class="sc-btn" onclick="selSc('anx',1,this)">1</button><button class="sc-btn" onclick="selSc('anx',2,this)">2</button><button class="sc-btn" onclick="selSc('anx',3,this)">3</button><button class="sc-btn" onclick="selSc('anx',4,this)">4</button><button class="sc-btn" onclick="selSc('anx',5,this)">5</button><button class="sc-btn" onclick="selSc('anx',6,this)">6</button><button class="sc-btn" onclick="selSc('anx',7,this)">7</button><button class="sc-btn" onclick="selSc('anx',8,this)">8</button><button class="sc-btn" onclick="selSc('anx',9,this)">9</button><button class="sc-btn" onclick="selSc('anx',10,this)">10</button>
+        </section>
+        <section class="log-step" data-step="3" hidden>
+          <h2 class="log-q">Como está o corpo?</h2>
+          <p class="log-sub">Os dois são opcionais. Toque de novo para desmarcar.</p>
+          <div class="log-block">
+            <div class="log-lbl">Ansiedade agora <span>0 tranquila · 10 muito intensa</span></div>
+            <div class="scale-row anx" id="anx-row"><button class="sc-btn" onclick="selSc('anx',0,this)">0</button><button class="sc-btn" onclick="selSc('anx',1,this)">1</button><button class="sc-btn" onclick="selSc('anx',2,this)">2</button><button class="sc-btn" onclick="selSc('anx',3,this)">3</button><button class="sc-btn" onclick="selSc('anx',4,this)">4</button><button class="sc-btn" onclick="selSc('anx',5,this)">5</button><button class="sc-btn" onclick="selSc('anx',6,this)">6</button><button class="sc-btn" onclick="selSc('anx',7,this)">7</button><button class="sc-btn" onclick="selSc('anx',8,this)">8</button><button class="sc-btn" onclick="selSc('anx',9,this)">9</button><button class="sc-btn" onclick="selSc('anx',10,this)">10</button></div>
           </div>
-        </div>
-        <div class="card">
-          <div class="card-title">Sono ontem à noite</div>
-          <div class="scale-row" id="sleep-row">
-            <button class="sc-btn" onclick="selSc('sleep','Péssimo',this)">Péssimo</button>
-            <button class="sc-btn" onclick="selSc('sleep','Ruim',this)">Ruim</button>
-            <button class="sc-btn" onclick="selSc('sleep','Ok',this)">Ok</button>
-            <button class="sc-btn" onclick="selSc('sleep','Bom',this)">Bom</button>
-            <button class="sc-btn" onclick="selSc('sleep','Ótimo',this)">Ótimo</button>
+          <div class="log-block">
+            <div class="log-lbl">Sono ontem à noite</div>
+            <div class="scale-row" id="sleep-row">
+              <button class="sc-btn" onclick="selSc('sleep','Péssimo',this)">Péssimo</button>
+              <button class="sc-btn" onclick="selSc('sleep','Ruim',this)">Ruim</button>
+              <button class="sc-btn" onclick="selSc('sleep','Ok',this)">Ok</button>
+              <button class="sc-btn" onclick="selSc('sleep','Bom',this)">Bom</button>
+              <button class="sc-btn" onclick="selSc('sleep','Ótimo',this)">Ótimo</button>
+            </div>
           </div>
-        </div>
-        <div class="card">
-          <div class="card-title">O que aconteceu?</div>
-          <div class="card-sub">Selecione os gatilhos do dia</div>
-          <div class="tags" id="tags-row">
-            <span class="tag" onclick="togTag(this)">Trabalho estressante</span>
-            <span class="tag" onclick="togTag(this)">Briga ou conflito</span>
-            <span class="tag" onclick="togTag(this)">Exercício físico</span>
-            <span class="tag" onclick="togTag(this)">Pouco sono</span>
-            <span class="tag" onclick="togTag(this)">Alimentação ruim</span>
-            <span class="tag" onclick="togTag(this)">Tempo com amigos</span>
-            <span class="tag" onclick="togTag(this)">Notícias ruins</span>
-            <span class="tag" onclick="togTag(this)">Solidão</span>
-            <span class="tag" onclick="togTag(this)">Meditação</span>
-            <span class="tag" onclick="togTag(this)">Natureza</span>
-            <span class="tag" onclick="togTag(this)">Família</span>
-            <span class="tag" onclick="togTag(this)">Lazer</span>
+        </section>
+        <section class="log-step" data-step="4" hidden>
+          <h2 class="log-q">Como foi o dia?</h2>
+          <p class="log-sub">Tudo aqui é opcional.</p>
+          <div class="log-block" style="margin-top:6px">
+            <div class="log-lbl">O que marcou</div>
+            <div class="tags" id="tags-row">
+              <button type="button" class="tag" onclick="togTag(this)">Trabalho estressante</button>
+              <button type="button" class="tag" onclick="togTag(this)">Briga ou conflito</button>
+              <button type="button" class="tag" onclick="togTag(this)">Exercício físico</button>
+              <button type="button" class="tag" onclick="togTag(this)">Pouco sono</button>
+              <button type="button" class="tag" onclick="togTag(this)">Alimentação ruim</button>
+              <button type="button" class="tag" onclick="togTag(this)">Tempo com amigos</button>
+              <button type="button" class="tag" onclick="togTag(this)">Notícias ruins</button>
+              <button type="button" class="tag" onclick="togTag(this)">Solidão</button>
+              <button type="button" class="tag" onclick="togTag(this)">Meditação</button>
+              <button type="button" class="tag" onclick="togTag(this)">Natureza</button>
+              <button type="button" class="tag" onclick="togTag(this)">Família</button>
+              <button type="button" class="tag" onclick="togTag(this)">Lazer</button>
+            </div>
           </div>
-        </div>
-        <div class="card">
-          <div class="card-title">Hoje eu…</div>
-          <div class="card-sub">Opcional. Toque no que fez parte do seu dia — pequenas coisas contam.</div>
-          <div id="log-pillars"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Quer refletir? ✍️</div>
-          <div class="reflect-q" id="log-prompt">O que está passando pela sua cabeça agora?</div>
-          <div class="card-sub">Escreva o que quiser — ou nada. Esse espaço é só seu.</div>
-          <textarea class="inp" id="log-note" placeholder="Escreva livremente…"></textarea>
-        </div>
-        <button class="btn btn-p" onclick="saveLog()" style="margin-bottom:8px">Salvar meu registro ✓</button>
-        <div style="text-align:center;font-size:11px;color:#ccc;margin-bottom:24px">Registrar é um ato de cuidado com você mesmo 🌱</div>
+          <div class="log-block">
+            <div class="log-lbl">Hoje eu…</div>
+            <div id="log-pillars"></div>
+          </div>
+          <div class="log-block">
+            <div class="log-lbl">Algo bom de hoje?</div>
+            <input class="inp" id="log-grat" maxlength="140" placeholder="Pode ser pequeno: um café, uma conversa, um respiro">
+          </div>
+          <div class="log-block">
+            <div class="log-lbl">Quer escrever?</div>
+            <div class="reflect-q" id="log-prompt">O que está passando pela sua cabeça agora?</div>
+            <textarea class="inp" id="log-note" rows="5" placeholder="Escreva livremente — esse espaço é só seu."></textarea>
+          </div>
+        </section>
+      </div>
+      <div class="log-foot">
+        <button class="btn-text" id="log-back" onclick="logStep(-1)" style="visibility:hidden">Voltar</button>
+        <button class="btn btn-p" id="log-next" onclick="logStep(1)" disabled>Continuar</button>
       </div>
     </div>
 
     <!-- ══════════════════════════════ BREATHING ══ -->
     <div class="screen" id="s-breath">
       <div class="status"><span>9:41</span><span>100%</span></div>
-      <div style="padding:8px 16px 4px;display:flex;align-items:center;gap:10px;flex-shrink:0">
-        <button onclick="goTo('care')" style="background:none;border:none;font-size:22px;cursor:pointer">‹</button>
-        <span style="font-size:15px;font-weight:600">Respiração guiada</span>
+      <div class="tool-head">
+        <button class="back" onclick="goTo('care')" aria-label="Voltar"><svg class="ic" aria-hidden="true"><use href="#i-chevL"/></svg></button>
+        <span>Respirar</span>
       </div>
       <div class="breath-container">
         <div class="breath-tabs">
@@ -1213,38 +1531,26 @@ textarea.inp{resize:none;min-height:76px}
         </div>
         <div class="breath-instr" id="b-instr">Respire com calma</div>
         <div class="breath-sub" id="b-sub">Escolha uma técnica e toque no círculo</div>
-        <button class="btn btn-p" id="b-btn" onclick="toggleBreath()" style="width:160px;margin:0 auto">▶ Iniciar</button>
+        <button class="btn btn-p" id="b-btn" onclick="toggleBreath()" style="width:160px;margin:0 auto">Começar</button>
         <div class="breath-cycles" id="b-cycles"></div>
         <div id="b-evidence" style="font-size:11px;color:#aaa;line-height:1.5;text-align:center;max-width:290px;margin:14px auto 0">Prolongar a expiração ativa a resposta de calma do corpo (sistema nervoso parassimpático). Base: estudos de respiração lenta e variabilidade da frequência cardíaca.</div>
       </div>
-      <div class="bnav">
-        <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
-        <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
-        <div class="bni active" onclick="goTo('care')"><span class="bni-icon">🌿</span><span class="bni-lbl">Cuidar</span></div>
-        <div class="bni" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
-        <div class="bni" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
-      </div>
+      <nav class="bnav" data-tab="care"></nav>
     </div>
 
     <!-- ══════════════════════════════ CUIDAR ══ -->
     <div class="screen" id="s-care">
       <div class="status"><span>9:41</span><span>100%</span></div>
       <div class="scroll pad" id="care-body"></div>
-      <div class="bnav">
-        <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
-        <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
-        <div class="bni active" onclick="goTo('care')"><span class="bni-icon">🌿</span><span class="bni-lbl">Cuidar</span></div>
-        <div class="bni" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
-        <div class="bni" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
-      </div>
+      <nav class="bnav" data-tab="care"></nav>
     </div>
 
     <!-- ══════════════════════════════ FERRAMENTA (meditar, pensamento, leitura) ══ -->
     <div class="screen" id="s-tool">
       <div class="status"><span>9:41</span><span>100%</span></div>
-      <div style="padding:8px 16px 4px;display:flex;align-items:center;gap:10px;flex-shrink:0">
-        <button onclick="toolBack()" style="background:none;border:none;font-size:22px;cursor:pointer;padding:0" aria-label="Voltar">‹</button>
-        <span style="font-size:15px;font-weight:600;color:#1a1a1a" id="tool-title"></span>
+      <div class="tool-head">
+        <button class="back" onclick="toolBack()" aria-label="Voltar"><svg class="ic" aria-hidden="true"><use href="#i-chevL"/></svg></button>
+        <span id="tool-title"></span>
       </div>
       <div class="scroll pad" style="padding-top:4px" id="tool-body"></div>
     </div>
@@ -1252,125 +1558,65 @@ textarea.inp{resize:none;min-height:76px}
     <!-- ══════════════════════════════ HISTORY ══ -->
     <div class="screen" id="s-history">
       <div class="status"><span>9:41</span><span>100%</span></div>
-      <div style="padding:12px 20px 0;flex-shrink:0">
-        <h1>Histórico</h1>
-        <div class="top-tabs" style="margin-top:12px">
-          <button class="top-tab active" id="ht-relatorio" onclick="histTab('relatorio')">Relatório</button>
-          <button class="top-tab" id="ht-logs" onclick="histTab('logs')">Registros</button>
-          <button class="top-tab" id="ht-pixels" onclick="histTab('pixels')">Ano em Pixels</button>
+      <div class="scr-head">
+        <div class="head-row"><h1>Diário</h1><button class="help-pill" onclick="openHelpSheet()"><svg class="ic" aria-hidden="true"><use href="#i-coracao"/></svg>Preciso de ajuda</button></div>
+        <div class="top-tabs">
+          <button class="top-tab active" id="ht-logs" onclick="histTab('logs')">Registros</button>
+          <button class="top-tab" id="ht-relatorio" onclick="histTab('relatorio')">Relatório</button>
+          <button class="top-tab" id="ht-pixels" onclick="histTab('pixels')">Ano</button>
         </div>
       </div>
       <div class="scroll pad" style="padding-top:4px" id="history-body"></div>
-      <div class="bnav">
-        <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
-        <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
-        <div class="bni" onclick="goTo('care')"><span class="bni-icon">🌿</span><span class="bni-lbl">Cuidar</span></div>
-        <div class="bni active" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
-        <div class="bni" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
-      </div>
+      <nav class="bnav" data-tab="history"></nav>
     </div>
 
     <!-- ══════════════════════════════ MORE ══ -->
     <div class="screen" id="s-more">
       <div class="status"><span>9:41</span><span>100%</span></div>
       <div class="scroll pad">
-        <h1>Ferramentas</h1>
-        <p class="sub">Tudo para cuidar de você</p>
-        <div class="top-tabs">
-          <button class="top-tab active" id="mt-habits" onclick="moreTab('habits')">Hábitos</button>
-          <button class="top-tab" id="mt-gratitude" onclick="moreTab('gratitude')">Gratidão</button>
-          <button class="top-tab" id="mt-conta" onclick="moreTab('conta')">Conta</button>
-        </div>
+        <div class="head-row"><h1>Você</h1><button class="help-pill" onclick="openHelpSheet()"><svg class="ic" aria-hidden="true"><use href="#i-coracao"/></svg>Preciso de ajuda</button></div>
         <div id="more-body"></div>
       </div>
-      <div class="bnav">
-        <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
-        <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
-        <div class="bni" onclick="goTo('care')"><span class="bni-icon">🌿</span><span class="bni-lbl">Cuidar</span></div>
-        <div class="bni" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
-        <div class="bni active" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
-      </div>
+      <nav class="bnav" data-tab="more"></nav>
     </div>
 
-    <!-- ══════════════════════════════ SOS ══ -->
+    <!-- ══════════════════════════════ SOS — para agora ══ -->
     <div class="screen" id="s-sos">
       <div class="status"><span>9:41</span><span>100%</span></div>
-      <div style="padding:8px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0">
-        <button onclick="goTo('home')" style="background:none;border:none;font-size:22px;cursor:pointer">‹</button>
-        <span style="font-size:15px;font-weight:600;color:#1a1a1a">Momento difícil</span>
+      <div class="tool-head">
+        <button class="back" onclick="goTo('home')" aria-label="Voltar"><svg class="ic" aria-hidden="true"><use href="#i-chevL"/></svg></button>
+        <span>Para agora</span>
       </div>
       <div class="scroll pad" style="padding-top:4px">
-
-        <div style="background:linear-gradient(135deg,#fff0f0,#ffe8e8);border-radius:16px;padding:18px;margin-bottom:16px;border:1px solid #fdd">
-          <div style="font-size:22px;margin-bottom:8px">🤍</div>
-          <div style="font-size:15px;font-weight:600;color:#c0392b;margin-bottom:6px">O que você está sentindo é real.</div>
-          <div style="font-size:13px;color:#888;line-height:1.7">Não é fraqueza. Não é frescura. Não é exagero.<br>Você não precisa justificar o que sente para ninguém — nem para si mesmo.</div>
+        <div class="sos-hero">
+          <div class="hs-ic"><svg class="ic" aria-hidden="true"><use href="#i-coracao"/></svg></div>
+          <div class="sos-hero-t">O que você está sentindo é real.</div>
+          <p>Não é fraqueza nem exagero. Coloque a mão no peito e sinta a respiração. Você está aqui, agora — e isso basta para começar.</p>
         </div>
-
-        <div style="background:#f8f7ff;border-radius:14px;padding:14px;margin-bottom:16px;border-left:3px solid #2a7d63">
-          <div style="font-size:12px;font-weight:600;color:#2a7d63;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">Antes de qualquer técnica</div>
-          <div style="font-size:13px;color:#555;line-height:1.65">Coloque a mão no peito. Sinta seu coração batendo. Você está aqui, agora, e isso é suficiente.</div>
+        <div class="section-lbl">Para acalmar o corpo</div>
+        <div class="list">
+          <button class="row" onclick="runTool('calm')"><span class="r-ic"><svg class="ic" aria-hidden="true"><use href="#i-vento"/></svg></span><span class="r-t"><b>Respirar devagar</b><small>Inspire em 4, solte em 6. O corpo entende o sinal de calma.</small></span><svg class="ic chev" aria-hidden="true"><use href="#i-chev"/></svg></button>
+          <button class="row" onclick="runTool('ground')"><span class="r-ic"><svg class="ic" aria-hidden="true"><use href="#i-olho"/></svg></span><span class="r-t"><b>Voltar ao presente</b><small>5 coisas que você vê, 4 que toca, 3 que ouve…</small></span><svg class="ic chev" aria-hidden="true"><use href="#i-chev"/></svg></button>
+          <button class="row" onclick="runTool('pmr')"><span class="r-ic"><svg class="ic" aria-hidden="true"><use href="#i-pausa"/></svg></span><span class="r-t"><b>Soltar a tensão</b><small>Contrair e soltar os músculos, passo a passo</small></span><svg class="ic chev" aria-hidden="true"><use href="#i-chev"/></svg></button>
         </div>
-
-        <div class="sos-technique">
-          <div class="sos-title">🫁 Respiração 4-7-8</div>
-          <div class="sos-desc">Inspire por 4s → Segure por 7s → Expire por 8s.<br>Repita 3 vezes. Ativa o sistema nervoso parassimpático — seu corpo sabe como acalmar, às vezes só precisa de um convite.</div>
-          <button class="btn btn-p" style="margin-top:10px;padding:10px;font-size:13px" onclick="goTo('breath')">Ir para respiração guiada →</button>
-        </div>
-
-        <div class="sos-technique">
-          <div class="sos-title">👁️ Técnica 5-4-3-2-1 (Grounding)</div>
-          <div class="sos-desc">Quando a cabeça está longe, os sentidos trazem você de volta ao presente. Nomeie:<br><br>
-            <b>5</b> coisas que você <b>vê</b><br>
-            <b>4</b> que você pode <b>tocar</b><br>
-            <b>3</b> que você <b>ouve</b><br>
-            <b>2</b> que você <b>cheira</b><br>
-            <b>1</b> que você <b>saboreia</b>
-          </div>
-          <button class="btn btn-p" style="margin-top:10px;padding:10px;font-size:13px" onclick="runTool('ground')">Fazer passo a passo →</button>
-        </div>
-
-        <div class="sos-technique">
-          <div class="sos-title">❄️ Temperatura fria</div>
-          <div class="sos-desc">Coloque o rosto em água fria por 30 segundos, segure gelo nas mãos, ou tome um banho gelado rapidinho. Isso ativa o reflexo de mergulho — uma resposta natural do seu corpo que diminui a frequência cardíaca em segundos.</div>
-        </div>
-
-        <div class="sos-technique">
-          <div class="sos-title">🤲 Relaxamento muscular progressivo</div>
-          <div class="sos-desc">Aperte os punhos com força por 5 segundos, depois solte completamente. Suba pelo corpo: panturrilha → coxa → barriga → ombros. A tensão intencional seguida de alívio engana o sistema nervoso de um jeito bom.</div>
-        </div>
-
+        <p class="sos-tip"><b>Água fria.</b> Molhar o rosto ou segurar gelo por 30 segundos ativa um reflexo natural que desacelera o coração.</p>
         <div id="sos-people"></div>
-
-        <div class="sos-technique" style="background:#fef0ee;border-color:#fdd">
-          <div class="sos-title" style="color:#c0392b">📞 Você não precisa passar por isso sozinho</div>
-          <div class="sos-desc">
-            <b>CVV — Centro de Valorização da Vida</b><br>
-            <span style="font-size:20px;font-weight:700;color:#c0392b">188</span> · 24 horas · gratuito<br><br>
-            Não é só para situações extremas. É para qualquer momento em que você precisar de alguém que escute — sem julgamento, sem comparar, sem minimizar.
-          </div>
-        </div>
-
-        <div style="font-size:11px;color:#bbb;text-align:center;line-height:1.6;margin:4px 4px 8px">As técnicas desta tela são baseadas em práticas de terapia cognitivo-comportamental e de regulação do sistema nervoso. O Florescer é um apoio e não substitui acompanhamento profissional.</div>
-
+        <div class="section-lbl">Falar com alguém agora</div>
+        <a class="big-act urgent" href="tel:188"><span class="r-ic"><svg class="ic" aria-hidden="true"><use href="#i-tel"/></svg></span><span class="r-t"><b>CVV · 188</b><small>24 horas, gratuito. Para qualquer momento em que você precise de alguém que escute — sem julgamento.</small></span></a>
+        <a class="big-act urgent" href="tel:192" style="margin-top:8px"><span class="r-ic"><svg class="ic" aria-hidden="true"><use href="#i-tel"/></svg></span><span class="r-t"><b>SAMU · 192</b><small>Se houver risco imediato. Ou vá ao pronto-socorro mais próximo.</small></span></a>
+        <div class="rep-foot" style="text-align:center;margin:16px 6px 8px">Técnicas baseadas em terapia cognitivo-comportamental e em regulação do sistema nervoso. O Florescer é um apoio e não substitui acompanhamento profissional.</div>
       </div>
     </div>
 
     <!-- ══════════════════════════════ JORNADA ══ -->
     <div class="screen" id="s-jornada">
-      <div class="status"><span>9:41</span><span class="status-center">Sua jornada</span><span></span></div>
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 16px 4px;flex-shrink:0">
-        <button onclick="goTo('home')" style="background:none;border:none;font-size:22px;cursor:pointer;padding:0">‹</button>
-        <span style="font-size:15px;font-weight:600;color:#1a1a1a">Sua jornada</span>
+      <div class="status"><span>9:41</span><span>100%</span></div>
+      <div class="tool-head">
+        <button class="back" onclick="goTo('more')" aria-label="Voltar"><svg class="ic" aria-hidden="true"><use href="#i-chevL"/></svg></button>
+        <span>Sua jornada</span>
       </div>
       <div class="scroll pad" id="jornada-body"></div>
-      <div class="bnav">
-        <div class="bni" onclick="goTo('home')"><span class="bni-icon">🏠</span><span class="bni-lbl">Início</span></div>
-        <div class="bni" onclick="goTo('log')"><span class="bni-icon">✏️</span><span class="bni-lbl">Registrar</span></div>
-        <div class="bni" onclick="goTo('care')"><span class="bni-icon">🌿</span><span class="bni-lbl">Cuidar</span></div>
-        <div class="bni" onclick="goTo('history')"><span class="bni-icon">📅</span><span class="bni-lbl">Histórico</span></div>
-        <div class="bni" onclick="goTo('more')"><span class="bni-icon">☰</span><span class="bni-lbl">Mais</span></div>
-      </div>
+      <nav class="bnav" data-tab="more"></nav>
     </div>
 
   </div><!-- phone-screen -->
@@ -1378,12 +1624,12 @@ textarea.inp{resize:none;min-height:76px}
 
 <div class="side-info">
   Navegue<br>pelas telas<br><br>
-  🏠 Início<br>
-  ✏️ Registrar<br>
-  🌿 Cuidar<br>
-  📅 Histórico<br>
-  ☰ Mais<br><br>
-  🆘 SOS<br>no Início
+  Hoje<br>
+  Cuidar<br>
+  Registrar<br>
+  Diário<br>
+  Você<br><br>
+  Preciso de ajuda<br>no topo
 </div>
 
 <script>
@@ -1424,9 +1670,18 @@ function esc(s) {
 }
 window.esc = esc;
 
+// ── Ícones de linha (sprite no topo do app) ──
+function ico(n, cls){ return '<svg class="ic' + (cls ? ' ' + cls : '') + '" aria-hidden="true"><use href="#i-' + n + '"/></svg>'; }
+window.ico = ico;
+const MOOD_NAMES = {1:'Péssimo', 2:'Mal', 3:'Ok', 4:'Bem', 5:'Ótimo'};
+const PILLAR_ICON = {movimento:'mov', sono:'sono', alimentacao:'comida', conexao:'conexao', pausa:'pausa'};
+const PRACTICE_ICON = {resp:'vento', bodyscan:'meditar', compaixao:'coracao', folhas:'broto', pmr:'sono', ground:'olho'};
+const TRAIL_ICON = {ansiedade:'vento', sono:'sono', gentileza:'coracao', emocoes:'pensamento', rotina:'broto', passos:'passos'};
+const GOAL_ICON = {ansiedade:'vento', humor:'pensamento', sono:'sono', estresse:'pausa', gentileza:'coracao', habitos:'broto', energia:'passos'};
+
 const MOODS = {1:'😞',2:'😕',3:'😐',4:'🙂',5:'😄'};
 const DAYS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-const MOOD_COLORS = {0:'#f0f0f0',1:'#ffd6d6',2:'#ffedc0',3:'#fff9c4',4:'#c8f0c8',5:'#a8e6cf'};
+const MOOD_COLORS = {0:'#EDF1EE',1:'#C5CCDE',2:'#DCE0EA',3:'#E8EADF',4:'#C3E0D3',5:'#8DC4AC'};
 
 function save() {
   localStorage.setItem('fl_logs', JSON.stringify(S.logs));
@@ -1805,7 +2060,7 @@ function challengeView(){
     + '<div class="chal-text">' + def.text + '</div>'
     + '<div class="chal-bar"><div style="width:' + pct + '%"></div></div>'
     + (n >= def.target
-        ? '<div class="chal-done">Feito! ' + n + '/' + def.target + ' 🌱</div>'
+        ? '<div class="chal-done">Feito! ' + n + '/' + def.target + '</div>'
         : '<div style="font-size:11px;color:#888;margin-top:6px">' + n + ' de ' + def.target + '. Recomeçar semana que vem, sem pressa.</div>')
     + '</div>';
 }
@@ -1853,6 +2108,7 @@ function goTo(screen) {
   }
   stopBreath();
   stopMed();
+  closeHelpSheet();
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('s-' + screen).classList.add('active');
   if (screen === 'home') renderHome();
@@ -1868,249 +2124,105 @@ function goTo(screen) {
 
 // ═══════════ HOME ═══════════
 function renderHome() {
-  const today = new Date().toDateString();
-  const todayLogs = S.logs.filter(l => new Date(l.date).toDateString() === today);
-  const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
-  const weekLogs = S.logs.filter(l => new Date(l.date) >= weekAgo);
-
-  // greeting contextual baseado no humor recente
-  const last3 = S.logs.slice(-3);
-  const recentAvg = last3.length ? last3.reduce((s,l)=>s+l.mood,0)/last3.length : 3;
-  const h2 = new Date().getHours();
-  const greetBase = h2 < 12 ? 'Bom dia' : h2 < 18 ? 'Boa tarde' : 'Boa noite';
-  let greetSuffix = '';
-  if (last3.length > 0) {
-    if (recentAvg <= 2) greetSuffix = ' — que bom que você voltou 🤍';
-    else if (recentAvg >= 4.5) greetSuffix = ' — você está arrasando! ✨';
-    else if (recentAvg >= 4) greetSuffix = ' — parece que você está bem 🌻';
-    else greetSuffix = ' 👋';
-  } else {
-    greetSuffix = ' — bem-vindo! 🌱';
-  }
-  document.getElementById('home-hi').textContent = greetBase + greetSuffix;
-  document.getElementById('home-date').textContent = new Date().toLocaleDateString('pt-BR', {weekday:'long',day:'numeric',month:'long'});
-
-  // streak
-  let streak = 0;
-  const t = new Date(); t.setHours(0,0,0,0);
-  const days = [...new Set(S.logs.map(l => new Date(l.date).toDateString()))].sort((a,b)=>new Date(b)-new Date(a));
-  for (let i = 0; i < days.length; i++) {
-    const exp = new Date(t); exp.setDate(t.getDate()-i);
-    if (new Date(days[i]).toDateString()===exp.toDateString()) streak++;
-    else break;
-  }
-
-  const avg = weekLogs.length ? (weekLogs.reduce((s,l)=>s+l.mood,0)/weekLogs.length).toFixed(1) : '--';
-  const weekDays = new Set(weekLogs.map(l => new Date(l.date).toDateString())).size;
-
-  document.getElementById('home-metrics').innerHTML = `
-    <div class="metric"><div class="metric-n">${weekDays}</div><div class="metric-l">${weekDays===1?'dia':'dias'} nesta semana</div></div>
-    <div class="metric"><div class="metric-n">${avg}</div><div class="metric-l">humor médio</div></div>
-    <div class="metric"><div class="metric-n">${S.logs.length}</div><div class="metric-l">registros total</div></div>
-  `;
-
-  // week bars
-  let bars='', dayls='';
-  for (let i=6;i>=0;i--) {
-    const d=new Date();d.setDate(d.getDate()-i);d.setHours(0,0,0,0);
-    const dl=S.logs.filter(l=>new Date(l.date).toDateString()===d.toDateString());
-    const m=dl.length?(dl.reduce((s,l)=>s+l.mood,0)/dl.length):0;
-    const h=m?(m/5)*100:0;
-    const cls=i===0?'today':m===0?'empty':'';
-    bars+=`<div class="wbar-wrap"><div class="wbar ${cls}" style="height:${h||8}%"></div></div>`;
-    dayls+=`<div class="wday" style="flex:1;text-align:center">${DAYS[d.getDay()][0]}</div>`;
-  }
-  document.getElementById('home-bars').innerHTML=bars;
-  document.getElementById('home-days').innerHTML=dayls;
-
-  // action — registrar é convite, não cobrança
-  let actionHtml = '';
-  if (todayLogs.length >= 1) {
-    const extra = todayLogs.length === 1
-      ? 'Se quiser voltar em outro momento do dia, é só abrir — sem obrigação.'
-      : `${todayLogs.length} registros hoje.`;
-    actionHtml = `<div style="background:#eaf5f1;border-radius:14px;padding:14px;text-align:center">
-      <div style="font-size:13px;font-weight:600;color:#1f6450">Você cuidou de você hoje. 🌱</div>
-      <div style="font-size:12px;color:#888;margin-top:6px">${extra}</div>
-      <button class="btn-link" onclick="goTo('log')" style="margin-top:4px">Registrar de novo</button>
-    </div>`;
-  } else {
-    actionHtml = `<button class="btn btn-p" onclick="goTo('log')">✏️ Fazer registro do dia</button>`;
-  }
-  const restartNote = (streak === 0 && S.logs.length > 0)
-    ? `<div style="font-size:12px;color:#1f6450;text-align:center;margin-bottom:10px">Recomeçar também é cuidar. 🌱</div>`
-    : '';
-  document.getElementById('home-action').innerHTML = restartNote + actionHtml;
-
-  // habits preview
-  const todayKey = new Date().toDateString();
-  const doneToday = S.habitDone[todayKey] || [];
-  const habHtml = [...S.habits].sort((a,b)=>(b.plan?1:0)-(a.plan?1:0)).slice(0,3).map(h=>`
-    <div class="habit-item">
-      <div class="habit-check ${doneToday.includes(h.id)?'done':''}" onclick="toggleHabit(${h.id})">${doneToday.includes(h.id)?'✓':''}</div>
-      <span style="font-size:16px">${esc(h.icon)}</span>
-      <span class="habit-name" style="font-size:13px">${esc(h.name)}</span>
-      <span class="habit-streak">${h.streak>0?'🌱 '+h.streak:''}</span>
-    </div>
-  `).join('') + `<div style="text-align:center;margin-top:8px"><button class="btn-link" onclick="moreTab('habits');goTo('more')">Ver todos os hábitos →</button></div>`;
-  document.getElementById('home-habits-preview').innerHTML = habHtml;
-
-  // gratitude preview
-  const todayGrat = S.gratitude.filter(g => new Date(g.date).toDateString() === today);
-  let gratHtml;
-  if (todayGrat.length) {
-    gratHtml = todayGrat.slice(0,2).map((g,i)=>`
-      <div class="grat-item"><div class="grat-num">${i+1}</div><div class="grat-text">${esc(g.text)}</div></div>
-    `).join('') + `<button class="btn-link" onclick="moreTab('gratitude');goTo('more')" style="margin-top:6px">Ver mais →</button>`;
-  } else {
-    gratHtml = `<div style="text-align:center;padding:8px 0">
-      <div style="font-size:24px;margin-bottom:6px">🙏</div>
-      <div style="font-size:13px;color:#bbb;margin-bottom:10px">O que te fez bem hoje?</div>
-      <button class="btn btn-p" style="padding:10px" onclick="moreTab('gratitude');goTo('more')">Escrever gratidão</button>
-    </div>`;
-  }
-  document.getElementById('home-grat-preview').innerHTML = gratHtml;
-
-  renderHomeWeekSummary();
+  const now = new Date(), today = now.toDateString();
+  const todayLogs = S.logs.filter(l => new Date(l.date).toDateString() === today)
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+  const h = now.getHours();
+  const first = ((S.user && S.user.name) || '').trim().split(/\s+/)[0];
+  document.getElementById('home-hi').textContent = (h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite') + (first ? ', ' + first : '');
+  document.getElementById('home-date').textContent = now.toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long'});
+  renderHomeSeal();
   renderHomeHelp();
+
+  // Cartão principal: a pergunta do dia ou, depois de registrar, o próprio dia no diário.
+  const nowEl = document.getElementById('home-now');
+  if (!todayLogs.length) {
+    const away = S.logs.length && daysSinceLastLog() >= 3;
+    nowEl.innerHTML = `<div class="card now-card">
+      <div class="card-title">${away ? 'Que bom ter você de volta. Como está agora?' : 'Como você está agora?'}</div>
+      <div class="faces">${[1, 2, 3, 4, 5].map(m => `<button class="face" onclick="startLogWithMood(${m})" aria-label="${MOOD_NAMES[m]}">${ico('f' + m)}</button>`).join('')}</div>
+      <div class="faces-lbl"><span>péssimo</span><span>ótimo</span></div>
+      <div class="now-hint">Toque em um rosto para registrar · cerca de 1 minuto</div>
+    </div>`;
+  } else {
+    nowEl.innerHTML = `<div class="card now-card">
+      <div class="now-head"><div class="card-title">Seu dia</div><button class="btn-link" onclick="goTo('log')">Registrar de novo</button></div>
+      ${todayLogs.map(l => diaryEntry(l, true)).join('')}
+    </div>`;
+  }
   renderHomePillars();
   renderHomeTrail();
-  renderHomePlant();
-  // conquistas que já valem pelos dados existentes
+  renderHomeHabits();
   checkBadges();
   flushBadgeFx();
 }
 
-// ═══════════ LOG FORM ═══════════
+// ═══════════ LOG FORM — registro em 4 passos ═══════════
+// Só o humor é obrigatório. "Salvar agora" funciona em qualquer passo.
+const LOG_STEP_NAMES = ['como você está', 'o que você sente', 'corpo', 'o dia'];
+let LOG_STEP = 1;
+function timeOfDay(){ const h = new Date().getHours(); return h < 12 ? 'Manhã' : h < 18 ? 'Tarde' : 'Noite'; }
 function resetLog() {
-  S.logForm = {mood:null,anx:null,sleep:null,triggers:[],emotions:[],prompt:'',note:'',time:'Manhã'};
+  S.logForm = {mood:null, anx:null, sleep:null, triggers:[], emotions:[], prompt:'', note:'', time:timeOfDay(), emoOpen:null};
+  LOG_STEP = 1;
+  document.querySelectorAll('#mood-row .mood-btn').forEach(b => b.classList.remove('sel'));
+  document.querySelectorAll('#anx-row .sc-btn, #sleep-row .sc-btn').forEach(b => b.classList.remove('sel'));
+  document.querySelectorAll('#tags-row .tag').forEach(b => b.classList.remove('sel'));
+  document.querySelectorAll('#time-row .time-btn').forEach(b => b.classList.toggle('sel', b.dataset.t === S.logForm.time));
+  ['log-note', 'log-grat'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  const hint = document.getElementById('mood-hint');
+  if (hint) hint.style.display = 'none';
   renderLogPillars();
   renderEmoWheel();
   updateReflection();
-  document.querySelectorAll('#mood-row .mood-btn').forEach(b=>b.classList.remove('sel'));
-  document.querySelectorAll('#anx-row .sc-btn').forEach(b=>b.classList.remove('sel'));
-  document.querySelectorAll('#sleep-row .sc-btn').forEach(b=>b.classList.remove('sel'));
-  document.querySelectorAll('#tags-row .tag').forEach(b=>b.classList.remove('sel'));
-  document.querySelectorAll('#time-row .time-btn').forEach(b=>b.classList.remove('sel'));
-  document.querySelector('#time-row .time-btn').classList.add('sel');
-  if (document.getElementById('log-note')) document.getElementById('log-note').value='';
-  if (document.getElementById('mood-hint')) document.getElementById('mood-hint').style.display='none';
-  // aplicar tema manhã por padrão
-  const firstBtn = document.querySelector('#time-row .time-btn');
-  if (firstBtn) selTime(firstBtn, 'Manhã');
+  renderLogStep();
 }
-const TIME_THEMES = {
-  'Manhã': {
-    bg: 'linear-gradient(180deg, #ff9a5c 0%, #ffcd84 40%, #fff8f0 100%)',
-    cardBg: '#ffffffcc',
-    titleColor: '#7a3510',
-    subColor: '#c4622a',
-    statusColor: '#7a3510',
-    emoji: '🌅',
-    phrase: 'Bom dia! Como você acordou?'
-  },
-  'Tarde': {
-    bg: 'linear-gradient(180deg, #4ab8e8 0%, #87d4f5 40%, #f0faff 100%)',
-    cardBg: '#ffffffcc',
-    titleColor: '#0a4a6e',
-    subColor: '#1a7aaa',
-    statusColor: '#0a4a6e',
-    emoji: '☀️',
-    phrase: 'Boa tarde! Como está sendo o dia?'
-  },
-  'Noite': {
-    bg: 'linear-gradient(180deg, #0d1b3e 0%, #1a2f6b 40%, #2a3a7a 100%)',
-    cardBg: '#ffffff18',
-    titleColor: '#e8eeff',
-    subColor: '#9aaedd',
-    statusColor: '#e8eeff',
-    emoji: '🌙',
-    phrase: 'Boa noite! Como foi o seu dia?'
-  }
-};
-
+function renderLogStep(){
+  document.querySelectorAll('#s-log .log-step').forEach(sec => { sec.hidden = +sec.dataset.step !== LOG_STEP; });
+  document.querySelectorAll('#s-log .log-steps i').forEach((i, k) => i.classList.toggle('on', k < LOG_STEP));
+  const lbl = document.getElementById('log-step-lbl');
+  if (lbl) lbl.textContent = 'Passo ' + LOG_STEP + ' de 4 · ' + LOG_STEP_NAMES[LOG_STEP - 1];
+  const back = document.getElementById('log-back');
+  if (back) back.style.visibility = LOG_STEP > 1 ? 'visible' : 'hidden';
+  const next = document.getElementById('log-next');
+  if (next) { next.textContent = LOG_STEP === 4 ? 'Salvar registro' : 'Continuar'; next.disabled = !S.logForm.mood; }
+  const nowBtn = document.getElementById('log-save-now');
+  if (nowBtn) nowBtn.disabled = !S.logForm.mood;
+  const body = document.getElementById('log-body');
+  if (body) body.scrollTop = 0;
+}
+function logStep(d){
+  if (d > 0 && !S.logForm.mood) return;
+  if (d > 0 && LOG_STEP === 4) { saveLog(); return; }
+  LOG_STEP = Math.max(1, Math.min(4, LOG_STEP + d));
+  renderLogStep();
+}
+function closeLog(){
+  const f = S.logForm, note = (document.getElementById('log-note') || {}).value || '';
+  const dirty = f.mood || (f.emotions || []).length || (f.triggers || []).length || note.trim();
+  if (dirty && !confirm('Sair sem salvar este registro?')) return;
+  goTo('home');
+}
+function startLogWithMood(m){
+  goTo('log');
+  selMood(m);
+  LOG_STEP = 2;
+  renderLogStep();
+}
 function selTime(el, v) {
   S.logForm.time = v;
-  document.querySelectorAll('#time-row .time-btn').forEach(b => b.classList.remove('sel'));
-  el.classList.add('sel');
-
-  const theme = TIME_THEMES[v];
-  const screen = document.getElementById('s-log');
-
-  // fundo da tela
-  screen.style.background = theme.bg;
-  screen.style.transition = 'background 0.8s ease';
-
-  // cards ficam semi-transparentes com blur
-  document.querySelectorAll('#s-log .card').forEach(c => {
-    c.style.background = theme.cardBg;
-    c.style.backdropFilter = 'blur(8px)';
-    c.style.transition = 'background 0.6s ease';
-  });
-
-  // atualiza título e subtítulo do header
-  const header = document.getElementById('log-header-text');
-  if (header) {
-    header.innerHTML = `<span style="font-size:18px">${theme.emoji}</span> ${theme.phrase}`;
-    header.style.color = theme.titleColor;
-  }
-
-  // atualiza cor do texto da dica
-  const hint = document.getElementById('log-hint-text');
-  if (hint) {
-    hint.style.color = theme.subColor;
-  }
-
-  // status bar cor
-  const status = screen.querySelector('.status');
-  if (status) status.style.color = theme.statusColor;
-
-  // botão voltar cor
-  const backBtn = screen.querySelector('button');
-  if (backBtn) backBtn.style.color = theme.titleColor;
-
-  // estrelas na noite
-  if (v === 'Noite') {
-    addStars(screen);
-  } else {
-    removeStars(screen);
-  }
-}
-
-function addStars(screen) {
-  removeStars(screen);
-  const stars = document.createElement('div');
-  stars.id = 'night-stars';
-  stars.style.cssText = 'position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0';
-  let html = '';
-  for (let i = 0; i < 40; i++) {
-    const x = Math.random() * 100;
-    const y = Math.random() * 45;
-    const size = Math.random() * 2 + 1;
-    const opacity = Math.random() * 0.6 + 0.2;
-    const delay = Math.random() * 3;
-    html += `<div style="position:absolute;left:${x}%;top:${y}%;width:${size}px;height:${size}px;background:#fff;border-radius:50%;opacity:${opacity};animation:twinkle 2s ${delay}s infinite alternate"></div>`;
-  }
-  stars.innerHTML = html;
-  screen.appendChild(stars);
-}
-
-function removeStars(screen) {
-  const old = document.getElementById('night-stars');
-  if (old) old.remove();
+  document.querySelectorAll('#time-row .time-btn').forEach(b => b.classList.toggle('sel', b === el));
 }
 const MOOD_HINTS = {
-  1: {text:'Faz sentido você se sentir assim. Não precisa estar bem o tempo todo.', bg:'#fef0ee', color:'#8b2e1a'},
-  2: {text:'Dias difíceis acontecem. Você está sendo honesto com você mesmo — isso é corajoso.', bg:'#faf5e8', color:'#5c3d00'},
-  3: {text:'Nem ótimo, nem ruim. Às vezes é exatamente assim — e tudo bem.', bg:'#f5f5f5', color:'#555'},
-  4: {text:'Que bom! Aproveite esse dia com leveza.', bg:'#e8fdf3', color:'#1a6b44'},
-  5: {text:'Incrível! Que esse sentimento dure bastante.', bg:'#eaf5f1', color:'#1f6450'},
+  1: 'Faz sentido você se sentir assim. Não precisa estar bem o tempo todo.',
+  2: 'Dias difíceis acontecem. Olhar para isso com honestidade já é cuidado.',
+  3: 'Nem ótimo, nem ruim. Às vezes é exatamente assim — e tudo bem.',
+  4: 'Que bom. Aproveite esse momento com leveza.',
+  5: 'Que bom te ver assim. Vale guardar o que ajudou.',
 };
-
 function selMood(v) {
-  S.logForm.mood=v;
-  document.querySelectorAll('#mood-row .mood-btn').forEach((b,i)=>b.classList.toggle('sel',i+1===v));
-  // mostra hint empático
+  S.logForm.mood = v;
+  document.querySelectorAll('#mood-row .mood-btn').forEach((b, i) => b.classList.toggle('sel', i + 1 === v));
   let hint = document.getElementById('mood-hint');
   if (!hint) {
     hint = document.createElement('div');
@@ -2118,33 +2230,31 @@ function selMood(v) {
     hint.className = 'mood-hint';
     document.getElementById('mood-row').after(hint);
   }
-  const h = MOOD_HINTS[v];
-  hint.style.background = h.bg;
-  hint.style.color = h.color;
-  hint.textContent = h.text;
+  hint.textContent = MOOD_HINTS[v];
   hint.style.display = 'block';
   updateReflection();
+  renderLogStep();
 }
-function selSc(type,v,el) {
-  S.logForm[type]=v;
-  const row=document.getElementById(type+'-row');
-  row.querySelectorAll('.sc-btn').forEach(b=>b.classList.toggle('sel',b.textContent==v));
+function selSc(type, v, el) {
+  S.logForm[type] = S.logForm[type] === v ? null : v;
+  const row = document.getElementById(type + '-row');
+  row.querySelectorAll('.sc-btn').forEach(b => b.classList.toggle('sel', S.logForm[type] !== null && b.textContent === String(S.logForm[type])));
 }
 function togTag(el) {
   el.classList.toggle('sel');
-  const t=el.textContent;
-  if(el.classList.contains('sel')) S.logForm.triggers.push(t);
-  else S.logForm.triggers=S.logForm.triggers.filter(x=>x!==t);
+  const t = el.textContent;
+  if (el.classList.contains('sel')) S.logForm.triggers.push(t);
+  else S.logForm.triggers = S.logForm.triggers.filter(x => x !== t);
   updateReflection();
 }
 
 // ═══════════ EMOÇÕES ═══════════
 // Quatro quadrantes do modelo circumplexo de afeto (valência × energia).
 const EMOTIONS = [
-  {q:'pesadas',   label:'Pesadas',   color:'#7b8fb8', items:[['tristeza','Tristeza'],['solidao','Solidão'],['cansaco','Cansaço'],['desanimo','Desânimo'],['culpa','Culpa'],['vazio','Vazio']]},
-  {q:'agitadas',  label:'Agitadas',  color:'#d67e66', items:[['ansiedade','Ansiedade'],['sobrecarga','Sobrecarga'],['irritacao','Irritação'],['frustracao','Frustração'],['medo','Medo'],['inseguranca','Insegurança']]},
-  {q:'calmas',    label:'Calmas',    color:'#4fa488', items:[['calma','Calma'],['alivio','Alívio'],['gratidao','Gratidão'],['paz','Paz'],['satisfacao','Satisfação'],['aconchego','Aconchego']]},
-  {q:'vibrantes', label:'Vibrantes', color:'#cf9e34', items:[['alegria','Alegria'],['empolgacao','Empolgação'],['orgulho','Orgulho'],['confianca','Confiança'],['motivacao','Motivação'],['carinho','Carinho']]},
+  {q:'pesadas',   label:'Pesadas',   color:'#7E90B5', items:[['tristeza','Tristeza'],['solidao','Solidão'],['cansaco','Cansaço'],['desanimo','Desânimo'],['culpa','Culpa'],['vazio','Vazio']]},
+  {q:'agitadas',  label:'Agitadas',  color:'#CC876B', items:[['ansiedade','Ansiedade'],['sobrecarga','Sobrecarga'],['irritacao','Irritação'],['frustracao','Frustração'],['medo','Medo'],['inseguranca','Insegurança']]},
+  {q:'calmas',    label:'Calmas',    color:'#4F9E85', items:[['calma','Calma'],['alivio','Alívio'],['gratidao','Gratidão'],['paz','Paz'],['satisfacao','Satisfação'],['aconchego','Aconchego']]},
+  {q:'vibrantes', label:'Vibrantes', color:'#BE9A3E', items:[['alegria','Alegria'],['empolgacao','Empolgação'],['orgulho','Orgulho'],['confianca','Confiança'],['motivacao','Motivação'],['carinho','Carinho']]},
 ];
 const EMO_INDEX = {};
 EMOTIONS.forEach(g => g.items.forEach(([k,l]) => { EMO_INDEX[k] = {label:l, q:g.q, color:g.color}; }));
@@ -2154,19 +2264,21 @@ function emoLabel(k){ return EMO_INDEX[k] ? EMO_INDEX[k].label : k; }
 function renderEmoWheel(){
   const host = document.getElementById('emo-wheel');
   if (!host) return;
-  const sel = S.logForm.emotions || [];
-  host.innerHTML = EMOTIONS.map(g =>
-    '<div class="emo-group"><div class="emo-glabel" style="color:'+g.color+'"><i style="background:'+g.color+'"></i>'+g.label+'</div><div class="emo-chips">'
-    + g.items.map(([k,l]) => {
-        const on = sel.indexOf(k) >= 0;
-        return '<button type="button" class="emo-chip'+(on?' sel':'')+'"'
-          + (on ? ' style="background:'+g.color+';border-color:'+g.color+'"' : '')
-          + ' onclick="togEmo(\''+k+'\')">'+l+'</button>';
-      }).join('')
-    + '</div></div>'
-  ).join('')
-  + (sel.length ? '<div class="emo-count">'+sel.map(emoLabel).join(' · ')+'</div>' : '');
+  const f = S.logForm, sel = f.emotions || [], open = f.emoOpen || null;
+  const g = EMOTIONS.find(x => x.q === open);
+  host.innerHTML = '<div class="quads">' + EMOTIONS.map(q => {
+      const n = q.items.filter(([k]) => sel.indexOf(k) >= 0).length;
+      return '<button type="button" class="quad' + (open === q.q ? ' open' : '') + (n ? ' has' : '') + '" style="--q:' + q.color + '" onclick="openQuad(\'' + q.q + '\')" aria-expanded="' + (open === q.q) + '">'
+        + '<i></i><b>' + q.label + (n ? ' · ' + n : '') + '</b><small>' + q.items.slice(0, 3).map(x => x[1].toLowerCase()).join(', ') + '</small></button>';
+    }).join('') + '</div>'
+    + (g
+      ? '<div class="log-lbl" style="margin-top:16px">' + g.label + ' · marque as que servem</div><div class="emo-chips">'
+        + g.items.map(([k, l]) => '<button type="button" class="emo-chip' + (sel.indexOf(k) >= 0 ? ' sel' : '') + '" style="--q:' + g.color + '" onclick="togEmo(\'' + k + '\')">' + l + '</button>').join('')
+        + '</div>'
+      : '<p class="log-sub" style="margin:14px 0 0">Toque em um tom para ver as palavras.</p>')
+    + (sel.length ? '<div class="emo-count">Você marcou: ' + sel.map(emoLabel).join(' · ') + '</div>' : '');
 }
+function openQuad(q){ S.logForm.emoOpen = S.logForm.emoOpen === q ? null : q; renderEmoWheel(); }
 function togEmo(k){
   const a = S.logForm.emotions || (S.logForm.emotions = []);
   const i = a.indexOf(k);
@@ -2211,20 +2323,27 @@ function updateReflection(){
 }
 
 function saveLog() {
-  if (!S.logForm.mood || S.logForm.anx===null || !S.logForm.sleep) {
-    alert('Preencha humor, ansiedade e sono para continuar.'); return;
-  }
-  const note = document.getElementById('log-note').value;
+  if (!S.logForm.mood) { LOG_STEP = 1; renderLogStep(); return; }
+  const note = (document.getElementById('log-note') || {}).value || '';
+  const grat = ((document.getElementById('log-grat') || {}).value || '').trim();
   const newLog = {
-    id:Date.now(), date:new Date().toISOString(),
-    mood:S.logForm.mood, anxiety:S.logForm.anx,
-    sleep:S.logForm.sleep, triggers:[...S.logForm.triggers],
-    emotions:[...(S.logForm.emotions||[])],
-    note:note,
+    id: Date.now(), date: new Date().toISOString(),
+    mood: S.logForm.mood,
+    anxiety: typeof S.logForm.anx === 'number' ? S.logForm.anx : null,
+    sleep: S.logForm.sleep || null,
+    triggers: [...S.logForm.triggers],
+    emotions: [...(S.logForm.emotions || [])],
+    note: note,
     prompt: note.trim() ? (S.logForm.prompt || '') : '',
-    time:S.logForm.time
+    time: S.logForm.time
   };
   S.logs.push(newLog);
+  // "Algo bom de hoje?" vira uma gratidão do dia
+  if (grat) {
+    const g = {id: newLog.id + 1, date: newLog.date, text: grat.slice(0, 140)};
+    S.gratitude.push(g);
+    if (window.saveGratitudeCloud) window.saveGratitudeCloud(g);
+  }
   save();
   if (window.saveLogCloud) window.saveLogCloud(newLog);
   markCareDay();
@@ -2305,7 +2424,7 @@ const EMPATHY = {
   },
   2: {
     emoji:'🫂',
-    title:'Registrar já é um ato de cuidado com você mesmo.',
+    title:'Registrar já é um ato de cuidado.',
     text:'Nem sempre é fácil parar e olhar para dentro. Você fez isso hoje, e isso importa.',
     tip:'Quando não estamos bem, às vezes o simples ajuda. Uma caminhada curta, água gelada, ou só sentar em silêncio por 5 minutos.'
   },
@@ -2330,7 +2449,7 @@ const EMPATHY = {
 };
 
 const ANXIETY_EXTRA = {
-  high: '\n\nSeu nível de ansiedade está alto agora. Isso é pesado de carregar. O botão SOS tem técnicas que ajudam em minutos — sem julgamento.',
+  high: '\n\nSeu nível de ansiedade está alto agora. Isso é pesado de carregar. Em “Preciso de ajuda”, no topo da tela, há caminhos que ajudam em minutos — sem julgamento.',
   medium: '\n\nUm pouco de ansiedade é normal. Se quiser, o exercício de respiração guiada pode ajudar a baixar esse nível.'
 };
 
@@ -2340,19 +2459,20 @@ function showEmpathy(log) {
   let text = e.text;
   if (anxiety >= 7) text += ANXIETY_EXTRA.high;
   else if (anxiety >= 5) text += ANXIETY_EXTRA.medium;
-
+  const icon = mood <= 2 ? 'coracao' : mood === 3 ? 'broto' : 'flor';
   const overlay = document.createElement('div');
   overlay.className = 'empathy-overlay';
   overlay.id = 'empathy-overlay';
   overlay.innerHTML = `
-    <div class="empathy-sheet">
-      <span class="emp-emoji">${e.emoji}</span>
+    <div class="empathy-sheet" role="dialog" aria-label="Registro salvo">
+      <i class="grab"></i>
+      <div class="emp-ic">${ico(icon)}</div>
       <div class="emp-title">${e.title}</div>
-      <div class="emp-text">${text.replace(/\n\n/g,'<br><br>')}</div>
+      <div class="emp-text">${text.replace(/\n\n/g, '<br><br>')}</div>
       <div class="emp-tip-lbl" style="margin-bottom:8px">Se quiser, experimente agora</div>
-      ${suggestionsFor(log).map(k => toolRow(k, 'empAct')).join('')}
-      <button class="btn btn-soft" style="margin-top:8px" onclick="closeEmpathy()">Voltar ao início</button>
-      ${anxiety >= 6 ? `<button class="btn" style="background:#fef0ee;color:#c0392b;margin-top:8px" onclick="closeEmpathy();goTo('sos')">Preciso de ajuda agora</button>` : ''}
+      <div class="list">${suggestionsFor(log).map(k => toolRow(k, 'empAct')).join('')}</div>
+      <button class="btn btn-p" style="margin-top:12px" onclick="closeEmpathy()">Voltar ao início</button>
+      ${anxiety >= 6 ? `<button class="btn btn-soft" style="margin-top:8px;color:var(--urgent);border-color:#E8D2CC" onclick="closeEmpathy();openHelpSheet()">Preciso de ajuda agora</button>` : ''}
     </div>
   `;
   document.getElementById('app').appendChild(overlay);
@@ -2386,11 +2506,11 @@ function toggleHabit(id) {
 
 // ═══════════ BREATHING ═══════════
 const BREATH_TYPES = {
-  '478': {name:'4-7-8',phases:[{l:'Inspire',d:4,c:'#2a7d63'},{l:'Segure',d:7,c:'#c9a84c'},{l:'Expire',d:8,c:'#4ecb8d'}],desc:'Reduz ansiedade rapidamente',
+  '478': {name:'4-7-8',phases:[{l:'Inspire',d:4,c:'#2F7A64'},{l:'Segure',d:7,c:'#6E9C8C'},{l:'Expire',d:8,c:'#4F9E85'}],desc:'Reduz ansiedade rapidamente',
     evidence:'Prolongar a expiração ativa a resposta de calma do corpo (sistema nervoso parassimpático). Base: estudos de respiração lenta e variabilidade da frequência cardíaca.'},
-  'box':  {name:'Box',phases:[{l:'Inspire',d:4,c:'#2a7d63'},{l:'Segure',d:4,c:'#c9a84c'},{l:'Expire',d:4,c:'#4ecb8d'},{l:'Segure',d:4,c:'#ff6b6b'}],desc:'Foco e concentração',
+  'box':  {name:'Box',phases:[{l:'Inspire',d:4,c:'#2F7A64'},{l:'Segure',d:4,c:'#6E9C8C'},{l:'Expire',d:4,c:'#4F9E85'},{l:'Segure',d:4,c:'#8DB3A5'}],desc:'Foco e concentração',
     evidence:'Ciclos iguais de inspirar, segurar e expirar ajudam a estabilizar a atenção. Usada em treinamento de foco e manejo de estresse.'},
-  'calm': {name:'Acalmar',phases:[{l:'Inspire',d:4,c:'#2a7d63'},{l:'Expire',d:6,c:'#4ecb8d'}],desc:'Simples e relaxante',
+  'calm': {name:'Acalmar',phases:[{l:'Inspire',d:4,c:'#2F7A64'},{l:'Expire',d:6,c:'#4F9E85'}],desc:'Simples e relaxante',
     evidence:'Expirar por mais tempo do que se inspira favorece o relaxamento. Base: pesquisa sobre respiração diafragmática e ansiedade.'},
 };
 let breathPhase=0, breathTimer=null, breathCount=0, breathRunning=false, breathType='478', breathCycles=0;
@@ -2402,7 +2522,7 @@ function selBreath(type, el) {
   el.classList.add('active');
   const bt=BREATH_TYPES[type];
   document.getElementById('b-instr').textContent=bt.name+' — '+bt.desc;
-  document.getElementById('b-sub').textContent='Toque em Iniciar para começar';
+  document.getElementById('b-sub').textContent='Toque em Começar quando quiser';
   document.getElementById('b-text').innerHTML='Pronto?';
   document.getElementById('b-count').textContent='';
   document.getElementById('b-cycles').textContent='';
@@ -2413,14 +2533,14 @@ let breathSessionCounted=false;
 function toggleBreath() {
   if (breathRunning) { stopBreath(); return; }
   breathRunning=true; breathPhase=0; breathCount=0; breathCycles=0; breathSessionCounted=false;
-  document.getElementById('b-btn').textContent='⏹ Parar';
+  document.getElementById('b-btn').textContent='Parar';
   runBreathPhase();
 }
 
 function stopBreath() {
   breathRunning=false;
   clearInterval(breathTimer);
-  document.getElementById('b-btn').textContent='▶ Iniciar';
+  document.getElementById('b-btn').textContent='Começar';
   document.getElementById('b-inner').style.transform='scale(1)';
   document.getElementById('b-text').innerHTML='Toque para<br>começar';
   document.getElementById('b-count').textContent='';
@@ -2514,7 +2634,7 @@ const PRACTICES = {
     {x:'Percorra o corpo com a atenção. Se algum lugar ainda estiver tenso, contraia e solte mais uma vez.', d:40},
     {x:'Fique aqui, respirando devagar, sentindo o corpo pesado e apoiado. Se for hora de dormir, pode simplesmente continuar assim.', d:50},
   ]},
-  ground: {emoji:'👁️', title:'Aterramento 5-4-3-2-1', min:0, desc:'Voltar ao presente pelos sentidos.', steps:[
+  ground: {emoji:'👁️', title:'Voltar ao presente', min:0, desc:'Voltar ao presente pelos sentidos.', steps:[
     {x:'Pare por um instante. Você está aqui, agora. Vamos trazer a atenção para os sentidos, um de cada vez.'},
     {x:'Olhe ao redor e nomeie <b>5 coisas que você vê</b>. Pode ser em voz baixa: uma cor, um objeto, uma luz.'},
     {x:'Agora <b>4 coisas que você pode tocar</b>. A roupa na pele, o chão sob os pés, a textura de algo perto.'},
@@ -2631,31 +2751,31 @@ const ART_GROUPS = [
 function toolDef(key){
   if (key.startsWith('art:')) {
     const a = ARTICLES.find(x => x.id === key.slice(4));
-    return a && {emoji:'📖', title:a.title, sub:'Leitura de 1 minuto'};
+    return a && {icon:'livro', title:a.title, sub:'Leitura de 1 minuto'};
   }
   if (PRACTICES[key]) {
     const p = PRACTICES[key];
-    return {emoji:p.emoji, title:p.title, sub: p.min ? p.min + ' min · prática guiada' : 'No seu tempo · passo a passo'};
+    return {icon:PRACTICE_ICON[key] || 'meditar', title:p.title, sub: p.min ? p.min + ' min · prática guiada' : 'No seu tempo · passo a passo'};
   }
   return ({
-    breath478: {emoji:'🫁', title:'Respiração 4-7-8', sub:'2 min · reduz a ativação do corpo'},
-    calm:      {emoji:'🫁', title:'Respiração para acalmar', sub:'2 min · expiração mais longa'},
-    thought:   {emoji:'🧠', title:'Registro de pensamento', sub:'5–10 min · olhar o pensamento de outro ângulo'},
-    gratidao:  {emoji:'🙏', title:'Guardar em gratidão', sub:'Anotar o que fez bem hoje'},
-    meditate:  {emoji:'🧘', title:'Meditar', sub:'Timer e práticas guiadas'},
-    log:       {emoji:'✏️', title:'Fazer um registro', sub:'Humor, emoções e o que marcou o dia'},
-    report:    {emoji:'📊', title:'Ver seu relatório', sub:'Semana, mês e descobertas'},
-    plan:      {emoji:'👣', title:'Pequenos passos', sub:'Até 3 ações pequenas para a semana'},
-    passo:     {emoji:'🌱', title:'Só 5 minutos', sub:'Uma ação pequena, agora'},
-    help:      {emoji:'🩺', title:'Onde buscar ajuda', sub:'Psicologia, psiquiatria, SUS e urgência'},
-    apoio:     {emoji:'💌', title:'Como me apoiar', sub:'Um texto para enviar a quem você confia'},
+    breath478: {icon:'vento', title:'Respiração 4-7-8', sub:'2 min · diminui a ativação do corpo'},
+    calm:      {icon:'vento', title:'Respirar devagar', sub:'2 min · expiração mais longa'},
+    thought:   {icon:'pensamento', title:'Olhar um pensamento', sub:'5–10 min · de outro ângulo, em 7 passos'},
+    gratidao:  {icon:'flor', title:'Algo bom de hoje', sub:'Anotar o que fez bem'},
+    meditate:  {icon:'meditar', title:'Meditar', sub:'Timer e práticas guiadas'},
+    log:       {icon:'mais', title:'Fazer um registro', sub:'Humor, emoções e o que marcou o dia'},
+    report:    {icon:'relatorio', title:'Ver seu relatório', sub:'Semana, mês e descobertas'},
+    plan:      {icon:'passos', title:'Pequenos passos', sub:'Até 3 ações pequenas para a semana'},
+    passo:     {icon:'passos', title:'Só 5 minutos', sub:'Uma ação pequena, agora'},
+    help:      {icon:'estetoscopio', title:'Onde buscar ajuda', sub:'Psicologia, psiquiatria, SUS e urgência'},
+    apoio:     {icon:'carta', title:'Como me apoiar', sub:'Um texto para enviar a quem você confia'},
   })[key] || null;
 }
 function toolRow(key, handler){
   const t = toolDef(key);
   if (!t) return '';
-  return `<button class="tool-row" onclick="${handler || 'runTool'}('${key}')"><span class="tr-e">${t.emoji}</span>
-    <span class="tr-t"><b>${t.title}</b><small>${t.sub}</small></span><span class="tr-go">›</span></button>`;
+  return `<button class="tool-row" onclick="${handler || 'runTool'}('${key}')"><span class="r-ic">${ico(t.icon)}</span>
+    <span class="r-t"><b>${t.title}</b><small>${t.sub}</small></span>${ico('chev', 'chev')}</button>`;
 }
 
 function currentScreen(){ const el = document.querySelector('.screen.active'); return el ? el.id.slice(2) : 'home'; }
@@ -2678,7 +2798,9 @@ function runTool(key){
   }
   if (key === 'thought') { TR = newTR(); return openTool('thought'); }
   if (key === 'timer') return openTool('practice', 'timer');
-  if (key === 'gratidao') { moreTab('gratitude'); goTo('more'); return; }
+  if (key === 'gratidao') return openTool('grat');
+  if (key === 'library') return openTool('library');
+  if (key === 'trails') return openTool('trails');
   if (key === 'meditate') return openTool('meditate');
   if (key === 'thoughts') return openTool('thoughts');
   if (key.startsWith('trail:')) return openTool('trail', key.slice(6));
@@ -2724,13 +2846,16 @@ function renderTool(keepScroll){
   if (k === 'learn') { title.textContent = 'Aprender'; renderArticle(body, TOOL.arg); }
   else if (k === 'meditate') { title.textContent = 'Meditar'; renderMeditate(body); }
   else if (k === 'practice') { title.textContent = TOOL.arg === 'timer' ? 'Meditação livre' : (PRACTICES[TOOL.arg] || {}).title || ''; startPractice(body, TOOL.arg); }
-  else if (k === 'thought') { title.textContent = 'Registro de pensamento'; if (!TR) TR = newTR(); renderThought(body); }
+  else if (k === 'thought') { title.textContent = 'Olhar um pensamento'; if (!TR) TR = newTR(); renderThought(body); }
   else if (k === 'thoughts') { title.textContent = 'Seus registros de pensamento'; renderThoughtList(body); }
   else if (k === 'trail') { title.textContent = 'Trilha'; renderTrail(body, TOOL.arg); }
   else if (k === 'plan') { title.textContent = 'Pequenos passos'; renderPlan(body); }
   else if (k === 'passo') { title.textContent = 'Só 5 minutos'; renderPasso(body); }
   else if (k === 'help') { title.textContent = 'Buscar ajuda'; renderHelp(body); }
   else if (k === 'apoio') { title.textContent = 'Rede de apoio'; renderApoio(body); }
+  else if (k === 'library') { title.textContent = 'Leituras'; renderLibrary(body); }
+  else if (k === 'trails') { title.textContent = 'Trilhas'; renderTrailsList(body); }
+  else if (k === 'grat') { title.textContent = 'Algo bom de hoje'; renderGrat(body); }
 }
 
 // ── Hub
@@ -2750,42 +2875,38 @@ function selNeed(k){ CARE_NEED = CARE_NEED === k ? null : k; renderCare(); }
 function renderCare(){
   const body = document.getElementById('care-body');
   const need = NEEDS.find(n => n.k === CARE_NEED);
-  const read = S.progress.readArticles || [];
   const th = S.thoughts || [];
-  body.innerHTML = `<h1>Cuidar</h1>
-    <p class="sub">Ferramentas práticas para o que você sente agora.</p>
-    <div class="card">
-      <div class="card-title">O que está pesando agora?</div>
-      <div class="chip-row">${NEEDS.map(n => `<button class="chip ${CARE_NEED === n.k ? 'sel' : ''}" onclick="selNeed('${n.k}')">${n.label}</button>`).join('')}</div>
-      ${need ? `<div style="margin-top:12px">${need.tools.map(k => toolRow(k)).join('')}</div>` : ''}
+  const tr = S.progress.trailActive && trailDef(S.progress.trailActive);
+  const plan = planHabits().length;
+  const row = (onclick, icon, title, sub, meta) => `<button class="row" onclick="${onclick}"><span class="r-ic">${ico(icon)}</span><span class="r-t"><b>${title}</b><small>${sub}</small></span>${meta ? `<span class="r-meta">${meta}</span>` : ''}${ico('chev', 'chev')}</button>`;
+  body.innerHTML = `<div class="head-row"><h1>Cuidar</h1><button class="help-pill" onclick="openHelpSheet()">${ico('coracao')}Preciso de ajuda</button></div>
+    <p class="sub">Escolha pelo tempo que você tem.</p>
+    <div class="chip-row">${NEEDS.map(n => `<button class="chip ${CARE_NEED === n.k ? 'sel' : ''}" onclick="selNeed('${n.k}')">${n.label}</button>`).join('')}</div>
+    ${need ? `<div class="section-lbl">Indicado para ${need.label.toLowerCase()}</div><div class="list">${need.tools.map(k => toolRow(k)).join('')}</div>` : ''}
+    <div class="section-lbl">Para agora · até 5 min</div>
+    <div class="list">
+      ${row("runTool('calm')", 'vento', 'Respirar devagar', 'Expiração mais longa que a inspiração', '2 min')}
+      ${row("runTool('ground')", 'olho', 'Voltar ao presente', 'Os 5 sentidos, um de cada vez', '3 min')}
+      ${row("runTool('passo')", 'passos', 'Só 5 minutos', 'Uma ação pequena, agora', '5 min')}
+      ${row("runTool('meditate')", 'meditar', 'Meditar', 'Timer e práticas guiadas', '3–20 min')}
     </div>
-    ${profileTools().length ? `<div class="section-lbl">Para você</div>${profileTools().slice(0, 3).map(k => toolRow(k)).join('')}` : ''}
-    <div class="section-lbl">Práticas</div>
-    <div class="tool-grid">
-      <button class="tool-tile" onclick="goTo('breath')"><span class="tt-e">🫁</span><b>Respirar</b><small>Técnicas guiadas de 1 a 3 minutos</small></button>
-      <button class="tool-tile" onclick="runTool('meditate')"><span class="tt-e">🧘</span><b>Meditar</b><small>Timer e práticas guiadas</small></button>
-      <button class="tool-tile" onclick="runTool('thought')"><span class="tt-e">🧠</span><b>Registro de pensamento</b><small>Olhar o pensamento de outro ângulo</small></button>
-      <button class="tool-tile" onclick="runTool('ground')"><span class="tt-e">👁️</span><b>Aterramento</b><small>5-4-3-2-1, para voltar ao presente</small></button>
-      <button class="tool-tile" onclick="runTool('plan')"><span class="tt-e">👣</span><b>Pequenos passos</b><small>Rotina possível, uma ação por vez</small></button>
-      <button class="tool-tile" onclick="runTool('help')"><span class="tt-e">🩺</span><b>Buscar ajuda</b><small>Psicologia, psiquiatria e urgência</small></button>
+    <div class="section-lbl">Para entender · 5 a 10 min</div>
+    <div class="list">
+      ${row("runTool('thought')", 'pensamento', 'Olhar um pensamento', 'De outro ângulo, em 7 passos', '')}
+      ${th.length ? row("runTool('thoughts')", 'doc', 'Pensamentos que você já olhou', th.length + ' ' + pl(th.length, 'registro', 'registros'), '') : ''}
+      ${row("runTool('library')", 'livro', 'Leituras de 1 minuto', 'Ansiedade, sono, emoções e mais', String(ARTICLES.length))}
     </div>
-    ${th.length ? `<button class="tool-row" style="margin-top:10px" onclick="runTool('thoughts')"><span class="tr-e">📝</span>
-      <span class="tr-t"><b>Seus registros de pensamento</b><small>${th.length} ${pl(th.length, 'registro', 'registros')}</small></span><span class="tr-go">›</span></button>` : ''}
-    <div class="section-lbl">Rede de apoio</div>
-    ${toolRow('apoio')}
-    <div class="section-lbl">Trilhas · um passo por dia</div>
-    ${TRAILS.map(t => {
-      const d = trailDoneCount(t.id), n = t.days.length;
-      const sub = d >= n ? '✓ concluída' : trailState(t.id) ? `Dia ${Math.min(trailCurrentDay(t.id), n)} de ${n}` + (S.progress.trailActive === t.id ? ' · em andamento' : '') : `${n} dias · ${t.desc}`;
-      return `<button class="tool-row" onclick="runTool('trail:${t.id}')"><span class="tr-e">${t.emoji}</span>
-        <span class="tr-t"><b>${t.title}</b><small>${sub}</small></span><span class="tr-go">›</span></button>`;
-    }).join('')}
-    <div class="section-lbl">Aprender · leituras de 1 minuto</div>
-    ${ART_GROUPS.map(([g, ids]) => `<div class="art-group">${g}</div><div class="card" style="padding:2px 16px">
-      ${ids.map(id => ARTICLES.find(a => a.id === id)).filter(Boolean).map(a => `<div class="art-row" onclick="runTool('art:${a.id}')"><span>${a.emoji}</span><span class="ar-t">${a.title}</span>
-        ${read.includes(a.id) ? '<small class="read">✓ lido</small>' : '<small>1 min</small>'}</div>`).join('')}
-    </div>`).join('')}
-    <div class="rep-foot" style="text-align:center;margin:6px 8px 12px">As práticas se baseiam em TCC, mindfulness e autocompaixão. O Florescer é um apoio e não substitui acompanhamento profissional.</div>`;
+    <div class="section-lbl">Para a semana</div>
+    <div class="list">
+      ${row("runTool('trails')", 'trilha', 'Trilhas', 'Um passo curto por dia', tr ? 'dia ' + Math.min(trailCurrentDay(tr.id), tr.days.length) : '')}
+      ${row("runTool('plan')", 'passos', 'Pequenos passos', 'Até 3 ações para a semana', plan ? plan + ' de 3' : '')}
+    </div>
+    <div class="section-lbl">Apoio</div>
+    <div class="list">
+      ${row("runTool('help')", 'estetoscopio', 'Buscar ajuda profissional', 'Psicologia, psiquiatria, SUS e urgência', '')}
+      ${row("runTool('apoio')", 'carta', 'Como me apoiar', 'Um texto para enviar a quem você confia', '')}
+    </div>
+    <div class="rep-foot" style="text-align:center;margin:14px 8px 18px">As práticas se baseiam em TCC, mindfulness e autocompaixão. O Florescer é um apoio e não substitui acompanhamento profissional.</div>`;
 }
 
 // ── Leitura
@@ -2794,7 +2915,7 @@ function renderArticle(body, id){
   if (!a) { body.innerHTML = ''; return; }
   const p = S.progress;
   if (!p.readArticles.includes(id)) { p.readArticles.push(id); progressSave(); checkBadges(); }
-  body.innerHTML = `<div class="art-hero">${a.emoji}</div>
+  body.innerHTML = `<div class="hero-ic">${ico('livro')}</div>
     <div class="art-title">${a.title}</div>
     <div class="art-meta">Leitura de 1 minuto</div>
     <div class="art-body">${a.body.map(x => x.startsWith('<ul') ? x : `<p>${x}</p>`).join('')}</div>
@@ -2827,7 +2948,7 @@ let MED_CFG = {min:5, interval:0};
 function renderMeditate(body){
   const p = S.progress;
   body.innerHTML = `<div class="card">
-      <div class="card-title">⏱️ Meditação livre</div>
+      <div class="card-title">Meditação livre</div>
       <div class="card-sub">Silêncio, com sino suave no início e no fim.</div>
       <div class="tr-lbl" style="margin-top:0">Duração</div>
       <div class="chip-row">${[3,5,10,15,20].map(m => `<button class="chip ${MED_CFG.min === m ? 'sel' : ''}" onclick="MED_CFG.min=${m};renderTool(1)">${m} min</button>`).join('')}</div>
@@ -2941,7 +3062,7 @@ function medFinish(completed){
   const mh = S.habits.find(h => /medita/i.test(h.name));
   const offerHabit = key !== 'ground' && ms >= 60000 && mh && !(S.habitDone[new Date().toDateString()] || []).includes(mh.id);
   document.getElementById('tool-body').innerHTML = `<div class="med-run">
-    <div style="font-size:48px;margin:28px 0 8px">🌱</div>
+    <div class="hero-ic big">${ico('broto')}</div>
     <div class="tr-q">${completed ? 'Prática concluída' : 'Tudo bem parar antes'}</div>
     <div class="tr-help" style="max-width:300px">${min >= 1 ? min + ' min de presença. ' : ''}${completed
       ? 'Perceba como você está agora — sem precisar que algo tenha mudado.'
@@ -3078,7 +3199,7 @@ function cmpRows(rec){
 function renderThoughtDone(body){
   const r = TR.saved;
   const drop = r.emotions.reduce((a, e) => a + (e.before - e.after), 0) + (r.beliefBefore - r.beliefAfter);
-  body.innerHTML = `<div style="text-align:center;margin:10px 0 6px;font-size:44px">🌱</div>
+  body.innerHTML = `<div class="hero-ic big" style="margin:10px auto 6px">${ico('broto')}</div>
     <div class="tr-q" style="text-align:center">Registro salvo</div>
     <div class="tr-help" style="text-align:center">${drop > 0
       ? 'A intensidade diminuiu. Olhar o pensamento de outro ângulo fez diferença.'
@@ -3175,7 +3296,7 @@ function pillarDaysIn(inR){
 function pillarButtons(handler){
   const today = pillarsOn();
   return `<div class="pil-row">${PILLARS.map(p => { const on = today.includes(p.k);
-    return `<button class="pil ${on ? 'on' : ''}" aria-pressed="${on}" onclick="${handler}('${p.k}')"><span class="pil-e">${p.e}</span><span class="pil-l">${p.q}</span></button>`; }).join('')}</div>`;
+    return `<button class="pil ${on ? 'on' : ''}" aria-pressed="${on}" onclick="${handler}('${p.k}')"><span class="pc">${ico(PILLAR_ICON[p.k])}</span><span class="pil-l">${p.q}</span></button>`; }).join('')}</div>`;
 }
 function togPillar(k, where){
   if (setPillar(k)) markCareDay();
@@ -3192,11 +3313,10 @@ function renderHomePillars(){
   if (!el) return;
   const c = {};
   for (let i = 0; i < 7; i++) { const d = new Date(); d.setDate(d.getDate() - i); pillarsOn(dateKey(d)).forEach(k => c[k] = (c[k] || 0) + 1); }
-  const week = PILLARS.filter(p => c[p.k]).map(p => `${p.l} ${c[p.k]} ${pl(c[p.k], 'dia', 'dias')}`);
+  const week = PILLARS.filter(p => c[p.k]).map(p => `${p.l} ${c[p.k]}`);
   el.innerHTML = planReviewCard() + `<div class="section-lbl">Hoje eu…</div>
-    <div class="card">${pillarButtons('togPillarHome')}
-      <div class="pil-foot">${week.length ? 'Nos últimos 7 dias: ' + week.join(' · ') : 'Toque no que fez parte do seu dia. Pequenas coisas contam.'}</div>
-      <button class="btn-link" style="padding-bottom:0" onclick="runTool('plan')">Pequenos passos para a semana →</button>
+    <div class="card" style="padding:14px 10px 12px">${pillarButtons('togPillarHome')}
+      <div class="pil-foot" style="text-align:center">${week.length ? 'Nos últimos 7 dias: ' + week.join(' · ') : 'Toque no que fez parte do seu dia. Pequenas coisas contam.'}</div>
     </div>`;
 }
 
@@ -3247,19 +3367,19 @@ function toggleMicro(id, btn){
 function renderPlan(body){
   const chosen = planHabits();
   if (chosen.length && S.progress.planWeek !== weekKey()) { S.progress.planWeek = weekKey(); progressSave(); }
-  body.innerHTML = `<div class="tr-hints" style="margin-top:0">Quando a energia está baixa, a vontade costuma vir <b>depois</b> da ação. Escolha até 3 passos pequenos para esta semana — eles aparecem nos seus hábitos de hoje, na tela inicial.
+  body.innerHTML = `<div class="tr-hints" style="margin-top:0">Quando a energia está baixa, a vontade costuma vir <b>depois</b> da ação. Escolha até 3 passos pequenos para esta semana — eles aparecem nos seus hábitos de hoje.
       <button class="btn-link" style="padding:0;font-size:12px" onclick="runTool('art:ativacao')">Por que funciona</button></div>
-    <div class="section-lbl" style="margin-top:6px">Hoje eu…</div>
-    <div class="card">${pillarButtons('togPillarPlan')}</div>
+    <div class="section-lbl" style="margin-top:12px">Hoje eu…</div>
+    <div class="card" style="padding:14px 10px 12px">${pillarButtons('togPillarPlan')}</div>
     <div class="section-lbl">Seu plano da semana · ${chosen.length} de ${PLAN_MAX}</div>
     ${chosen.length
-      ? `<div class="card" style="padding:4px 14px">${chosen.map(h => `<div class="person"><span style="font-size:18px">${esc(h.icon)}</span>
-          <span class="person-n" style="font-weight:500">${esc(h.name)}</span><button class="pbtn" onclick="toggleMicro('${h.micro}')">Tirar</button></div>`).join('')}</div>`
+      ? `<div class="list">${chosen.map(h => `<div class="row"><span class="r-ic">${ico(PILLAR_ICON[h.pillar] || 'passos')}</span>
+          <span class="r-t"><b>${esc(h.name)}</b></span><button class="pbtn" onclick="toggleMicro('${h.micro}')">Tirar</button></div>`).join('')}</div>`
       : `<div class="rep-empty" style="margin-bottom:6px">Nenhum passo escolhido ainda. Comece por um só.</div>`}
     <div class="tr-warn" id="plan-warn"></div>
-    ${PILLARS.map(p => `<div class="section-lbl">${p.e} ${p.l}</div>
+    ${PILLARS.map(p => `<div class="section-lbl">${p.l}</div>
       ${MICRO.filter(m => m.p === p.k).map(m => { const on = S.habits.some(h => h.micro === m.id);
-        return `<button class="trap ${on ? 'sel' : ''}" onclick="toggleMicro('${m.id}')"><b>${m.e} ${m.t}</b><small>${on ? '✓ No seu plano' : 'Adicionar ao plano'}</small></button>`; }).join('')}`).join('')}`;
+        return `<button class="trap ${on ? 'sel' : ''}" onclick="toggleMicro('${m.id}')"><b>${ico(PILLAR_ICON[p.k])}${m.t}</b><small>${on ? 'No seu plano' : 'Adicionar ao plano'}</small></button>`; }).join('')}`).join('')}`;
 }
 // Revisão gentil quando começa uma semana nova.
 function planReviewCard(){
@@ -3286,19 +3406,19 @@ let PASSO = null;
 function renderPasso(body){
   if (PASSO) {
     const m = MICRO.find(x => x.id === PASSO);
-    body.innerHTML = `<div class="med-run"><div style="font-size:46px;margin:26px 0 8px">${m.e}</div>
+    body.innerHTML = `<div class="med-run"><div class="hero-ic big">${ico(PILLAR_ICON[m.p] || 'passos')}</div>
       <div class="tr-q">${m.t}</div>
       <div class="tr-help" style="max-width:300px">Combinado. Faça agora, no seu ritmo. Quando terminar, volte aqui e toque em “Fiz”.</div>
       <div class="tr-nav" style="width:100%"><button class="btn btn-soft" onclick="PASSO=null;renderTool(1)">Trocar</button>
-        <button class="btn btn-p" onclick="passoFeito()">Fiz 🌱</button></div></div>`;
+        <button class="btn btn-p" onclick="passoFeito()">Fiz</button></div></div>`;
     return;
   }
   const n = Math.floor(Date.now() / 864e5);
   const pick = ['movimento', 'conexao', 'pausa'].map((p, i) => { const list = MICRO.filter(m => m.p === p); return list[(n + i) % list.length]; });
-  body.innerHTML = `<div class="art-hero">🌱</div><div class="art-title">Só 5 minutos</div>
+  body.innerHTML = `<div class="hero-ic">${ico('passos')}</div><div class="art-title">Só 5 minutos</div>
     <div class="tr-help">Não precisa ter vontade antes. Escolha uma coisa pequena para fazer agora — depois repare se algo mudou, mesmo que pouco.</div>
-    ${pick.map(m => `<button class="trap" onclick="PASSO='${m.id}';renderTool(1)"><b>${m.e} ${m.t}</b><small>${PILLARS.find(p => p.k === m.p).l}</small></button>`).join('')}
-    <button class="btn-link" onclick="runTool('plan')">Ver todos os pequenos passos →</button>`;
+    ${pick.map(m => `<button class="trap" onclick="PASSO='${m.id}';renderTool(1)"><b>${ico(PILLAR_ICON[m.p])}${m.t}</b><small>${PILLARS.find(p => p.k === m.p).l}</small></button>`).join('')}
+    <button class="btn-link" onclick="runTool('plan')">Ver todos os pequenos passos</button>`;
 }
 function passoFeito(){
   const m = MICRO.find(x => x.id === PASSO);
@@ -3307,7 +3427,7 @@ function passoFeito(){
   setPillar(m.p, true);
   markCareDay();
   const inPlan = S.habits.some(h => h.micro === m.id);
-  document.getElementById('tool-body').innerHTML = `<div class="med-run"><div style="font-size:48px;margin:28px 0 8px">🌱</div>
+  document.getElementById('tool-body').innerHTML = `<div class="med-run"><div class="hero-ic big">${ico('broto')}</div>
     <div class="tr-q">Você saiu do lugar</div>
     <div class="tr-help" style="max-width:300px">Isso conta — e muito. Como você está agora, mesmo que só um pouco diferente?</div>
     ${!inPlan && planHabits().length < PLAN_MAX ? `<button class="btn btn-soft" style="margin-bottom:8px" onclick="toggleMicro('${m.id}', this)">Repetir nos próximos dias</button>` : ''}
@@ -3349,18 +3469,18 @@ function openReportPdf(){
 }
 function renderHelp(body){
   const places = [
-    ['🏥', 'Pelo SUS', 'Procure a Unidade Básica de Saúde (UBS) do seu bairro. Ela é a porta de entrada e encaminha para o CAPS (Centro de Atenção Psicossocial) quando necessário.'],
-    ['🎓', 'Clínicas-escola', 'Faculdades de psicologia oferecem atendimento gratuito ou com valor social, com supervisão de professores.'],
-    ['💳', 'Plano de saúde', 'Planos de saúde costumam cobrir consultas de psiquiatria e sessões de psicologia. Consulte a rede credenciada.'],
-    ['💻', 'Atendimento online', 'É permitido e regulamentado. Confira se a pessoa tem registro ativo no CRP (psicologia) ou no CRM (psiquiatria).'],
+    ['estetoscopio', 'Pelo SUS', 'Procure a Unidade Básica de Saúde (UBS) do seu bairro. Ela é a porta de entrada e encaminha para o CAPS (Centro de Atenção Psicossocial) quando necessário.'],
+    ['livro', 'Clínicas-escola', 'Faculdades de psicologia oferecem atendimento gratuito ou com valor social, com supervisão de professores.'],
+    ['doc', 'Plano de saúde', 'Planos de saúde costumam cobrir consultas de psiquiatria e sessões de psicologia. Consulte a rede credenciada.'],
+    ['conexao', 'Atendimento online', 'É permitido e regulamentado. Confira se a pessoa tem registro ativo no CRP (psicologia) ou no CRM (psiquiatria).'],
   ];
-  body.innerHTML = `<div class="art-hero">🩺</div>
+  body.innerHTML = `<div class="hero-ic">${ico('estetoscopio')}</div>
     <div class="art-title">Onde buscar ajuda</div>
     <div class="art-meta">Procurar ajuda é um passo de cuidado, não de fraqueza.</div>
     <div class="help-card urgent">
       <div class="card-title" style="color:#b03a2e">Se for urgente</div>
       <div style="font-size:13px;color:#555;line-height:1.55;margin-top:4px">Se você está pensando em se machucar ou em não querer mais viver, fale com alguém agora.</div>
-      <div class="call-row"><a class="call-btn" href="tel:188">📞 CVV · 188</a><a class="call-btn" href="tel:192">🚑 SAMU · 192</a></div>
+      <div class="call-row"><a class="call-btn" href="tel:188">${ico('tel')}CVV · 188</a><a class="call-btn" href="tel:192">${ico('tel')}SAMU · 192</a></div>
       <div class="rep-foot" style="margin-top:8px">CVV: 24 horas, gratuito, também em cvv.org.br. Em risco imediato, vá ao pronto-socorro ou à UPA mais próxima.</div>
     </div>
     <div class="section-lbl">Psicologia ou psiquiatria?</div>
@@ -3370,7 +3490,7 @@ function renderHelp(body){
     </div>
     <div class="rep-foot">Muitas vezes as duas trabalham juntas. Não existe porta errada — qualquer uma orienta o próximo passo.</div>
     <div class="section-lbl">Onde encontrar</div>
-    <div class="card" style="padding:4px 16px">${places.map(([e, t, x]) => `<div class="disc"><span style="font-size:18px">${e}</span><span><b>${t}</b><br><span style="color:#666">${x}</span></span></div>`).join('')}</div>
+    <div class="card" style="padding:4px 16px">${places.map(([e, t, x]) => `<div class="disc"><span class="r-ic">${ico(e)}</span><span><b>${t}</b><br><span style="color:#666">${x}</span></span></div>`).join('')}</div>
     <div class="section-lbl">Antes da primeira consulta</div>
     <div class="card">
       <div class="card-sub" style="margin-bottom:6px">Anotar ajuda a não esquecer nada na hora:</div>
@@ -3400,22 +3520,22 @@ function waLink(p){
 function renderSosPeople(){
   const el = document.getElementById('sos-people');
   if (!el) return;
-  el.innerHTML = `<div class="sos-technique">
-    <div class="sos-title">🤝 Minhas pessoas</div>
-    <div class="sos-desc">${CONTACTS.length ? 'Alguém de confiança para chamar agora.' : 'Guarde até 3 pessoas de confiança para chamar num momento difícil. Fica salvo só neste aparelho.'}</div>
-    ${CONTACTS.map((c, i) => `<div class="person"><span class="person-n">${esc(c.name)}</span>
-      <a class="pbtn" href="tel:${phoneDigits(c.phone)}">Ligar</a>
-      <a class="pbtn" href="${waLink(c.phone)}" target="_blank" rel="noopener">WhatsApp</a>
-      <button class="pbtn pbtn-x" onclick="removeContact(${i})" aria-label="Remover">✕</button></div>`).join('')}
-    ${PEOPLE_FORM ? `<div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
-        <input class="inp" id="pp-name" placeholder="Nome" maxlength="30">
-        <input class="inp" id="pp-phone" placeholder="Telefone com DDD" inputmode="tel" maxlength="20">
-        <div class="tr-warn" id="pp-warn" style="margin:0"></div>
-        <div class="tr-nav" style="margin:0"><button class="btn btn-soft" style="padding:10px;font-size:13px" onclick="PEOPLE_FORM=false;renderSosPeople()">Cancelar</button>
-          <button class="btn btn-p" style="padding:10px;font-size:13px" onclick="addContact()">Salvar</button></div></div>`
-      : CONTACTS.length < 3 ? `<button class="btn-link" onclick="PEOPLE_FORM=true;renderSosPeople()">+ Adicionar pessoa</button>` : ''}
-    <button class="btn-link" style="display:block" onclick="runTool('apoio')">Enviar “Como me apoiar” para alguém →</button>
-  </div>`;
+  el.innerHTML = `<div class="section-lbl">Minhas pessoas</div>
+    <div class="list">
+      ${CONTACTS.map((c, i) => `<div class="row"><span class="r-ic">${ico('voce')}</span><span class="r-t"><b>${esc(c.name)}</b></span>
+        <a class="pbtn" href="tel:${phoneDigits(c.phone)}">Ligar</a>
+        <a class="pbtn" href="${waLink(c.phone)}" target="_blank" rel="noopener">Mensagem</a>
+        <button class="pbtn pbtn-x" onclick="removeContact(${i})" aria-label="Remover ${esc(c.name)}">${ico('x')}</button></div>`).join('')}
+      ${PEOPLE_FORM
+        ? `<div style="display:flex;flex-direction:column;gap:8px;padding:12px 0">
+            <input class="inp" id="pp-name" placeholder="Nome" maxlength="30">
+            <input class="inp" id="pp-phone" placeholder="Telefone com DDD" inputmode="tel" maxlength="20">
+            <div class="tr-warn" id="pp-warn" style="margin:0"></div>
+            <div class="tr-nav" style="margin:0"><button class="btn btn-soft" onclick="PEOPLE_FORM=false;renderSosPeople()">Cancelar</button>
+              <button class="btn btn-p" onclick="addContact()">Salvar</button></div></div>`
+        : (CONTACTS.length < 3 ? `<button class="row" onclick="PEOPLE_FORM=true;renderSosPeople()"><span class="r-ic">${ico('mais')}</span><span class="r-t"><b>Adicionar pessoa</b><small>${CONTACTS.length ? 'Até 3 pessoas' : 'Fica salvo só neste aparelho'}</small></span></button>` : '')}
+    </div>
+    <button class="btn-link" onclick="runTool('apoio')">Enviar “Como me apoiar” para alguém</button>`;
 }
 function addContact(){
   const n = document.getElementById('pp-name').value.trim(), ph = document.getElementById('pp-phone').value.trim();
@@ -3439,7 +3559,7 @@ Agradeço por estar comigo.`;
 function renderApoio(body){
   let txt = null;
   try { txt = localStorage.getItem('fl_apoio'); } catch (e) {}
-  body.innerHTML = `<div class="art-hero">💌</div><div class="art-title">Como me apoiar</div>
+  body.innerHTML = `<div class="hero-ic">${ico('carta')}</div><div class="art-title">Como me apoiar</div>
     <div class="tr-help">Às vezes é difícil explicar o que ajuda. Ajuste este texto do seu jeito e envie para alguém de confiança.</div>
     <textarea class="inp" id="apoio-txt" rows="14" oninput="try{localStorage.setItem('fl_apoio',this.value)}catch(e){}">${esc(txt || APOIO_PADRAO)}</textarea>
     <button class="btn btn-p" style="margin-top:10px" onclick="shareApoio()">Enviar para alguém</button>
@@ -3502,13 +3622,13 @@ function renderOnboard(){
   const remSel = OB.rem !== undefined ? OB.rem : (REMINDER.on ? REMINDER.h : null);
   body.innerHTML = `<div style="text-align:center;margin:4px 0 16px">
       <img src="icon-512.png" style="width:78px;height:78px;object-fit:contain;margin:0 auto 6px;display:block;border-radius:22px" alt="">
-      <div class="tr-q">${OB.edit ? 'Seu perfil' : 'Que bom ter você aqui 🌱'}</div>
+      <div class="tr-q">${OB.edit ? 'Seu perfil' : 'Que bom ter você aqui'}</div>
       <p class="sub" style="margin:0;line-height:1.5">${OB.edit ? 'Ajuste quando quiser — as sugestões do app mudam junto.' : 'Três perguntas rápidas para o Florescer se ajustar a você. Dá para mudar depois.'}</p>
     </div>
     <div class="card">
       <div class="card-title">O que traz você ao Florescer?</div>
       <div class="card-sub">Escolha quantas quiser.</div>
-      ${GOALS.map(g => `<button class="trap ${OB.goals.includes(g.k) ? 'sel' : ''}" onclick="obGoal('${g.k}')"><b>${g.e} ${g.l}</b></button>`).join('')}
+      ${GOALS.map(g => `<button class="trap ${OB.goals.includes(g.k) ? 'sel' : ''}" onclick="obGoal('${g.k}')"><b>${ico(GOAL_ICON[g.k] || 'broto')}${g.l}</b></button>`).join('')}
     </div>
     <div class="card">
       <div class="card-title">Você faz acompanhamento psicológico?</div>
@@ -3639,7 +3759,7 @@ function renderTrail(body, id){
   const st = trailState(id), n = tr.days.length, done = trailDoneCount(id);
   const cur = trailCurrentDay(id), locked = trailLockedToday(id), finished = done >= n;
   const other = S.progress.trailActive && S.progress.trailActive !== id ? trailDef(S.progress.trailActive) : null;
-  let h = `<div class="trail-hero"><div class="th-e">${tr.emoji}</div>
+  let h = `<div class="trail-hero"><div class="hero-ic">${ico(TRAIL_ICON[id] || 'trilha')}</div>
       <div class="art-title" style="margin-top:4px">${tr.title}</div>
       <div class="tr-help" style="margin:0">${tr.desc}</div>
       <div class="trail-bar"><div style="width:${done / n * 100}%"></div></div>
@@ -3652,7 +3772,7 @@ function renderTrail(body, id){
   }
   if (finished) {
     const notes = tr.days.map((d, i) => st.notes['d' + (i + 1)] ? `<div class="th-lbl">${d.t}</div><div class="th-txt">${esc(st.notes['d' + (i + 1)])}</div>` : '').join('');
-    h += `<div class="card" style="text-align:center"><div style="font-size:36px">🌷</div>
+    h += `<div class="card" style="text-align:center"><div class="hero-ic" style="margin:4px auto 10px">${ico('flor')}</div>
       <div class="tr-q">Você concluiu esta trilha</div>
       <div class="tr-help">Foram ${n} passos de cuidado. O que funcionou para você continua disponível em Cuidar.</div>
       ${notes ? `<div style="text-align:left">${notes}</div>` : ''}</div>`;
@@ -3674,7 +3794,7 @@ function renderTrail(body, id){
       </div>`;
     }
     if (st && i === cur && locked) {
-      return `<div class="tday lock"><span class="tn">${i}</span><div>${d.t}<small>Próximo passo amanhã 🌙 — um por dia ajuda a fixar.</small></div></div>`;
+      return `<div class="tday lock"><span class="tn">${i}</span><div>${d.t}<small>Próximo passo amanhã — um por dia ajuda a fixar.</small></div></div>`;
     }
     return `<div class="tday lock"><span class="tn">${i}</span><div>${d.t}</div></div>`;
   }).join('') + `</div>`;
@@ -3687,21 +3807,18 @@ function renderHomeTrail(){
   const tr = id && trailDef(id);
   if (tr) {
     const n = tr.days.length, d = Math.min(trailCurrentDay(id), n), locked = trailLockedToday(id);
-    el.innerHTML = `<div class="section-lbl">Sua trilha</div>
-      <div class="card home-trail" onclick="runTool('trail:${id}')"><span class="ht-e">${tr.emoji}</span>
-        <div style="flex:1;min-width:0"><b>${tr.title}</b>
-          <small>${locked ? 'Passo de hoje feito · o próximo abre amanhã 🌙' : `Dia ${d} de ${n} · ${tr.days[d - 1].t}`}</small>
-          <div class="trail-bar" style="margin:8px 0 0"><div style="width:${trailDoneCount(id) / n * 100}%"></div></div></div>
-        <span class="tr-go" style="color:#2a7d63;font-size:18px">›</span></div>`;
+    el.innerHTML = `<div class="section-lbl">Seu próximo passo</div>
+      <div class="list"><button class="row" onclick="runTool('trail:${id}')"><span class="r-ic">${ico(TRAIL_ICON[id] || 'trilha')}</span>
+        <span class="r-t"><b>${locked ? 'Passo de hoje feito' : tr.days[d - 1].t}</b><small>${tr.title} · ${locked ? 'o próximo abre amanhã' : 'dia ' + d + ' de ' + n}</small>
+          <span class="trail-bar" style="display:block;margin:6px 0 0;height:3px"><span style="display:block;height:100%;background:var(--leaf);width:${trailDoneCount(id) / n * 100}%"></span></span></span>${ico('chev', 'chev')}</button></div>`;
     return;
   }
   const started = Object.keys(S.progress.trails || {}).length;
   const goal = ((PROFILE && PROFILE.goals) || []).find(g => GOAL_TRAIL[g]);
   const sug = !started && goal && trailDef(GOAL_TRAIL[goal]);
   el.innerHTML = sug ? `<div class="section-lbl">Sugestão para você</div>
-    <div class="card home-trail" onclick="runTool('trail:${sug.id}')"><span class="ht-e">${sug.emoji}</span>
-      <div style="flex:1;min-width:0"><b>${sug.title}</b><small>Trilha de ${sug.days.length} dias · um passo curto por dia</small></div>
-      <span style="color:#2a7d63;font-size:18px">›</span></div>` : '';
+    <div class="list"><button class="row" onclick="runTool('trail:${sug.id}')"><span class="r-ic">${ico(TRAIL_ICON[sug.id] || 'trilha')}</span>
+      <span class="r-t"><b>${sug.title}</b><small>Trilha de ${sug.days.length} dias · um passo curto por dia</small></span>${ico('chev', 'chev')}</button></div>` : '';
 }
 
 // ═══════════ LEMBRETE GENTIL (notificação local, máx. 1 por dia) ═══════════
@@ -3760,7 +3877,7 @@ async function setReminder(on, h, m){
   REMINDER = {on, h: h == null ? REMINDER.h : h, m: m == null ? REMINDER.m : m};
   try { localStorage.setItem('fl_reminder', JSON.stringify(REMINDER)); } catch (e) {}
   await scheduleReminders();
-  if (document.getElementById('s-more').classList.contains('active') && moreCurrentTab === 'conta') renderMore();
+  if (document.getElementById('s-more').classList.contains('active')) renderMore();
 }
 function setReminderTime(v){
   const [h, m] = String(v || '').split(':').map(Number);
@@ -4286,7 +4403,7 @@ function renderReport(body){
   if (Object.keys(pc).length) html += `<div class="card">
     <div class="card-title">Pilares do cuidado</div>
     <div class="card-sub">Em quantos dias cada pilar fez parte da sua rotina.</div>
-    ${hbars(PILLARS.filter(p => pc[p.k]).map(p => [p.e + ' ' + p.l, pc[p.k]]), r.elapsed, () => '#8fc9b0', (v) => v + 'd')}
+    ${hbars(PILLARS.filter(p => pc[p.k]).map(p => [p.l, pc[p.k]]), r.elapsed, () => '#8fc9b0', (v) => v + 'd')}
   </div>`;
 
   // ── Hábitos e humor
@@ -4307,7 +4424,7 @@ function renderReport(body){
   // ── PDF para levar à terapia
   const emTerapia = PROFILE && PROFILE.therapy === 'sim';
   html += `<div class="card">
-    <div class="card-title">📄 ${emTerapia ? 'Levar para a sessão' : 'Exportar em PDF'}</div>
+    <div class="card-title">${emTerapia ? 'Levar para a sessão' : 'Exportar em PDF'}</div>
     <div class="card-sub">${emTerapia ? 'Um PDF deste período para mostrar a quem acompanha você.' : 'Um PDF deste período — útil para guardar ou mostrar a um profissional.'}</div>
     <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#555;line-height:1.45">
       <input type="checkbox" id="pdf-notes" style="margin-top:2px;accent-color:#2a7d63"> Incluir o que escrevi (reflexões e registros de pensamento)</label>
@@ -4350,8 +4467,160 @@ function renderHomeWeekSummary(){
   </div>`;
 }
 
+// ═══════════ NAVEGAÇÃO — cinco destinos ═══════════
+const NAV_TABS = [
+  {s:'home', i:'hoje', l:'Hoje'},
+  {s:'care', i:'cuidar', l:'Cuidar'},
+  {s:'log', i:'mais', l:'Registrar', add:true},
+  {s:'history', i:'diario', l:'Diário'},
+  {s:'more', i:'voce', l:'Você'},
+];
+function renderNavs(){
+  document.querySelectorAll('.bnav[data-tab]').forEach(nav => {
+    const cur = nav.getAttribute('data-tab');
+    nav.innerHTML = NAV_TABS.map(t => t.add
+      ? `<button class="bni bni-add" onclick="goTo('log')" aria-label="Fazer um registro"><span class="bni-circle">${ico(t.i)}</span></button>`
+      : `<button class="bni${cur === t.s ? ' active' : ''}" onclick="goTo('${t.s}')"${cur === t.s ? ' aria-current="page"' : ''}>${ico(t.i, 'bni-ic')}<span class="bni-lbl">${t.l}</span></button>`
+    ).join('');
+  });
+}
+
+// ═══════════ PRECISO DE AJUDA — folha rápida por cima da tela atual ═══════════
+function openHelpSheet(){
+  closeHelpSheet();
+  bumpSos();
+  const ov = document.createElement('div');
+  ov.className = 'empathy-overlay';
+  ov.id = 'help-sheet';
+  ov.addEventListener('click', (ev) => { if (ev.target === ov) closeHelpSheet(); });
+  const people = CONTACTS.slice(0, 3).map(c => `<div class="big-act"><span class="r-ic">${ico('voce')}</span>
+      <span class="r-t"><b>${esc(c.name)}</b><small>Alguém de confiança</small></span>
+      <a class="pbtn" href="tel:${phoneDigits(c.phone)}">Ligar</a><a class="pbtn" href="${waLink(c.phone)}" target="_blank" rel="noopener">Mensagem</a></div>`).join('');
+  ov.innerHTML = `<div class="empathy-sheet help-sheet" role="dialog" aria-label="Preciso de ajuda">
+    <i class="grab"></i>
+    <div class="hs-ic">${ico('coracao')}</div>
+    <div class="hs-title">Estou aqui com você.</div>
+    <div class="hs-sub">Respire. Escolha uma coisa só.</div>
+    <button class="big-act" onclick="closeHelpSheet();runTool('calm')"><span class="r-ic">${ico('vento')}</span><span class="r-t"><b>Respirar comigo</b><small>Expiração longa, no seu ritmo</small></span></button>
+    ${people || `<button class="big-act" onclick="closeHelpSheet();goTo('sos')"><span class="r-ic">${ico('voce')}</span><span class="r-t"><b>Guardar alguém de confiança</b><small>Para chamar num momento assim</small></span></button>`}
+    <a class="big-act urgent" href="tel:188"><span class="r-ic">${ico('tel')}</span><span class="r-t"><b>CVV · 188</b><small>24 horas, gratuito, sem julgamento</small></span></a>
+    <button class="btn-link hs-more" onclick="closeHelpSheet();goTo('sos')">Outras técnicas para agora</button>
+  </div>`;
+  document.getElementById('app').appendChild(ov);
+}
+function closeHelpSheet(){ const el = document.getElementById('help-sheet'); if (el) el.remove(); }
+
+// ═══════════ HOJE — peças da tela inicial ═══════════
+function daysSinceLastLog(){
+  if (!S.logs.length) return Infinity;
+  const last = Math.max(...S.logs.map(l => +new Date(l.date)));
+  return Math.floor((Date.now() - last) / 864e5);
+}
+function renderHomeSeal(){
+  const el = document.getElementById('home-seal');
+  if (!el) return;
+  backfillCareDays();
+  const days = S.progress.careDays.length;
+  const grew = _fx.grew != null;
+  el.className = 'seal' + (grew ? ' grew' : '');
+  el.setAttribute('aria-label', 'Sua jornada');
+  el.innerHTML = `<span class="seal-ic">${ico('broto')}</span><span>${grew ? 'Sua planta cresceu — ver' : days + ' ' + pl(days, 'dia', 'dias') + ' de cuidado'}</span>`;
+}
+function habitRow(h, done){
+  const on = done.includes(h.id);
+  return `<div class="row"><button class="habit-check${on ? ' done' : ''}" onclick="toggleHabit(${h.id})" aria-pressed="${on}" aria-label="${esc(h.name)}">${on ? ico('check') : ''}</button>
+    <span class="r-t"><b>${esc(h.name)}</b>${h.streak > 0 ? `<small>${h.streak} ${pl(h.streak, 'dia', 'dias')} de cuidado</small>` : ''}</span>${h.pillar ? `<span class="r-meta">${ico(PILLAR_ICON[h.pillar] || 'broto', 'chev')}</span>` : ''}</div>`;
+}
+function renderHomeHabits(){
+  const el = document.getElementById('home-habits');
+  if (!el) return;
+  if (!S.habits.length) { el.innerHTML = ''; return; }
+  const done = S.habitDone[new Date().toDateString()] || [];
+  const list = [...S.habits].sort((a, b) => (b.plan ? 1 : 0) - (a.plan ? 1 : 0)).slice(0, 3);
+  el.innerHTML = `<div class="section-lbl">Hábitos de hoje</div><div class="list">${list.map(h => habitRow(h, done)).join('')}</div>`
+    + (S.habits.length > 3 ? `<button class="btn-link" onclick="moreTab('habits');goTo('more')">Ver todos os ${S.habits.length} hábitos</button>` : '');
+}
+
+// ═══════════ DIÁRIO — registros por dia ═══════════
+function diaryEntry(l, compact){
+  const t = new Date(l.date).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+  const emo = (l.emotions || []).map(emoLabel);
+  const extra = [typeof l.anxiety === 'number' ? 'ansiedade ' + l.anxiety : '', l.sleep ? 'sono ' + String(l.sleep).toLowerCase() : ''].filter(Boolean).join(' · ');
+  const note = (l.note || '').trim();
+  let more = '';
+  if (!compact && (l.triggers || []).length) more += `<div class="entry-meta">${esc(l.triggers.join(' · '))}</div>`;
+  if (!compact && extra) more += `<div class="entry-meta">${esc(extra)}</div>`;
+  if (note) {
+    if (!compact && l.prompt) more += `<div class="entry-prompt">${esc(l.prompt)}</div>`;
+    more += `<div class="entry-note${compact ? ' clamp' : ''}">${esc(note)}</div>`;
+  }
+  const m = Math.max(1, Math.min(5, l.mood || 3));
+  return `<div class="entry"><span class="entry-face m${m}">${ico('f' + m)}</span>
+    <div class="entry-b"><div class="entry-top"><b>${MOOD_NAMES[m]}</b><span>${esc(l.time || '')}${l.time ? ' · ' : ''}${t}</span></div>
+      ${emo.length ? `<div class="entry-emo">${esc(emo.join(' · '))}</div>` : ''}${more}</div></div>`;
+}
+let DIARY_DAYS = 14;
+function renderDiary(body){
+  const days = {};
+  const add = (k) => days[k] || (days[k] = {logs: [], grats: []});
+  S.logs.forEach(l => add(dateKey(l.date)).logs.push(l));
+  S.gratitude.forEach(g => add(dateKey(g.date)).grats.push(g));
+  const keys = Object.keys(days).sort().reverse();
+  if (!keys.length) {
+    body.innerHTML = `<div class="empty"><div class="hero-ic" style="margin:0 auto 12px">${ico('diario')}</div>Seu diário começa no primeiro registro.<br>Leva cerca de 1 minuto.
+      <button class="btn btn-p" style="margin-top:16px" onclick="goTo('log')">Fazer o primeiro registro</button></div>`;
+    return;
+  }
+  const todayK = dateKey(), y = new Date();
+  y.setDate(y.getDate() - 1);
+  const yK = dateKey(y);
+  const r = reportRange('week', 0), st = reportStats(r.start, r.end);
+  const week = st.logs.length
+    ? `<div class="week-line"><span>Últimos 7 dias · humor médio <b>${fmt1(st.mood)}</b> · ${st.days} ${pl(st.days, 'dia', 'dias')} com registro</span><button class="btn-link" onclick="histTab('relatorio')">Relatório</button></div>`
+    : '';
+  body.innerHTML = week + keys.slice(0, DIARY_DAYS).map(k => {
+    const d = new Date(k + 'T12:00');
+    let label = k === todayK ? 'Hoje' : k === yK ? 'Ontem' : d.toLocaleDateString('pt-BR', {weekday:'long'});
+    label = label.charAt(0).toUpperCase() + label.slice(1);
+    const date = d.toLocaleDateString('pt-BR', {day:'numeric', month:'long'});
+    const {logs, grats} = days[k];
+    logs.sort((a, b) => new Date(a.date) - new Date(b.date));
+    const pils = pillarsOn(k).map(p => { const P = PILLARS.find(x => x.k === p); return P ? `<span>${ico(PILLAR_ICON[p])}${P.l}</span>` : ''; }).join('');
+    return `<div class="day"><div class="day-h"><b>${label}</b><span>${date}</span></div>
+      <div class="card day-card">${logs.map(l => diaryEntry(l, false)).join('')}${grats.length ? `<div class="day-grat">${ico('flor')}<div>${grats.map(g => esc(g.text)).join('<br>')}</div></div>` : ''}${pils ? `<div class="day-pils">${pils}</div>` : ''}</div></div>`;
+  }).join('') + (keys.length > DIARY_DAYS ? `<button class="btn btn-soft" style="margin:8px 0 18px" onclick="DIARY_DAYS += 14;renderHistory()">Ver dias anteriores</button>` : '');
+}
+
+// ═══════════ TELAS DE APOIO: leituras, trilhas, algo bom de hoje ═══════════
+function renderLibrary(body){
+  const read = S.progress.readArticles || [];
+  body.innerHTML = `<p class="sub" style="margin-top:2px">Textos curtos, com fonte. ${read.length} de ${ARTICLES.length} lidos.</p>`
+    + ART_GROUPS.map(([g, ids]) => `<div class="section-lbl">${g}</div><div class="list">`
+      + ids.map(id => ARTICLES.find(a => a.id === id)).filter(Boolean).map(a => `<button class="row" onclick="runTool('art:${a.id}')"><span class="r-t"><b>${a.title}</b></span><span class="r-meta">${read.includes(a.id) ? 'lido' : '1 min'}</span>${ico('chev', 'chev')}</button>`).join('')
+      + '</div>').join('');
+}
+function renderTrailsList(body){
+  body.innerHTML = `<p class="sub" style="margin-top:2px">Um passo curto por dia. Se pular um dia, é só continuar de onde parou.</p><div class="list">`
+    + TRAILS.map(t => {
+      const d = trailDoneCount(t.id), n = t.days.length;
+      const sub = d >= n ? 'Concluída' : trailState(t.id) ? `Dia ${Math.min(trailCurrentDay(t.id), n)} de ${n}${S.progress.trailActive === t.id ? ' · em andamento' : ''}` : `${n} dias · ${t.desc}`;
+      return `<button class="row" onclick="runTool('trail:${t.id}')"><span class="r-ic">${ico(TRAIL_ICON[t.id] || 'trilha')}</span><span class="r-t"><b>${t.title}</b><small>${sub}</small></span>${ico('chev', 'chev')}</button>`;
+    }).join('') + '</div>';
+}
+function renderGrat(body){
+  const today = new Date().toDateString();
+  const list = S.gratitude.filter(g => new Date(g.date).toDateString() === today);
+  body.innerHTML = `<div class="hero-ic">${ico('flor')}</div>
+    <div class="art-title">Algo bom de hoje</div>
+    <p class="sub">Pode ser pequeno. Anotar ajuda a lembrar que dias assim existem.</p>
+    ${list.length ? `<div class="list">${list.map(g => `<div class="row"><span class="r-t"><b style="font-weight:400">${esc(g.text)}</b></span></div>`).join('')}</div>` : ''}
+    ${list.length < 5
+      ? `<div class="add-row"><input class="inp" id="grat-inp" maxlength="140" placeholder="O que fez bem hoje?"><button class="btn btn-p" onclick="addGrat()">Guardar</button></div>`
+      : '<p class="sub" style="margin-top:10px">Cinco por dia já é bastante. Amanhã tem mais espaço.</p>'}`;
+}
+
 // ═══════════ HISTORY ═══════════
-let histCurrentTab='relatorio';
+let histCurrentTab='logs';
 function histTab(tab) {
   histCurrentTab=tab;
   ['relatorio','logs','pixels'].forEach(t=>{
@@ -4365,31 +4634,13 @@ function renderHistory() {
   if (histCurrentTab==='relatorio') {
     renderReport(body);
   } else if (histCurrentTab==='logs') {
-    const logs=[...S.logs].reverse();
-    if(!logs.length){body.innerHTML='<div style="text-align:center;color:#bbb;padding:40px 0;font-size:14px">Nenhum registro ainda.<br>Comece hoje! ✨</div>';return;}
-    body.innerHTML=logs.map(l=>{
-      const mc=l.mood>=4?'bg-green':l.mood===3?'bg-yellow':'bg-red';
-      const ac=l.anxiety<=3?'bg-green':l.anxiety<=6?'bg-yellow':'bg-red';
-      const d=new Date(l.date).toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'});
-      const time=l.time?`<span class="badge bg-purple" style="margin-left:4px">${l.time}</span>`:'';
-      return `<div class="log-item">
-        <span class="log-em">${MOODS[l.mood]}</span>
-        <div class="log-info">
-          <div class="log-date">${d} ${time}</div>
-          <div class="log-tags">${esc([...(l.emotions||[]).map(emoLabel), ...(l.triggers||[])].join(' · ')) || 'Sem emoções ou gatilhos'}</div>
-        </div>
-        <div class="log-bdgs">
-          <span class="badge ${mc}">${l.mood}/5</span>
-          <span class="badge ${ac}">A${l.anxiety}</span>
-        </div>
-      </div>`;
-    }).join('');
+    renderDiary(body);
 
   } else if (histCurrentTab==='pixels') {
     // Year in pixels
     const now=new Date();
     const startOfYear=new Date(now.getFullYear(),0,1);
-    let html=`<div style="margin-bottom:12px"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px">📆 Ano em Pixels — ${now.getFullYear()}</div><div style="font-size:11px;color:#bbb;margin-bottom:10px">Cada quadrado = 1 dia. Toque para ver.</div></div>`;
+    let html=`<div style="margin-bottom:12px"><div class="card-title" style="margin:8px 0 4px">Ano em pixels · ${now.getFullYear()}</div><div style="font-size:11px;color:#bbb;margin-bottom:10px">Cada quadrado = 1 dia. Toque para ver.</div></div>`;
     html+=`<div class="pixels-grid">`;
     const months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
     let curMonth=-1;
@@ -4400,191 +4651,83 @@ function renderHistory() {
       const dl=S.logs.filter(l=>new Date(l.date).toDateString()===ds);
       const avgM=dl.length?(dl.reduce((s,l)=>s+l.mood,0)/dl.length):0;
       const col=MOOD_COLORS[Math.round(avgM)];
-      const title=dl.length?`${MOODS[Math.round(avgM)]} Humor ${avgM.toFixed(1)}`:'Sem registro';
+      const title=dl.length?`${MOOD_NAMES[Math.round(avgM)]} · humor ${fmt1(avgM)}`:'Sem registro';
       html+=`<div class="pixel" style="background:${col}" title="${title}" onclick="alert('${d.toLocaleDateString('pt-BR')}: ${title}')"></div>`;
     }
     html+=`</div>`;
     html+=`<div class="px-legend">
-      <div style="display:flex;align-items:center;gap:4px"><div class="px-dot" style="background:#f0f0f0"></div><span class="px-lbl">Sem registro</span></div>
-      <div style="display:flex;align-items:center;gap:4px"><div class="px-dot" style="background:#ffd6d6"></div><span class="px-lbl">Péssimo</span></div>
-      <div style="display:flex;align-items:center;gap:4px"><div class="px-dot" style="background:#fff9c4"></div><span class="px-lbl">Ok</span></div>
-      <div style="display:flex;align-items:center;gap:4px"><div class="px-dot" style="background:#a8e6cf"></div><span class="px-lbl">Ótimo</span></div>
+      <div style="display:flex;align-items:center;gap:4px"><div class="px-dot" style="background:#EDF1EE"></div><span class="px-lbl">Sem registro</span></div>
+      <div style="display:flex;align-items:center;gap:4px"><div class="px-dot" style="background:#C5CCDE"></div><span class="px-lbl">Péssimo</span></div>
+      <div style="display:flex;align-items:center;gap:4px"><div class="px-dot" style="background:#E8EADF"></div><span class="px-lbl">Ok</span></div>
+      <div style="display:flex;align-items:center;gap:4px"><div class="px-dot" style="background:#8DC4AC"></div><span class="px-lbl">Ótimo</span></div>
     </div>`;
     body.innerHTML=html;
   }
 }
 
 // ═══════════ MORE ═══════════
-let moreCurrentTab='habits';
+let moreCurrentTab=null;
 function moreTab(tab) {
-  moreCurrentTab=tab;
-  ['habits','gratitude','conta','premium'].forEach(t=>{
-    document.getElementById('mt-'+t)?.classList.toggle('active',t===tab);
-  });
-  renderMore();
+  moreCurrentTab = tab;
+  if (document.getElementById('s-more').classList.contains('active')) renderMore();
 }
 
 function renderMore() {
-  const body=document.getElementById('more-body');
-  const today=new Date().toDateString();
-  const doneToday=S.habitDone[today]||[];
-
-  if (moreCurrentTab==='habits') {
-    const habList=S.habits.map(h=>`
-      <div class="habit-item">
-        <div class="habit-check ${doneToday.includes(h.id)?'done':''}" onclick="toggleHabit(${h.id})">${doneToday.includes(h.id)?'✓':''}</div>
-        <span style="font-size:18px">${esc(h.icon)}</span>
-        <div style="flex:1"><div class="habit-name">${esc(h.name)}</div><div style="font-size:11px;color:#bbb">${h.streak} ${h.streak===1?'dia':'dias'} de cuidado</div></div>
-        <span class="habit-streak">${h.streak>0?'🌱 '+h.streak:''}</span>
+  const body = document.getElementById('more-body');
+  const u = S.user || {};
+  const done = S.habitDone[new Date().toDateString()] || [];
+  const days = (S.progress.careDays || []).length, badges = Object.keys(S.progress.badges || {}).length;
+  const entrou = u.provider === 'google.com' ? 'Google' : 'e-mail e senha';
+  const desde = u.created ? new Date(u.created).toLocaleDateString('pt-BR', {day:'numeric', month:'long', year:'numeric'}) : '—';
+  const goals = (PROFILE && PROFILE.goals && PROFILE.goals.length) ? PROFILE.goals.map(g => (GOALS.find(x => x.k === g) || {l:g}).l).join(' · ') : 'Conte o que traz você ao Florescer';
+  const hhmm = String(REMINDER.h).padStart(2, '0') + ':' + String(REMINDER.m).padStart(2, '0');
+  const chev = ico('chev', 'chev');
+  body.innerHTML = `
+    <div class="me">
+      <div class="conta-avatar-wrap">
+        ${u.photo ? `<img src="${esc(u.photo)}" alt="" referrerpolicy="no-referrer" class="me-photo">` : `<div class="me-photo empty">${ico('voce')}</div>`}
+        <label class="conta-avatar-edit" title="Trocar foto">${ico('editar')}<input type="file" accept="image/*" style="display:none" onchange="onPickAvatar(this)"></label>
       </div>
-    `).join('');
-
-    body.innerHTML=`
-      <div class="card">
-        <div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:12px">Hábitos de hoje — ${doneToday.length}/${S.habits.length}</div>
-        <div style="background:#f0f0f0;border-radius:8px;height:8px;margin-bottom:14px">
-          <div style="background:#2a7d63;height:8px;border-radius:8px;width:${S.habits.length?(doneToday.length/S.habits.length*100):0}%;transition:width .4s"></div>
-        </div>
-        ${habList}
+      <div class="me-t">
+        <div id="conta-name" class="me-name">${esc(u.name || 'Você')}</div>
+        <div class="me-mail">${esc(u.email || '')}</div>
+        <button class="btn-link" style="padding:2px 0;font-size:12px" onclick="editContaName()">Editar nome</button>
       </div>
-      <div class="card">
-        <div class="card-title">➕ Adicionar hábito</div>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <input class="inp" id="new-habit-name" placeholder="Nome do hábito" style="flex:1">
-          <input class="inp" id="new-habit-icon" placeholder="🎯" style="width:52px;text-align:center">
-          <button class="btn-sm btn-sm-p" onclick="addHabit()">+</button>
-        </div>
-      </div>
-    `;
-
-  } else if (moreCurrentTab==='gratitude') {
-    const todayGrat=S.gratitude.filter(g=>new Date(g.date).toDateString()===today);
-    const oldGrat=S.gratitude.filter(g=>new Date(g.date).toDateString()!==today).slice(-6).reverse();
-
-    body.innerHTML=`
-      <div class="card">
-        <div class="card-title">🙏 Gratidão de hoje</div>
-        <div class="card-sub">Pelo que você é grato hoje?</div>
-        <div id="grat-today-list">
-          ${todayGrat.map((g,i)=>`<div class="grat-item"><div class="grat-num">${i+1}</div><div class="grat-text">${esc(g.text)}</div></div>`).join('')}
-        </div>
-        ${todayGrat.length<5?`<div style="display:flex;gap:8px;margin-top:10px">
-          <input class="inp" id="grat-inp" placeholder="Escreva algo pelo que é grato..." style="flex:1">
-          <button class="btn-sm btn-sm-p" onclick="addGrat()">+</button>
-        </div>`:'<div style="font-size:12px;color:#bbb;margin-top:8px;text-align:center">Máximo de 5 por dia ✓</div>'}
-      </div>
-      ${oldGrat.length?`<div class="card">
-        <div class="card-title">📚 Gratidões anteriores</div>
-        ${oldGrat.map(g=>`<div class="grat-item">
-          <div class="grat-num" style="background:#f5f5f5;color:#bbb">🙏</div>
-          <div class="grat-text">${esc(g.text)}<div style="font-size:10px;color:#ccc;margin-top:2px">${new Date(g.date).toLocaleDateString('pt-BR')}</div></div>
-        </div>`).join('')}
-      </div>`:''}
-    `;
-
-  } else if (moreCurrentTab==='conta') {
-    const u = S.user || {};
-    const entrou = u.provider === 'google.com' ? 'Google' : 'e-mail e senha';
-    const desde = u.created ? new Date(u.created).toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'}) : '—';
-    body.innerHTML = `
-      <div class="card" style="text-align:center">
-        <div class="conta-avatar-wrap">
-          ${u.photo
-            ? `<img src="${esc(u.photo)}" alt="" referrerpolicy="no-referrer" style="width:64px;height:64px;border-radius:50%;object-fit:cover;display:block">`
-            : `<div style="width:64px;height:64px;border-radius:50%;background:#eaf5f1;display:flex;align-items:center;justify-content:center;font-size:26px">🌱</div>`}
-          <label class="conta-avatar-edit" title="Trocar foto">✎<input type="file" accept="image/*" style="display:none" onchange="onPickAvatar(this)"></label>
-        </div>
-        <div id="conta-name" style="font-size:16px;font-weight:600;color:#1a1a1a;margin-top:8px">${esc(u.name || 'Você')}
-          <button class="btn-link" style="font-size:12px;vertical-align:middle" onclick="editContaName()">editar</button>
-        </div>
-        <div style="font-size:12px;color:#bbb">${esc(u.email || '')}</div>
-      </div>
-      <div class="card">
-        <div class="card-title">Cadastro</div>
-        <div style="font-size:12px;color:#666;line-height:1.9;margin-top:4px">
-          Entrou com <strong>${entrou}</strong><br>
-          No Florescer desde <strong>${desde}</strong>
-        </div>
-      </div>
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div class="card-title">Seu perfil</div>
-          <button class="btn-link" style="font-size:12px;padding:0" onclick="openOnboard(true)">editar</button>
-        </div>
-        <div style="font-size:12px;color:#666;line-height:1.7;margin-top:4px">${(PROFILE && PROFILE.goals && PROFILE.goals.length)
-          ? PROFILE.goals.map(g => (GOALS.find(x => x.k === g) || {l:g}).l).join(' · ')
-          : 'Conte o que traz você ao Florescer para receber sugestões sob medida.'}</div>
-      </div>
-      <div class="card">
-        <div class="card-title">Lembrete gentil</div>
-        ${reminderPlugin() ? `<div class="card-sub">No máximo 1 por dia, e só se você ainda não registrou. Se ficar 2 semanas sem abrir o app, ele para sozinho.</div>
-        <div style="display:flex;align-items:center;gap:12px">
-          <label class="switch"><input type="checkbox" ${REMINDER.on ? 'checked' : ''} onchange="setReminder(this.checked)"><span></span></label>
-          <span style="font-size:13px;color:#444;flex:1">${REMINDER.on ? 'Ativado' : 'Desativado'}</span>
-          <input type="time" class="inp" style="width:112px;padding:8px 10px" value="${String(REMINDER.h).padStart(2,'0')}:${String(REMINDER.m).padStart(2,'0')}" onchange="setReminderTime(this.value)">
-        </div>` : `<div class="card-sub" style="margin:0">Disponível no app para Android.</div>`}
-      </div>
-      <div class="card">
-        <div class="card-title">Seu plano</div>
-        <div style="font-size:13px;color:#444;margin-top:2px">Gratuito · <span style="color:#2a7d63">Premium em breve</span></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Privacidade</div>
-        <div style="font-size:12px;color:#888;line-height:1.6;margin-top:4px">Seus registros são seus. O Florescer não vende nem compartilha seus dados.</div>
-        <div style="margin-top:10px">
-          <button class="btn-link" style="font-size:12px" onclick="alert('Página em preparação.')">Política de Privacidade</button>
-          <span style="color:#ddd;margin:0 6px">·</span>
-          <button class="btn-link" style="font-size:12px" onclick="alert('Página em preparação.')">Termos de Uso</button>
-        </div>
-      </div>
-      <button class="btn btn-g" onclick="doLogout()">Sair da conta</button>
-      <button class="btn-link" style="display:block;margin:12px auto 24px;color:#c0392b;font-size:12px" onclick="alert('A exclusão de conta pelo app chega em breve. Enquanto isso, escreva para o suporte que apagamos tudo.')">Excluir minha conta</button>
-    `;
-
-  } else if (moreCurrentTab==='premium') {
-    body.innerHTML=`
-      <div style="text-align:center;padding:8px 0 4px">
-        <button class="btn-link" style="font-size:11px;color:#bbb">Política de Privacidade</button>
-        <span style="color:#ddd;margin:0 6px">·</span>
-        <button class="btn-link" style="font-size:11px;color:#bbb">Termos de Uso</button>
-      </div>
-      <div style="border:1.5px solid #eee;border-radius:16px;overflow:hidden;margin-bottom:12px">
-        <div class="plan-hdr"><span style="font-weight:600">Plano gratuito</span><span class="badge bg-green">Seu plano atual</span></div>
-        <div class="plan-body">
-          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Registros ilimitados</span></div>
-          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Gráfico semanal</span></div>
-          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Hábitos (até 3)</span></div>
-          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Respiração guiada</span></div>
-          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Botão SOS</span></div>
-          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Gratidão (até 5/dia)</span></div>
-          <div class="feat"><div class="feat-ck no">×</div><span class="feat-txt dim">Ano em Pixels completo</span></div>
-          <div class="feat"><div class="feat-ck no">×</div><span class="feat-txt dim">Hábitos ilimitados</span></div>
-          <div class="feat"><div class="feat-ck no">×</div><span class="feat-txt dim">Exportar PDF mensal</span></div>
-          <div class="feat"><div class="feat-ck no">×</div><span class="feat-txt dim">Temas e personalização</span></div>
-          <div class="feat"><div class="feat-ck no">×</div><span class="feat-txt dim">Lembretes avançados</span></div>
-        </div>
-      </div>
-      <div style="border:1.5px solid #2a7d63;border-radius:16px;overflow:hidden">
-        <div class="plan-hdr" style="background:linear-gradient(135deg,#2a7d63,#1f6450)">
-          <span style="font-weight:600;color:#fff">Premium</span>
-          <span style="background:#ffffff25;color:#fff;padding:3px 10px;border-radius:20px;font-size:10px">Mais popular</span>
-        </div>
-        <div class="plan-body">
-          <div style="font-size:24px;font-weight:700;color:#1a1a1a">R$ 19,90<span style="font-size:13px;font-weight:400;color:#bbb">/mês</span></div>
-          <div style="font-size:11px;color:#2a7d63;margin-bottom:14px">ou R$ 149/ano — economize 38%</div>
-          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Tudo do plano grátis</span></div>
-          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Hábitos ilimitados</span></div>
-          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Ano em Pixels completo</span></div>
-          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Exportar PDF mensal</span></div>
-          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Temas: escuro, rosa, verde</span></div>
-          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Lembretes personalizados</span></div>
-          <div class="feat"><div class="feat-ck ok">✓</div><span class="feat-txt">Backup na nuvem</span></div>
-          <button class="btn btn-p" style="margin-top:14px">Começar 7 dias grátis</button>
-          <button class="btn btn-s" style="margin-top:8px">Plano anual — R$ 149</button>
-          <div style="text-align:center;font-size:10px;color:#ccc;margin-top:8px">Cancele quando quiser</div>
-        </div>
-      </div>
-    `;
+    </div>
+    <div class="list">
+      <button class="row" onclick="goTo('jornada')"><span class="r-ic pollen">${ico('broto')}</span>
+        <span class="r-t"><b>Sua jornada</b><small>${days} ${pl(days, 'dia', 'dias')} de cuidado · ${badges} ${pl(badges, 'conquista', 'conquistas')}</small></span>${chev}</button>
+    </div>
+    <div class="section-lbl" id="me-habits">Hábitos</div>
+    <div class="list">${S.habits.length ? S.habits.map(h => habitRow(h, done)).join('') : '<div class="row"><span class="r-t"><small>Nenhum hábito ainda. Comece por um pequeno.</small></span></div>'}</div>
+    <div class="add-row"><input class="inp" id="new-habit-name" maxlength="40" placeholder="Novo hábito, ex.: caminhar 10 min"><button class="btn btn-p" onclick="addHabit()">Adicionar</button></div>
+    <button class="btn-link" onclick="runTool('plan')">Escolher pequenos passos para a semana</button>
+    <div class="section-lbl">Rede de apoio</div>
+    <div class="list">
+      <button class="row" onclick="goTo('sos')"><span class="r-ic">${ico('tel')}</span><span class="r-t"><b>Minhas pessoas</b><small>${CONTACTS.length ? esc(CONTACTS.map(c => c.name).join(', ')) : 'Guarde até 3 pessoas de confiança'}</small></span>${chev}</button>
+      <button class="row" onclick="runTool('apoio')"><span class="r-ic">${ico('carta')}</span><span class="r-t"><b>Como me apoiar</b><small>Um texto para enviar a quem você confia</small></span>${chev}</button>
+    </div>
+    <div class="section-lbl">Preferências</div>
+    <div class="list">
+      <button class="row" onclick="openOnboard(true)"><span class="r-ic">${ico('broto')}</span><span class="r-t"><b>Seu perfil</b><small>${esc(goals)}</small></span>${chev}</button>
+      ${reminderPlugin()
+        ? `<div class="row"><span class="r-ic">${ico('sino')}</span><span class="r-t"><b>Lembrete gentil</b><small>${REMINDER.on ? 'Todo dia às ' + hhmm + ', só se ainda não registrou' : 'Desligado · no máximo 1 por dia'}</small></span>
+            <label class="switch"><input type="checkbox" ${REMINDER.on ? 'checked' : ''} onchange="setReminder(this.checked)" aria-label="Lembrete gentil"><span></span></label></div>
+          ${REMINDER.on ? `<div class="row"><span class="r-t"><small>Horário do lembrete</small></span><input type="time" class="inp time-inp" value="${hhmm}" onchange="setReminderTime(this.value)" aria-label="Horário do lembrete"></div>` : ''}`
+        : `<div class="row"><span class="r-ic">${ico('sino')}</span><span class="r-t"><b>Lembrete gentil</b><small>Disponível no app para Android</small></span></div>`}
+    </div>
+    <div class="section-lbl" id="me-conta">Conta</div>
+    <div class="list">
+      <div class="row"><span class="r-ic">${ico('escudo')}</span><span class="r-t"><b>Cadastro</b><small>Entrou com ${entrou} · desde ${desde}</small></span></div>
+      <div class="row"><span class="r-ic">${ico('flor')}</span><span class="r-t"><b>Plano</b><small>Gratuito · Premium em breve</small></span></div>
+      <button class="row" onclick="alert('Página em preparação.')"><span class="r-ic">${ico('doc')}</span><span class="r-t"><b>Privacidade e termos</b><small>Seus registros são seus. O Florescer não vende nem compartilha seus dados.</small></span>${chev}</button>
+    </div>
+    <button class="btn btn-soft" style="margin-top:18px" onclick="doLogout()">${ico('sair')}Sair da conta</button>
+    <button class="btn-link danger" onclick="alert('A exclusão de conta pelo app chega em breve. Enquanto isso, escreva para o suporte que apagamos tudo.')">Excluir minha conta</button>`;
+  if (moreCurrentTab === 'habits' || moreCurrentTab === 'conta') {
+    const target = document.getElementById(moreCurrentTab === 'habits' ? 'me-habits' : 'me-conta');
+    moreCurrentTab = null;
+    if (target) setTimeout(() => target.scrollIntoView({block: 'start'}), 30);
   }
 }
 
@@ -4706,13 +4849,15 @@ function addGrat() {
   save();
   if (window.saveGratitudeCloud) window.saveGratitudeCloud(newGrat);
   markCareDay();
-  renderMore(); renderHome();
+  if (document.getElementById('s-tool').classList.contains('active')) renderTool(1);
+  renderHome();
 }
 
 // ═══════════ INIT ═══════════
 // (Dados de demonstração removidos — o app começa vazio e usa os estados
 //  vazios de cada tela. A sincronização com a nuvem é feita no
 //  onAuthStateChanged / syncFromCloud.)
+renderNavs();
 </script>
 </body>
 </html>
