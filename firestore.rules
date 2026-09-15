@@ -2,7 +2,8 @@ rules_version = '2';
 
 // Regras de segurança do Firestore — projeto florecer-app-c460d
 //
-// Princípio: cada usuário só acessa os próprios dados. Nada é público.
+// Princípio: cada usuário só acessa os próprios dados. A única coisa visível para outras
+// pessoas são frases do mural aprovadas pelo administrador — anônimas, sem nome.
 // Substitui o "modo teste" (allow read, write: if true) que expirou em 22/07/2026.
 //
 // Modelo de dados (ver ARQUITETURA.md):
@@ -12,6 +13,11 @@ rules_version = '2';
 //   logs/{autoId}        — { uid, date, mood, anxiety, sleep, triggers[], note, time }
 //   gratitude/{autoId}   — { uid, date, text }
 //   thoughts/{id}        — registro de pensamento (TCC) { uid, date, situation, thought, emotions[], ... }
+//   admins/{uid}         — existe = é administrador. Criado só pelo Console do Firebase.
+//   members/{uid}        — cadastro e uso { name, email, createdAt, lastSeen, careDays, logs, platform } — o admin lê
+//   stats/{aaaa-mm-dd}   — contadores anônimos do dia (humor, emoções, gatilhos, ferramentas) — só o admin lê
+//   evolution/{idAleat}  — retrato anônimo de evolução por aparelho (sem uid) — só o admin lê
+//   wall/{autoId}        — mural { text, source, lang, status, uid, createdAt, helped, reports }
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -22,6 +28,11 @@ service cloud.firestore {
 
     function isOwner(uid) {
       return signedIn() && request.auth.uid == uid;
+    }
+
+    // Administrador = existe o documento admins/{uid}, criado manualmente no Console.
+    function isAdmin() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
     // O usuário nunca pode se autopromover a Premium pelo cliente.
@@ -61,6 +72,58 @@ service cloud.firestore {
     match /thoughts/{thoughtId} {
       allow read, update, delete: if signedIn() && resource.data.uid == request.auth.uid;
       allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    // ── Gestão ────────────────────────────────────────────────
+    match /admins/{uid} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
+    // Cadastro e uso. Nunca humor, emoções ou textos.
+    match /members/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['uid', 'name', 'email', 'createdAt', 'lastSeen', 'careDays', 'logs', 'platform']);
+      allow delete: if isOwner(uid);
+    }
+
+    // Contadores anônimos por dia (incrementos). Só o admin lê.
+    match /stats/{day} {
+      allow read: if isAdmin();
+      allow create, update: if signedIn() && request.resource.data.keys().size() < 400;
+      allow delete: if false;
+    }
+
+    // Retrato anônimo de evolução (id aleatório do aparelho, sem uid). Só o admin lê.
+    match /evolution/{anonId} {
+      allow read: if isAdmin();
+      allow create, update: if signedIn()
+        && request.resource.data.keys().hasOnly(['weeks', 'logs', 'mood0', 'mood1', 'anx0', 'anx1', 'heavy', 'updatedAt']);
+      allow delete: if false;
+    }
+
+    // Mural "Palavras que florescem": entra como pendente, o admin aprova.
+    match /wall/{postId} {
+      allow read: if signedIn()
+        && (resource.data.status == 'approved' || resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.text is string
+        && request.resource.data.text.size() >= 3
+        && request.resource.data.text.size() <= 160
+        && request.resource.data.source in ['bom', 'recado', 'trilha']
+        && request.resource.data.lang in ['pt', 'en', 'es']
+        && request.resource.data.helped == 0
+        && request.resource.data.reports == 0
+        && request.resource.data.keys().hasOnly(['text', 'source', 'lang', 'status', 'uid', 'createdAt', 'helped', 'reports']);
+      allow update: if isAdmin()
+        || (signedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['helped'])
+            && request.resource.data.helped == resource.data.helped + 1)
+        || (signedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reports'])
+            && request.resource.data.reports == resource.data.reports + 1);
+      allow delete: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
     }
 
     // Qualquer caminho não previsto acima é negado por padrão.

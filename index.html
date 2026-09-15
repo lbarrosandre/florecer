@@ -839,6 +839,25 @@ div.row{cursor:default}
 .cover-btn-main{background:var(--leaf);box-shadow:none;border-radius:14px;font-weight:500;font-size:17px;padding:16px}
 .cover-btn-google{border:1px solid var(--line);box-shadow:none;border-radius:14px;font-weight:400;font-size:16px;padding:15px}
 .cover-link{color:var(--leaf);font-weight:400}
+/* ── Mural e painel do administrador ── */
+.toast{position:absolute;left:16px;right:16px;bottom:92px;z-index:500;background:var(--ink);color:#fff;border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.45;animation:fadeOv .2s ease}
+.share-lbl{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);margin-top:10px;cursor:pointer}
+.share-lbl input{width:18px;height:18px;accent-color:var(--leaf);flex-shrink:0}
+.wall-item{padding:14px 0}
+.wall-item p{font-size:14.5px;line-height:1.6;color:var(--ink);font-weight:300}
+.wall-meta{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:8px}
+.wall-meta > span{flex:1;min-width:120px;font-size:11.5px;color:var(--faint)}
+.pbtn.on{border-color:var(--leaf);color:var(--leaf);background:var(--leaf-soft)}
+.pbtn:disabled{opacity:.75;cursor:default}
+.wall-home{display:flex;flex-direction:column;gap:8px;width:100%;text-align:left;cursor:pointer;color:var(--ink)}
+.wall-q{font-size:15px;font-weight:300;line-height:1.55}
+.wall-more{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--leaf)}
+.wall-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+.wall-row .btn{width:auto;min-height:44px}
+.adm-kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 10px}
+.adm-kpi{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px}
+.adm-kpi b{display:block;font-size:24px;font-weight:300;color:var(--ink);font-variant-numeric:tabular-nums}
+.adm-kpi span{font-size:11.5px;color:var(--muted);line-height:1.35}
 </style>
 
   <!-- Firebase SDK (versão compat - mais estável) -->
@@ -904,6 +923,8 @@ div.row{cursor:default}
           window.goTo(window.needsOnboarding && window.needsOnboarding() ? 'onboard' : 'home');
         }
         if (window.scheduleReminders) window.scheduleReminders();
+        checkAdmin(user);
+        touchMember(user);
       } else {
         window.S.user = null;
         localStorage.removeItem('fl_user');
@@ -1109,6 +1130,86 @@ div.row{cursor:default}
       const uid = window.S.user?.uid;
       if (!uid) return;
       try { await db.collection('users').doc(uid).set({ profile }, { merge: true }); } catch(e) { console.log(e); }
+    };
+
+    // ═══════════ GESTÃO: cadastro/uso, estatísticas anônimas e mural ═══════════
+    // members/{uid}: só dados de cadastro e uso (nome, e-mail, último acesso) — visíveis ao administrador.
+    // users/{uid} continua privado: o administrador nunca lê progresso, perfil, anotações ou registros.
+    async function checkAdmin(user) {
+      try {
+        const d = await db.collection('admins').doc(user.uid).get();
+        window.S.isAdmin = d.exists;
+        const more = document.getElementById('s-more');
+        if (d.exists && more && more.classList.contains('active') && window.renderMore) window.renderMore();
+      } catch (e) {
+        window.S.isAdmin = false;
+      }
+    }
+    async function touchMember(user) {
+      const today = new Date().toISOString().slice(0, 10);
+      try { if (localStorage.getItem('fl_member_touch') === user.uid + today) return; } catch (e) {}
+      try {
+        await db.collection('members').doc(user.uid).set({
+          uid: user.uid,
+          name: (window.S.user && window.S.user.name) || '',
+          email: user.email || '',
+          createdAt: (user.metadata && user.metadata.creationTime) ? new Date(user.metadata.creationTime).toISOString() : null,
+          lastSeen: new Date().toISOString(),
+          careDays: ((window.S.progress && window.S.progress.careDays) || []).length,
+          logs: (window.S.logs || []).length,
+          platform: (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'android' : 'web',
+        }, { merge: true });
+        localStorage.setItem('fl_member_touch', user.uid + today);
+      } catch (e) {
+        console.log('members:', e && e.message);
+      }
+    }
+    window.statsAdd = async (fields) => {
+      if (!window.S.user) return;
+      const d = new Date();
+      const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      const data = {};
+      Object.keys(fields).forEach((k) => { data[k] = firebase.firestore.FieldValue.increment(fields[k]); });
+      try { await db.collection('stats').doc(key).set(data, { merge: true }); } catch (e) { console.log('stats:', e && e.message); }
+    };
+    window.evolutionSave = async (id, doc) => {
+      if (!window.S.user) return;
+      try { await db.collection('evolution').doc(id).set(doc); } catch (e) { console.log('evolution:', e && e.message); }
+    };
+    window.wallPost = async (post) => {
+      const uid = window.S.user && window.S.user.uid;
+      if (!uid) throw new Error('sem login');
+      await db.collection('wall').add({
+        text: post.text, source: post.source, lang: post.lang || 'pt', status: 'pending',
+        uid, createdAt: new Date().toISOString(), helped: 0, reports: 0,
+      });
+    };
+    window.wallApproved = async (lang) => {
+      const snap = await db.collection('wall').where('status', '==', 'approved').where('lang', '==', lang || 'pt')
+        .orderBy('createdAt', 'desc').limit(60).get();
+      return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    };
+    window.wallReact = async (id, field) => {
+      if (field !== 'helped' && field !== 'reports') return;
+      try { await db.collection('wall').doc(id).update({ [field]: firebase.firestore.FieldValue.increment(1) }); } catch (e) { console.log('mural:', e && e.message); }
+    };
+    window.adminFetch = async (what, days) => {
+      const list = (snap) => snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      if (what === 'members') return list(await db.collection('members').orderBy('lastSeen', 'desc').limit(500).get());
+      if (what === 'evolution') return list(await db.collection('evolution').limit(2000).get());
+      if (what === 'stats') {
+        const s = new Date();
+        s.setDate(s.getDate() - (days || 30) + 1);
+        const key = s.getFullYear() + '-' + String(s.getMonth() + 1).padStart(2, '0') + '-' + String(s.getDate()).padStart(2, '0');
+        return list(await db.collection('stats').where(firebase.firestore.FieldPath.documentId(), '>=', key).get());
+      }
+      if (what === 'pending' || what === 'approved') {
+        return list(await db.collection('wall').where('status', '==', what).orderBy('createdAt', 'desc').limit(200).get());
+      }
+      return [];
+    };
+    window.adminModerate = async (id, status) => {
+      await db.collection('wall').doc(id).update({ status, moderatedAt: new Date().toISOString() });
     };
 
     window.saveThoughtCloud = async (t) => {
@@ -1412,6 +1513,7 @@ div.row{cursor:default}
         <div id="home-help"></div>
         <div id="home-now"></div>
         <div id="home-pillars"></div>
+        <div id="home-wall"></div>
         <div id="home-trail"></div>
         <div id="home-habits"></div>
       </div>
@@ -1494,6 +1596,7 @@ div.row{cursor:default}
           <div class="log-block">
             <div class="log-lbl">Algo bom de hoje?</div>
             <input class="inp" id="log-grat" maxlength="140" placeholder="Pode ser pequeno: um café, uma conversa, um respiro">
+            <label class="share-lbl"><input type="checkbox" id="log-grat-share"> Compartilhar no mural, sem meu nome</label>
           </div>
           <div class="log-block">
             <div class="log-lbl">Quer escrever?</div>
@@ -2151,6 +2254,7 @@ function renderHome() {
     </div>`;
   }
   renderHomePillars();
+  renderHomeWall();
   renderHomeTrail();
   renderHomeHabits();
   checkBadges();
@@ -2170,6 +2274,8 @@ function resetLog() {
   document.querySelectorAll('#tags-row .tag').forEach(b => b.classList.remove('sel'));
   document.querySelectorAll('#time-row .time-btn').forEach(b => b.classList.toggle('sel', b.dataset.t === S.logForm.time));
   ['log-note', 'log-grat'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  const shareBox = document.getElementById('log-grat-share');
+  if (shareBox) shareBox.checked = false;
   const hint = document.getElementById('mood-hint');
   if (hint) hint.style.display = 'none';
   renderLogPillars();
@@ -2801,6 +2907,8 @@ function runTool(key){
   if (key === 'gratidao') return openTool('grat');
   if (key === 'library') return openTool('library');
   if (key === 'trails') return openTool('trails');
+  if (key === 'wall') return openTool('wall');
+  if (key === 'admin') return openTool('admin');
   if (key === 'meditate') return openTool('meditate');
   if (key === 'thoughts') return openTool('thoughts');
   if (key.startsWith('trail:')) return openTool('trail', key.slice(6));
@@ -2856,6 +2964,8 @@ function renderTool(keepScroll){
   else if (k === 'library') { title.textContent = 'Leituras'; renderLibrary(body); }
   else if (k === 'trails') { title.textContent = 'Trilhas'; renderTrailsList(body); }
   else if (k === 'grat') { title.textContent = 'Algo bom de hoje'; renderGrat(body); }
+  else if (k === 'wall') { title.textContent = 'Mural'; renderWall(body); }
+  else if (k === 'admin') { title.textContent = 'Painel do administrador'; renderAdmin(body); }
 }
 
 // ── Hub
@@ -2905,6 +3015,7 @@ function renderCare(){
     <div class="list">
       ${row("runTool('help')", 'estetoscopio', 'Buscar ajuda profissional', 'Psicologia, psiquiatria, SUS e urgência', '')}
       ${row("runTool('apoio')", 'carta', 'Como me apoiar', 'Um texto para enviar a quem você confia', '')}
+      ${row("runTool('wall')", 'flor', 'Palavras que florescem', 'Recados de quem também usa o Florescer', '')}
     </div>
     <div class="rep-foot" style="text-align:center;margin:14px 8px 18px">As práticas se baseiam em TCC, mindfulness e autocompaixão. O Florescer é um apoio e não substitui acompanhamento profissional.</div>`;
 }
@@ -3763,7 +3874,7 @@ function renderTrail(body, id){
       <div class="art-title" style="margin-top:4px">${tr.title}</div>
       <div class="tr-help" style="margin:0">${tr.desc}</div>
       <div class="trail-bar"><div style="width:${done / n * 100}%"></div></div>
-      <div style="font-size:11px;color:#999">${finished ? 'Trilha concluída 🌷' : `${done} de ${n} dias`}</div>
+      <div style="font-size:11px;color:#999">${finished ? 'Trilha concluída' : `${done} de ${n} dias`}</div>
     </div>`;
   if (!st) {
     h += `<div class="card"><div class="tr-help" style="margin-bottom:10px">São ${n} dias, um pequeno passo por dia — cerca de 5 minutos. Sem pressa: se pular um dia, é só continuar de onde parou.</div>
@@ -3775,6 +3886,7 @@ function renderTrail(body, id){
     h += `<div class="card" style="text-align:center"><div class="hero-ic" style="margin:4px auto 10px">${ico('flor')}</div>
       <div class="tr-q">Você concluiu esta trilha</div>
       <div class="tr-help">Foram ${n} passos de cuidado. O que funcionou para você continua disponível em Cuidar.</div>
+      ${Object.keys(st.notes || {}).length ? `<button class="btn btn-soft" style="margin:4px 0 10px" onclick="openWallShareTrail('${id}')">Compartilhar uma frase no mural</button>` : ''}
       ${notes ? `<div style="text-align:left">${notes}</div>` : ''}</div>`;
   }
   h += `<div class="card" style="padding:4px 14px">` + tr.days.map((d, k) => {
@@ -4508,7 +4620,9 @@ function openHelpSheet(){
   </div>`;
   document.getElementById('app').appendChild(ov);
 }
-function closeHelpSheet(){ const el = document.getElementById('help-sheet'); if (el) el.remove(); }
+function closeHelpSheet(){
+  ['help-sheet', 'share-sheet'].forEach(id => { const el = document.getElementById(id); if (el) el.remove(); });
+}
 
 // ═══════════ HOJE — peças da tela inicial ═══════════
 function daysSinceLastLog(){
@@ -4698,6 +4812,8 @@ function renderMore() {
       <button class="row" onclick="goTo('jornada')"><span class="r-ic pollen">${ico('broto')}</span>
         <span class="r-t"><b>Sua jornada</b><small>${days} ${pl(days, 'dia', 'dias')} de cuidado · ${badges} ${pl(badges, 'conquista', 'conquistas')}</small></span>${chev}</button>
     </div>
+    ${S.isAdmin ? `<div class="section-lbl">Gestão</div>
+    <div class="list"><button class="row" onclick="runTool('admin')"><span class="r-ic">${ico('relatorio')}</span><span class="r-t"><b>Painel do administrador</b><small>Pessoas, panorama, evolução e mural</small></span>${chev}</button></div>` : ''}
     <div class="section-lbl" id="me-habits">Hábitos</div>
     <div class="list">${S.habits.length ? S.habits.map(h => habitRow(h, done)).join('') : '<div class="row"><span class="r-t"><small>Nenhum hábito ainda. Comece por um pequeno.</small></span></div>'}</div>
     <div class="add-row"><input class="inp" id="new-habit-name" maxlength="40" placeholder="Novo hábito, ex.: caminhar 10 min"><button class="btn btn-p" onclick="addHabit()">Adicionar</button></div>
@@ -4716,11 +4832,15 @@ function renderMore() {
           ${REMINDER.on ? `<div class="row"><span class="r-t"><small>Horário do lembrete</small></span><input type="time" class="inp time-inp" value="${hhmm}" onchange="setReminderTime(this.value)" aria-label="Horário do lembrete"></div>` : ''}`
         : `<div class="row"><span class="r-ic">${ico('sino')}</span><span class="r-t"><b>Lembrete gentil</b><small>Disponível no app para Android</small></span></div>`}
     </div>
+    <div class="list" style="margin-top:8px">
+      <div class="row"><span class="r-ic">${ico('relatorio')}</span><span class="r-t"><b>Estatísticas anônimas</b><small>Números somados de todas as pessoas, para melhorar o Florescer. Nunca levam seu nome nem o que você escreve.</small></span>
+        <label class="switch"><input type="checkbox" ${anonStatsOn() ? 'checked' : ''} onchange="setAnonStats(this.checked)" aria-label="Estatísticas anônimas"><span></span></label></div>
+    </div>
     <div class="section-lbl" id="me-conta">Conta</div>
     <div class="list">
       <div class="row"><span class="r-ic">${ico('escudo')}</span><span class="r-t"><b>Cadastro</b><small>Entrou com ${entrou} · desde ${desde}</small></span></div>
       <div class="row"><span class="r-ic">${ico('flor')}</span><span class="r-t"><b>Plano</b><small>Gratuito · Premium em breve</small></span></div>
-      <button class="row" onclick="alert('Página em preparação.')"><span class="r-ic">${ico('doc')}</span><span class="r-t"><b>Privacidade e termos</b><small>Seus registros são seus. O Florescer não vende nem compartilha seus dados.</small></span>${chev}</button>
+      <button class="row" onclick="alert('Página em preparação.')"><span class="r-ic">${ico('doc')}</span><span class="r-t"><b>Privacidade e termos</b><small>Seus registros são seus. O administrador vê só cadastro e uso — nunca o que você registra ou escreve.</small></span>${chev}</button>
     </div>
     <button class="btn btn-soft" style="margin-top:18px" onclick="doLogout()">${ico('sair')}Sair da conta</button>
     <button class="btn-link danger" onclick="alert('A exclusão de conta pelo app chega em breve. Enquanto isso, escreva para o suporte que apagamos tudo.')">Excluir minha conta</button>`;
@@ -4851,6 +4971,390 @@ function addGrat() {
   markCareDay();
   if (document.getElementById('s-tool').classList.contains('active')) renderTool(1);
   renderHome();
+}
+
+// ═══════════ AVISOS CURTOS ═══════════
+function toast(msg){
+  const old = document.getElementById('toast');
+  if (old) old.remove();
+  const el = document.createElement('div');
+  el.id = 'toast';
+  el.className = 'toast';
+  el.setAttribute('role', 'status');
+  el.textContent = msg;
+  document.getElementById('app').appendChild(el);
+  setTimeout(() => { if (el.parentNode) el.remove(); }, 4200);
+}
+
+// ═══════════ MURAL — Palavras que florescem ═══════════
+// Frases anônimas, sempre por escolha de quem escreve, publicadas só depois da aprovação do administrador.
+// Cada frase guarda o idioma em que foi escrita e aparece para quem usa o app nesse idioma.
+function appLang(){ return window.LANG || 'pt'; }
+const WALL_SOURCES = {bom:'Algo bom de um dia', recado:'Recado para quem está num dia difícil', trilha:'Frase de uma trilha concluída'};
+let WALL = {items: null, loading: false, error: false, loadedAt: 0, reacted: {}};
+try { WALL.reacted = JSON.parse(localStorage.getItem('fl_wall_reacted') || '{}') || {}; } catch (e) {}
+const WALL_BLOCK = /(^|[^a-zà-ú])(porra|caralho|merda|puta|putas|puto|foda|foder|fdp|vtnc|vsf|buceta|cacete|arrombad[oa]|viad[oa]|idiota|imbecil|ot[aá]ri[oa])([^a-zà-ú]|$)/i;
+const WALL_CRISIS = /(suic[ií]d|me\s+matar|se\s+matar|tirar\s+(a\s+)?(minha\s+)?(pr[oó]pria\s+)?vida|n[ãa]o\s+quero\s+(mais\s+)?viver|quero\s+morrer|me\s+cortar|acabar\s+com\s+tudo|sumir\s+para\s+sempre)/i;
+
+function wallCheck(text){
+  const t = String(text || '').trim().replace(/\s+/g, ' ');
+  if (WALL_CRISIS.test(t)) return {ok:false, crisis:true};
+  if (t.length < 3) return {ok:false, msg:'Escreva pelo menos algumas palavras.'};
+  if (t.length > 160) return {ok:false, msg:'Use até 160 caracteres.'};
+  if (/(\d[\s().-]*){8,}/.test(t)) return {ok:false, msg:'Para proteger você, o mural não aceita números de telefone.'};
+  if (/[\w.+-]+@[\w-]+\.[\w.]+|https?:\/\/|www\.|\.(com|br|net|org)\b|@\w{2,}/i.test(t)) return {ok:false, msg:'O mural não aceita e-mails, links ou perfis.'};
+  if (WALL_BLOCK.test(t)) return {ok:false, msg:'Essa mensagem tem palavras que o mural não aceita.'};
+  return {ok:true, text:t};
+}
+function wallCrisis(){
+  const e = document.getElementById('empathy-overlay');
+  if (e) e.remove();
+  openHelpSheet();
+  toast('Essa mensagem não vai para o mural. Você não precisa passar por isso sem apoio.');
+}
+// true = enviado · false = sinal de crise (a ajuda já foi aberta) · texto = motivo para corrigir
+async function wallSubmit(text, source){
+  const c = wallCheck(text);
+  if (c.crisis) { wallCrisis(); return false; }
+  if (!c.ok) return c.msg;
+  if (!window.wallPost) return 'O mural está sem conexão agora. Tente mais tarde.';
+  try {
+    await window.wallPost({text: c.text, source, lang: appLang()});
+    statTool('mural');
+    return true;
+  } catch (e) {
+    return 'Não deu para enviar agora. Tente de novo.';
+  }
+}
+async function loadWall(force){
+  if (WALL.loading) return;
+  if (!force && WALL.items && Date.now() - WALL.loadedAt < 10 * 60000) return;
+  if (!window.wallApproved) { WALL.items = []; return; }
+  WALL.loading = true;
+  try {
+    WALL.items = (await window.wallApproved(appLang())).filter(w => (w.reports || 0) < 3);
+    WALL.error = false;
+    WALL.loadedAt = Date.now();
+  } catch (e) {
+    console.log('mural:', e && e.message);
+    WALL.items = WALL.items || [];
+    WALL.error = true;
+  }
+  WALL.loading = false;
+}
+function renderHomeWall(){
+  const el = document.getElementById('home-wall');
+  if (!el) return;
+  if (WALL.items === null) { el.innerHTML = ''; loadWall().then(renderHomeWall); return; }
+  const mine = S.user && S.user.uid;
+  const list = WALL.items.filter(w => w.uid !== mine);
+  if (!list.length) { el.innerHTML = ''; return; }
+  const w = list[Math.floor(Date.now() / 36e5) % list.length];
+  el.innerHTML = `<div class="section-lbl">Uma palavra de alguém</div>
+    <button class="card wall-home" onclick="runTool('wall')"><span class="wall-q">“${esc(w.text)}”</span><span class="wall-more">Ver o mural ${ico('chev', 'chev')}</span></button>`;
+}
+function wallItemRow(w){
+  const done = WALL.reacted[w.id];
+  return `<div class="wall-item"><p>“${esc(w.text)}”</p>
+    <div class="wall-meta"><span>${WALL_SOURCES[w.source] || ''}</span>
+      <button class="pbtn ${done === 'helped' ? 'on' : ''}" onclick="wallReactUi('${w.id}','helped')" ${done ? 'disabled' : ''}>${ico('coracao')}${done === 'helped' ? 'Me ajudou' : 'Isso me ajudou'}${w.helped ? ' · ' + w.helped : ''}</button>
+      ${done ? '' : `<button class="pbtn pbtn-x" onclick="wallReactUi('${w.id}','reports')">Denunciar</button>`}</div></div>`;
+}
+function renderWall(body){
+  const items = WALL.items;
+  body.innerHTML = `<div class="hero-ic">${ico('flor')}</div>
+    <div class="art-title">Palavras que florescem</div>
+    <p class="sub">Frases de quem também usa o Florescer. Sem nomes e com cuidado: tudo passa por aprovação antes de aparecer aqui.</p>
+    <div class="card">
+      <div class="card-title">Deixe um recado para quem está num dia difícil</div>
+      <textarea class="inp" id="wall-text" rows="3" maxlength="160" style="margin-top:10px" placeholder="Ex.: Hoje também foi pesado para mim. Um passo de cada vez."></textarea>
+      <div class="wall-row"><span class="r-meta" id="wall-count">0/160</span><button class="btn btn-p" id="wall-send" onclick="wallSendRecado()">Enviar</button></div>
+      <div class="tr-warn" id="wall-warn"></div>
+    </div>
+    <div class="section-lbl">No mural</div>
+    ${items === null
+      ? '<div class="empty">Carregando…</div>'
+      : WALL.error && !items.length
+        ? '<div class="empty">Não deu para carregar o mural agora. Tente de novo mais tarde.</div>'
+        : items.length
+          ? `<div class="list">${items.map(wallItemRow).join('')}</div>`
+          : '<div class="empty">Ainda não há frases aprovadas. A sua pode ser a primeira.</div>'}`;
+  const ta = document.getElementById('wall-text');
+  if (ta) ta.addEventListener('input', () => { document.getElementById('wall-count').textContent = ta.value.length + '/160'; });
+  if (items === null && !WALL.loading) loadWall(true).then(() => { if (TOOL.kind === 'wall' && document.getElementById('s-tool').classList.contains('active')) renderTool(1); });
+}
+async function wallSendRecado(){
+  const ta = document.getElementById('wall-text'), warn = document.getElementById('wall-warn'), btn = document.getElementById('wall-send');
+  btn.disabled = true;
+  const r = await wallSubmit(ta.value, 'recado');
+  btn.disabled = false;
+  if (r === true) { ta.value = ''; warn.textContent = ''; document.getElementById('wall-count').textContent = '0/160'; toast('Enviado. Aparece no mural depois de aprovado, sem seu nome.'); }
+  else if (typeof r === 'string') warn.textContent = r;
+}
+function wallReactUi(id, field){
+  if (field === 'reports' && !confirm('Denunciar esta frase? Ela sai do seu mural e será revisada.')) return;
+  WALL.reacted[id] = field;
+  try { localStorage.setItem('fl_wall_reacted', JSON.stringify(WALL.reacted)); } catch (e) {}
+  if (window.wallReact) window.wallReact(id, field);
+  const w = (WALL.items || []).find(x => x.id === id);
+  if (w) {
+    if (field === 'helped') w.helped = (w.helped || 0) + 1;
+    else WALL.items = WALL.items.filter(x => x.id !== id);
+  }
+  renderTool(1);
+  toast(field === 'helped' ? 'Que bom que ajudou.' : 'Obrigado por avisar. A frase será revisada.');
+}
+function openShareSheet(text, source){
+  closeHelpSheet();
+  const ov = document.createElement('div');
+  ov.className = 'empathy-overlay';
+  ov.id = 'share-sheet';
+  ov.addEventListener('click', (ev) => { if (ev.target === ov) ov.remove(); });
+  ov.innerHTML = `<div class="empathy-sheet help-sheet" role="dialog" aria-label="Compartilhar no mural"><i class="grab"></i>
+    <div class="hs-title">Compartilhar no mural</div>
+    <div class="hs-sub">Aparece sem seu nome, depois de aprovado. Revise antes de enviar.</div>
+    <textarea class="inp" id="share-text" rows="4" maxlength="160">${esc(text || '')}</textarea>
+    <div class="tr-warn" id="share-warn"></div>
+    <div class="tr-nav"><button class="btn btn-soft" onclick="closeHelpSheet()">Cancelar</button><button class="btn btn-p" onclick="shareSheetSend('${source}')">Enviar</button></div>
+  </div>`;
+  document.getElementById('app').appendChild(ov);
+}
+async function shareSheetSend(source){
+  const ta = document.getElementById('share-text'), warn = document.getElementById('share-warn');
+  if (!ta) return;
+  const r = await wallSubmit(ta.value, source);
+  if (r === true) { closeHelpSheet(); toast('Enviado. Aparece no mural depois de aprovado, sem seu nome.'); }
+  else if (typeof r === 'string' && warn) warn.textContent = r;
+}
+function openWallShareTrail(id){
+  const st = trailState(id), tr = trailDef(id);
+  if (!st || !tr) return;
+  const text = st.notes['d' + tr.days.length] || Object.values(st.notes || {}).pop() || '';
+  openShareSheet(text, 'trilha');
+}
+
+// ═══════════ ESTATÍSTICAS ANÔNIMAS ═══════════
+// Contadores somados por dia (stats/{data}) e um retrato de evolução por aparelho
+// (evolution/{id aleatório}). Nada leva nome, e-mail, uid ou texto escrito.
+function anonStatsOn(){ try { return localStorage.getItem('fl_anon_stats') !== 'off'; } catch (e) { return true; } }
+function setAnonStats(on){
+  try { localStorage.setItem('fl_anon_stats', on ? 'on' : 'off'); } catch (e) {}
+  renderMore();
+}
+function slugify(s){ return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, ''); }
+const TOOL_LABELS = {respirar:'Respiração', meditar:'Meditação', pensamento:'Olhar um pensamento', passo:'Só 5 minutos', trilha:'Dia de trilha concluído', ajuda:'Preciso de ajuda (aberto)', mural:'Frase enviada ao mural'};
+function statAdd(fields){
+  if (!anonStatsOn() || !window.statsAdd) return;
+  const dk = dateKey();
+  try { if (localStorage.getItem('fl_stats_active') !== dk) { fields.active = 1; localStorage.setItem('fl_stats_active', dk); } } catch (e) {}
+  window.statsAdd(fields);
+}
+function statTool(name){ statAdd({['tool_' + name]: 1}); }
+function statsFromLog(l){
+  const f = {logs: 1};
+  f['mood_' + l.mood] = 1;
+  if (typeof l.anxiety === 'number') { f.anxN = 1; f.anxSum = l.anxiety; if (l.anxiety >= 7) f.anxHigh = 1; }
+  if (l.sleep) f['sleep_' + slugify(l.sleep)] = 1;
+  (l.emotions || []).forEach(e => { f['emo_' + slugify(e)] = 1; });
+  (l.triggers || []).forEach(t => { f['trig_' + slugify(t)] = 1; });
+  statAdd(f);
+}
+function anonId(){
+  try {
+    let id = localStorage.getItem('fl_anon_id');
+    if (!id) {
+      id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID().replace(/-/g, '') : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+      localStorage.setItem('fl_anon_id', id);
+    }
+    return id;
+  } catch (e) { return null; }
+}
+function saveEvolutionSnapshot(){
+  if (!anonStatsOn() || !window.evolutionSave) return;
+  const dk = dateKey();
+  try { if (localStorage.getItem('fl_evo_day') === dk) return; } catch (e) {}
+  const logs = S.logs.filter(l => typeof l.mood === 'number').sort((a, b) => new Date(a.date) - new Date(b.date));
+  if (logs.length < 3) return;
+  const id = anonId();
+  if (!id) return;
+  const first = +new Date(logs[0].date), since = Date.now() - 14 * 864e5;
+  const early = logs.filter(l => +new Date(l.date) - first < 14 * 864e5);
+  const recent = logs.filter(l => +new Date(l.date) >= since);
+  const r1 = (x) => x == null ? null : Math.round(x * 10) / 10;
+  window.evolutionSave(id, {
+    weeks: Math.floor((Date.now() - first) / (7 * 864e5)), logs: logs.length,
+    mood0: r1(avgOf(early.map(l => l.mood))), mood1: r1(avgOf(recent.map(l => l.mood))),
+    anx0: r1(avgOf(early.map(l => l.anxiety))), anx1: r1(avgOf(recent.map(l => l.anxiety))),
+    heavy: !!helpSignal(), updatedAt: dk,
+  });
+  try { localStorage.setItem('fl_evo_day', dk); } catch (e) {}
+}
+// Liga as estatísticas e o mural aos pontos do app, sem mexer em cada função por dentro.
+(function(){
+  const _saveLog = saveLog;
+  saveLog = function(){
+    const gratEl = document.getElementById('log-grat'), shareEl = document.getElementById('log-grat-share');
+    const shareText = gratEl && shareEl && shareEl.checked ? gratEl.value.trim() : '';
+    const before = S.logs.length;
+    const result = _saveLog.apply(this, arguments);
+    if (S.logs.length > before) {
+      statsFromLog(S.logs[S.logs.length - 1]);
+      saveEvolutionSnapshot();
+      if (shareText) wallSubmit(shareText, 'bom').then(r => {
+        if (r === true) toast('“Algo bom” enviado ao mural. Aparece depois de aprovado, sem seu nome.');
+        else if (typeof r === 'string') toast('Não foi para o mural: ' + r.charAt(0).toLowerCase() + r.slice(1));
+      });
+    }
+    return result;
+  };
+  const _setPillar = setPillar;
+  setPillar = function(k, on, key){
+    const turned = _setPillar.apply(this, arguments);
+    if (turned && (!key || key === dateKey())) statAdd({['pil_' + k]: 1});
+    return turned;
+  };
+  const _breath = bumpBreathSession;
+  bumpBreathSession = function(){ statTool('respirar'); return _breath.apply(this, arguments); };
+  const _medit = bumpMeditation;
+  bumpMeditation = function(){ statTool('meditar'); return _medit.apply(this, arguments); };
+  const _thought = saveThought;
+  saveThought = function(){ statTool('pensamento'); return _thought.apply(this, arguments); };
+  const _passo = passoFeito;
+  passoFeito = function(){ statTool('passo'); return _passo.apply(this, arguments); };
+  const _trail = completeTrailDay;
+  completeTrailDay = function(){ statTool('trilha'); return _trail.apply(this, arguments); };
+  const _help = openHelpSheet;
+  openHelpSheet = function(){ statTool('ajuda'); return _help.apply(this, arguments); };
+})();
+
+// ═══════════ PAINEL DO ADMINISTRADOR ═══════════
+// Só aparece para quem está em admins/{uid} no Firestore. Mostra cadastro e uso das pessoas,
+// e números agregados e anônimos. Nunca humor, emoções ou textos de alguém identificável.
+const K_MIN = 5;
+let ADMIN = {tab: 'pessoas', days: 30, data: {}, loading: false};
+function adminTab(t){ ADMIN.tab = t; renderTool(1); }
+async function adminLoad(keys){
+  if (!window.adminFetch) { keys.forEach(k => { ADMIN.data[k] = []; }); return; }
+  ADMIN.loading = true;
+  try {
+    for (const k of keys) ADMIN.data[k] = await window.adminFetch(k, ADMIN.days);
+  } catch (e) {
+    console.log('admin:', e && e.message);
+    keys.forEach(k => { ADMIN.data[k] = ADMIN.data[k] || []; });
+    toast('Não deu para carregar tudo. Confira se as regras e o índice do Firestore foram publicados.');
+  }
+  ADMIN.loading = false;
+}
+function admKpis(items){
+  return `<div class="adm-kpis">${items.map(([v, l]) => `<div class="adm-kpi"><b>${v}</b><span>${l}</span></div>`).join('')}</div>`;
+}
+function renderAdmin(body){
+  if (!S.isAdmin) { body.innerHTML = '<div class="empty">Acesso restrito ao administrador.</div>'; return; }
+  const tabs = [['pessoas', 'Pessoas'], ['panorama', 'Panorama'], ['evolucao', 'Evolução'], ['mural', 'Mural']];
+  const pend = (ADMIN.data.pending || []).length;
+  const head = `<div class="top-tabs" style="margin-top:0">${tabs.map(([k, l]) => `<button class="top-tab ${ADMIN.tab === k ? 'active' : ''}" onclick="adminTab('${k}')">${l}${k === 'mural' && pend ? ' · ' + pend : ''}</button>`).join('')}</div>`;
+  const need = {pessoas: ['members'], panorama: ['stats', 'evolution'], evolucao: ['evolution'], mural: ['pending', 'approved']}[ADMIN.tab];
+  const missing = need.filter(k => !ADMIN.data[k]);
+  if (missing.length) {
+    body.innerHTML = head + '<div class="empty">Carregando…</div>';
+    if (!ADMIN.loading) adminLoad(missing).then(() => { if (TOOL.kind === 'admin') renderTool(1); });
+    return;
+  }
+  const view = {pessoas: adminPessoas, panorama: adminPanorama, evolucao: adminEvolucao, mural: adminMural}[ADMIN.tab];
+  body.innerHTML = head + view() + `<button class="btn-link" onclick="ADMIN.data={};renderTool(1)">Atualizar dados</button>`;
+}
+function adminPessoas(){
+  const m = ADMIN.data.members || [];
+  const now = Date.now();
+  const ago = (iso) => iso ? (now - new Date(iso)) / 864e5 : Infinity;
+  const when = (iso) => { const d = ago(iso); return d === Infinity ? '—' : d < 1 ? 'hoje' : d < 2 ? 'ontem' : 'há ' + Math.floor(d) + ' dias'; };
+  const sorted = [...m].sort((a, b) => String(b.lastSeen || '').localeCompare(String(a.lastSeen || '')));
+  return admKpis([[m.length, 'cadastros'], [m.filter(x => ago(x.lastSeen) <= 7).length, 'ativas em 7 dias'], [m.filter(x => ago(x.lastSeen) <= 30).length, 'ativas em 30 dias'], [m.filter(x => ago(x.createdAt) <= 7).length, 'novas em 7 dias']])
+    + `<p class="rep-foot" style="margin:0 2px 4px">Só dados de cadastro e uso. O que cada pessoa registra ou escreve não é visível aqui.</p>
+    <div class="section-lbl">Últimos acessos</div>
+    <div class="list">${sorted.length ? sorted.map(x => `<div class="row"><span class="r-ic">${ico('voce')}</span>
+      <span class="r-t"><b>${esc(x.name || 'Sem nome')}</b><small>${esc(x.email || '')}</small><small>${x.careDays || 0} dias de cuidado · ${x.logs || 0} registros · ${x.platform === 'android' ? 'Android' : 'Web'}</small></span>
+      <span class="r-meta">${when(x.lastSeen)}</span></div>`).join('') : '<div class="row"><span class="r-t"><small>Ninguém ainda.</small></span></div>'}</div>`;
+}
+function adminPanorama(){
+  const days = ADMIN.data.stats || [];
+  const tot = {};
+  days.forEach(d => Object.keys(d).forEach(k => { if (typeof d[k] === 'number') tot[k] = (tot[k] || 0) + d[k]; }));
+  const logs = tot.logs || 0;
+  let h = `<div class="rep-seg">${[7, 30, 90].map(n => `<button class="${ADMIN.days === n ? 'on' : ''}" onclick="ADMIN.days=${n};ADMIN.data.stats=null;renderTool(1)">${n} dias</button>`).join('')}</div>`;
+  h += admKpis([
+    [logs, 'registros no período'],
+    [days.length ? fmt1((tot.active || 0) / days.length) : '–', 'pessoas ativas por dia (média)'],
+    [tot.anxN ? Math.round((tot.anxHigh || 0) / tot.anxN * 100) + '%' : '–', 'dos registros com ansiedade alta (7+)'],
+    [tot.anxN ? fmt1(tot.anxSum / tot.anxN) : '–', 'ansiedade média (0 a 10)'],
+  ]);
+  const evo = (ADMIN.data.evolution || []).filter(e => e.updatedAt && (Date.now() - new Date(e.updatedAt + 'T12:00')) < 14 * 864e5);
+  if (evo.length >= K_MIN) h += `<div class="rep-trend" style="margin:0 0 10px">${evo.filter(e => e.heavy).length} de ${evo.length} pessoas ativas nas últimas 2 semanas estão num período pesado.</div>`;
+  if (logs < 10) return h + `<div class="empty">Ainda há poucos registros no período para mostrar padrões com segurança (mínimo de 10).</div>`;
+  const pct = (v) => Math.round(v / logs * 100) + '%';
+  const trigLabels = {};
+  document.querySelectorAll('#tags-row .tag').forEach(t => { trigLabels[slugify(t.textContent)] = t.textContent; });
+  const emoLabelBySlug = {};
+  Object.keys(EMO_INDEX).forEach(k => { emoLabelBySlug[slugify(k)] = EMO_INDEX[k]; });
+  const top = (prefix, label) => Object.keys(tot).filter(k => k.startsWith(prefix)).map(k => [label(k.slice(prefix.length)), tot[k]]).sort((a, b) => b[1] - a[1]);
+  const card = (title, sub, rows, color, val) => `<div class="card"><div class="card-title">${title}</div><div class="card-sub">${sub}</div>${rows.length ? hbars(rows.slice(0, 8), Math.max(...rows.map(r => r[1]), 1), color, val) : '<div class="rep-empty">Sem dados no período.</div>'}</div>`;
+  const moodRows = [1, 2, 3, 4, 5].map(m => [MOOD_NAMES[m], tot['mood_' + m] || 0]);
+  const emo = top('emo_', k => (emoLabelBySlug[k] || {label: k}).label);
+  const emoColor = (lbl) => { const e = Object.values(EMO_INDEX).find(x => x.label === lbl); return e ? e.color : '#C9D1CC'; };
+  h += card('Humor nos registros', 'Proporção de cada humor.', moodRows, () => '#8FC7AE', pct);
+  h += card('Emoções mais marcadas', 'Em quantos registros cada emoção aparece.', emo, emoColor, pct);
+  h += card('O que mais pesa', 'Situações marcadas nos registros.', top('trig_', k => trigLabels[k] || k), () => '#C9B9A6', pct);
+  h += card('Sono', 'Qualidade da noite anterior.', SLEEP_ORDER.map(s => [s, tot['sleep_' + slugify(s)] || 0]).filter(r => r[1]), () => '#B9C3DC', pct);
+  h += card('Pilares do cuidado', 'Quantas vezes cada pilar foi marcado.', top('pil_', k => (PILLARS.find(p => p.k === k) || {l: k}).l), () => '#8FC7AE', v => v);
+  h += card('Ferramentas mais usadas', 'Quantas vezes cada uma foi usada.', top('tool_', k => TOOL_LABELS[k] || k), () => '#A9C4BA', v => v);
+  return h + `<p class="rep-foot">Números somados de todas as pessoas, sem identificação. Podem variar um pouco (por exemplo, quem usa o app em dois aparelhos).</p>`;
+}
+function adminEvolucao(){
+  const all = ADMIN.data.evolution || [];
+  const ev = all.filter(e => (e.weeks || 0) >= 4 && typeof e.mood0 === 'number' && typeof e.mood1 === 'number');
+  let h = `<p class="sub" style="margin-top:0">Compara as duas primeiras semanas de uso de cada pessoa com as duas últimas. Sem identificação.</p>`
+    + admKpis([[all.length, 'pessoas com dados'], [ev.length, 'com 4 semanas ou mais']]);
+  if (ev.length < K_MIN) return h + `<div class="empty">Os resultados aparecem quando houver pelo menos ${K_MIN} pessoas com 4 semanas ou mais de uso. Com menos gente, daria para reconhecer alguém.</div>`;
+  const better = ev.filter(e => e.mood1 - e.mood0 >= 0.3).length;
+  const worse = ev.filter(e => e.mood1 - e.mood0 <= -0.3).length;
+  const same = ev.length - better - worse;
+  h += `<div class="card"><div class="card-title">Humor: começo e agora</div>
+    ${admKpis([[fmt1(avgOf(ev.map(e => e.mood0))), 'média nas 2 primeiras semanas'], [fmt1(avgOf(ev.map(e => e.mood1))), 'média nas 2 últimas semanas']])}
+    ${hbars([['Melhorou', better], ['Estável', same], ['Piorou', worse]], ev.length, (l) => ({'Melhorou': '#4F9E85', 'Estável': '#C9D1CC', 'Piorou': '#CC876B'})[l], v => Math.round(v / ev.length * 100) + '%')}</div>`;
+  const ea = ev.filter(e => typeof e.anx0 === 'number' && typeof e.anx1 === 'number');
+  if (ea.length >= K_MIN) {
+    h += `<div class="card"><div class="card-title">Ansiedade: começo e agora</div><div class="card-sub">De 0 a 10 — menor é melhor.</div>
+      ${admKpis([[fmt1(avgOf(ea.map(e => e.anx0))), 'média nas 2 primeiras semanas'], [fmt1(avgOf(ea.map(e => e.anx1))), 'média nas 2 últimas semanas']])}</div>`;
+  }
+  return h + `<p class="rep-foot">"Melhorou" = humor médio pelo menos 0,3 ponto maior nas últimas 2 semanas do que nas 2 primeiras. É um indicador do app, não uma avaliação clínica.</p>`;
+}
+function adminMural(){
+  const pend = ADMIN.data.pending || [], appr = ADMIN.data.approved || [];
+  const reported = appr.filter(w => (w.reports || 0) > 0).sort((a, b) => b.reports - a.reports);
+  const langName = {pt: 'PT', en: 'EN', es: 'ES'};
+  const item = (w, actions) => `<div class="wall-item"><p>“${esc(w.text)}”</p><div class="wall-meta"><span>${WALL_SOURCES[w.source] || ''} · ${langName[w.lang] || 'PT'} · ${w.createdAt ? new Date(w.createdAt).toLocaleDateString('pt-BR') : ''}${w.reports ? ' · ' + w.reports + ' ' + pl(w.reports, 'denúncia', 'denúncias') : ''}</span>${actions}</div></div>`;
+  return `<div class="section-lbl" style="margin-top:4px">Aguardando aprovação · ${pend.length}</div>
+    ${pend.length ? `<div class="list">${pend.map(w => item(w, `<button class="pbtn" onclick="adminMod('${w.id}','approved')">Aprovar</button><button class="pbtn pbtn-x" onclick="adminMod('${w.id}','rejected')">Recusar</button>`)).join('')}</div>` : '<div class="rep-empty">Nada pendente.</div>'}
+    <div class="section-lbl">Com denúncia · ${reported.length}</div>
+    ${reported.length ? `<div class="list">${reported.map(w => item(w, `<button class="pbtn pbtn-x" onclick="adminMod('${w.id}','rejected')">Retirar</button>`)).join('')}</div>` : '<div class="rep-empty">Nenhuma denúncia.</div>'}
+    <div class="section-lbl">No ar · ${appr.length}</div>
+    ${appr.length ? `<div class="list">${appr.slice(0, 40).map(w => item(w, `<span class="r-meta">${w.helped || 0} ajudou</span><button class="pbtn pbtn-x" onclick="adminMod('${w.id}','rejected')">Retirar</button>`)).join('')}</div>` : '<div class="rep-empty">Nenhuma frase no ar.</div>'}
+    <p class="rep-foot">Aprove frases gentis e gerais. Recuse conselhos médicos, promessas de cura, dados pessoais, religião imposta ou qualquer coisa que possa machucar alguém.</p>`;
+}
+async function adminMod(id, status){
+  if (!window.adminModerate) return;
+  try {
+    await window.adminModerate(id, status);
+    const w = [...(ADMIN.data.pending || []), ...(ADMIN.data.approved || [])].find(x => x.id === id);
+    ADMIN.data.pending = (ADMIN.data.pending || []).filter(x => x.id !== id);
+    ADMIN.data.approved = (ADMIN.data.approved || []).filter(x => x.id !== id);
+    if (status === 'approved' && w) ADMIN.data.approved.unshift({...w, status});
+    WALL.items = null;
+    renderTool(1);
+    toast(status === 'approved' ? 'Aprovada. Já aparece no mural.' : 'Frase retirada do mural.');
+  } catch (e) {
+    toast('Não deu para salvar. Confira a conexão e as regras do Firestore.');
+  }
 }
 
 // ═══════════ INIT ═══════════
