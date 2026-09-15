@@ -4011,10 +4011,12 @@ function reminderPlugin(){
 // 2 semanas sem abrir o app para de receber — lembrete não vira cobrança.
 async function scheduleReminders(){
   const ln = reminderPlugin();
-  if (!ln) return;
+  // Enquanto o login não voltar (S.user só chega depois do Firebase responder), não cancelar
+  // nada: cancelar aqui apagava os lembretes já agendados e não reagendava nenhum.
+  if (!ln || !S.user) return;
   try {
     await ln.cancel({notifications: REMINDER_IDS.map(id => ({id}))});
-    if (!REMINDER.on || !S.user) return;
+    if (!REMINDER.on) return;
     const now = new Date();
     const loggedToday = S.logs.some(l => new Date(l.date).toDateString() === now.toDateString());
     const list = [];
@@ -5712,13 +5714,14 @@ async function notifPermissionOk(){
 // Reagenda os próximos 14 dias de cada hábito com horário. Pula o dia se o hábito já foi marcado.
 async function scheduleHabitReminders(){
   const ln = reminderPlugin();
-  if (!ln) return;
+  // Mesmo cuidado do lembrete do diário: sem login recuperado, não cancela nem reagenda.
+  if (!ln || !S.user) return;
   try {
     let old = [];
     try { old = JSON.parse(localStorage.getItem(HABIT_NOTIF_KEY) || '[]'); } catch (e) {}
     if (old.length) await ln.cancel({notifications: old.map(id => ({id}))});
     const list = [];
-    if (S.user) {
+    {
       await habitCheckAuto(ln);
       const now = new Date();
       let seq = 0;
