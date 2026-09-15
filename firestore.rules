@@ -103,7 +103,8 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // Mural "Palavras que florescem": entra como pendente, o admin aprova.
+    // Mural "Palavras que florescem" e "O movimento muda vidas" (source 'movimento',
+    // até 280 caracteres, com atividade e o que melhorou): entra como pendente, o admin aprova.
     match /wall/{postId} {
       allow read: if signedIn()
         && (resource.data.status == 'approved' || resource.data.uid == request.auth.uid || isAdmin());
@@ -112,12 +113,17 @@ service cloud.firestore {
         && request.resource.data.status == 'pending'
         && request.resource.data.text is string
         && request.resource.data.text.size() >= 3
-        && request.resource.data.text.size() <= 160
-        && request.resource.data.source in ['bom', 'recado', 'trilha']
+        && (request.resource.data.text.size() <= 160
+            || (request.resource.data.source == 'movimento' && request.resource.data.text.size() <= 280))
+        && request.resource.data.source in ['bom', 'recado', 'trilha', 'movimento']
         && request.resource.data.lang in ['pt', 'en', 'es']
         && request.resource.data.helped == 0
         && request.resource.data.reports == 0
-        && request.resource.data.keys().hasOnly(['text', 'source', 'lang', 'status', 'uid', 'createdAt', 'helped', 'reports']);
+        && (!('activity' in request.resource.data)
+            || (request.resource.data.activity is string && request.resource.data.activity.size() <= 30))
+        && (!('tags' in request.resource.data)
+            || (request.resource.data.tags is list && request.resource.data.tags.size() <= 6))
+        && request.resource.data.keys().hasOnly(['text', 'source', 'lang', 'status', 'uid', 'createdAt', 'helped', 'reports', 'activity', 'tags']);
       allow update: if isAdmin()
         || (signedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['helped'])
             && request.resource.data.helped == resource.data.helped + 1)

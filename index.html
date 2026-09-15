@@ -871,6 +871,11 @@ div.row{cursor:default}
 .cv-hero{text-align:center;padding:22px 4px 4px}
 .cv-title{font-size:clamp(22px,6vw,28px);font-weight:300;line-height:1.22;letter-spacing:-.015em;color:var(--ink);text-wrap:balance}
 .cv-nw{white-space:nowrap}
+.pil-tip{display:flex;align-items:flex-start;gap:10px;width:100%;margin-top:12px;padding:12px 6px 2px;border:0;border-top:1px solid var(--line);background:none;text-align:left;font-family:inherit;font-size:12.5px;line-height:1.5;color:var(--muted);cursor:pointer}
+.pil-tip span{flex:1}
+.pil-tip b{display:inline-flex;align-items:center;gap:2px;color:var(--leaf);font-weight:500;white-space:nowrap}
+.pil-tip .ic{width:14px;height:14px}
+.move-tip{font-size:13.5px;line-height:1.55;color:var(--ink);font-weight:300;margin-top:10px}
 .cv-lede{font-size:14.5px;color:var(--muted);line-height:1.6;margin:12px auto 20px;max-width:34ch}
 .cv-cta{display:flex;flex-direction:column;gap:8px}
 .cv-section{margin-top:26px}
@@ -1203,14 +1208,19 @@ div.row{cursor:default}
     window.wallPost = async (post) => {
       const uid = window.S.user && window.S.user.uid;
       if (!uid) throw new Error('sem login');
-      await db.collection('wall').add({
+      const doc = {
         text: post.text, source: post.source, lang: post.lang || 'pt', status: 'pending',
         uid, createdAt: new Date().toISOString(), helped: 0, reports: 0,
-      });
+      };
+      if (post.activity) doc.activity = String(post.activity).slice(0, 30);
+      if (Array.isArray(post.tags) && post.tags.length) doc.tags = post.tags.slice(0, 6).map(String);
+      await db.collection('wall').add(doc);
     };
-    window.wallApproved = async (lang) => {
-      const snap = await db.collection('wall').where('status', '==', 'approved').where('lang', '==', lang || 'pt')
-        .orderBy('createdAt', 'desc').limit(60).get();
+    // source opcional: o mural do movimento busca só as histórias dele.
+    window.wallApproved = async (lang, source) => {
+      let q = db.collection('wall').where('status', '==', 'approved').where('lang', '==', lang || 'pt');
+      if (source) q = q.where('source', '==', source);
+      const snap = await q.orderBy('createdAt', 'desc').limit(60).get();
       return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     };
     window.wallReact = async (id, field) => {
@@ -2789,11 +2799,11 @@ const ARTICLES = [
     'Dar nome ao que se sente já ajuda. Pesquisas mostram que nomear a emoção (“isso é frustração”) tende a diminuir a intensidade dela. É por isso que o Florescer pede palavras, não só um número.'],
     src:'Base: pesquisas sobre rotulação de afeto (affect labeling) e aceitação emocional.'},
   {id:'sono', emoji:'😴', title:'Sono e humor andam juntos', try:'pmr', body:[
-    'Uma noite mal dormida deixa as áreas do cérebro ligadas às emoções mais reativas e diminui a capacidade de frear impulsos. Por isso tudo parece mais pesado e irritante no dia seguinte.',
+    'Uma noite mal dormida deixa as áreas do cérebro ligadas às emoções mais reativas e diminui a capacidade de frear impulsos. Por isso tudo parece mais pesado e irritante no dia seguinte — e a ansiedade tende a subir.',
     'O caminho inverso também existe: ansiedade e tristeza atrapalham o sono. Um alimenta o outro — e cuidar de um costuma ajudar o outro.',
     'Algumas bases simples: acordar em horário parecido todos os dias, pegar luz natural pela manhã, diminuir telas na última hora, cafeína só até o começo da tarde. Se o sono não vier em uns 20 minutos, levante e faça algo calmo até sentir sono.',
     'No seu relatório, a seção “Sono e humor” mostra como isso aparece nos seus dias.'],
-    src:'Base: pesquisas sobre sono e regulação emocional; orientações de higiene do sono e da TCC para insônia.'},
+    src:'Base: pesquisas sobre sono e regulação emocional (entre elas, Ben Simon e Walker, 2019, sobre sono e ansiedade); orientações de higiene do sono e da TCC para insônia.'},
   {id:'pensamentos', emoji:'💭', title:'Pensamentos não são fatos', try:'thought', body:[
     'A mente produz pensamentos o tempo todo — muitos automáticos, rápidos e convincentes: “vou falhar”, “ninguém se importa”, “fiz tudo errado”.',
     'A Terapia Cognitivo-Comportamental (TCC) parte de uma ideia simples: não é só o que acontece que nos afeta, mas a interpretação que fazemos. E interpretações podem ser examinadas.',
@@ -2852,6 +2862,18 @@ const ARTICLES = [
     'A ativação comportamental, uma das abordagens mais estudadas para a depressão, inverte a ordem: primeiro uma ação pequena, depois a motivação. Fazer algo com sentido ou prazer, mesmo por poucos minutos, alimenta o humor aos poucos.',
     'O segredo é o tamanho: 5 minutos, não 1 hora. Escolha passos possíveis no seu dia real e repare no efeito depois — sem se cobrar pelo que não deu.'],
     src:'Base: ativação comportamental (Jacobson, Martell e colaboradores), recomendada em diretrizes clínicas para depressão.'},
+  {id:'rotina', emoji:'🕰️', title:'Rotina regular, humor mais estável', try:'plan', body:[
+    'O corpo funciona com um relógio interno que organiza sono, fome, energia e humor ao longo do dia. Esse relógio se guia por sinais que se repetem: a luz da manhã e os horários de acordar, de comer e de se movimentar.',
+    'Quando a rotina fica desregulada — cada dia acordando, comendo e dormindo num horário —, o relógio perde a referência. Pesquisas associam esse descompasso a mais sintomas de depressão e a um humor mais instável. E o caminho costuma se repetir: a rotina se desfaz, o humor cai e fica ainda mais difícil retomar.',
+    'Não é preciso uma agenda rígida. Algumas âncoras já ajudam: acordar em horário parecido (inclusive no fim de semana), pegar luz natural cedo, fazer as refeições em horários próximos e ter um momento de movimento no dia.',
+    'Em “Pequenos passos”, você pode escolher até 3 âncoras para a semana e ver como elas aparecem nos seus dias.'],
+    src:'Base: estudos sobre ritmo circadiano e humor (como Lyall e colaboradores, 2018, com dados do UK Biobank) e terapias que trabalham a regularidade da rotina.'},
+  {id:'corpo', emoji:'🌡️', title:'Escutar o corpo sem se cobrar', try:'bodyscan', body:[
+    'O corpo avisa antes de a gente perceber: cansaço que não passa, ombros tensos, fome esquecida, sono fora de hora, irritação por pouco. Notar esses sinais é um jeito de acompanhar como você está — sem nota e sem meta.',
+    'Tem dias em que a energia está muito baixa. Nesses dias, adaptar é autocuidado, não fraqueza: trocar a corrida por uma caminhada leve, a caminhada por 5 minutos de alongamento, ou simplesmente descansar. Algum movimento é melhor que nenhum — e descanso também faz parte.',
+    'Uma pergunta ajuda: “do que meu corpo precisa agora?”. Às vezes é se mexer para destravar; às vezes é comer, beber água ou dormir mais cedo. Anotar no diário como o corpo estava ajuda a ver seus padrões com o tempo.',
+    '<b>Dor no peito, tontura, falta de ar fora do comum ou dor forte</b> são sinais para parar e procurar orientação de saúde.'],
+    src:'Base: diretrizes da Organização Mundial da Saúde sobre atividade física (2020); práticas de atenção plena ao corpo e autocompaixão.'},
   {id:'escutar', emoji:'👂', title:'Como apoiar: escutar sem resolver', try:false, body:[
     'Quando alguém querido está mal, a vontade é resolver: dar conselho, apontar o lado bom, sugerir soluções. Na maioria das vezes, o que mais ajuda é escutar.',
     'Escuta ativa é prestar atenção de verdade, sem interromper e sem julgar. Repita com suas palavras o que entendeu (“parece que está sendo muito pesado”) e pergunte como pode ajudar.',
@@ -2873,7 +2895,7 @@ const ARTICLES = [
 ];
 const ART_GROUPS = [
   ['Entender o que você sente', ['ansiedade', 'emocoes', 'pensamentos', 'armadilhas', 'ruminacao']],
-  ['Corpo e rotina', ['sono', 'respirar', 'movimento', 'alimentacao', 'conexao', 'ativacao']],
+  ['Corpo e rotina', ['sono', 'rotina', 'alimentacao', 'movimento', 'corpo', 'respirar', 'conexao', 'ativacao']],
   ['Cuidar de si e buscar ajuda', ['autocompaixao', 'ajuda', 'psi']],
   ['Para quem apoia alguém', ['escutar', 'dizer', 'presenca']],
 ];
@@ -2933,6 +2955,7 @@ function runTool(key){
   if (key === 'library') return openTool('library');
   if (key === 'trails') return openTool('trails');
   if (key === 'wall') return openTool('wall');
+  if (key === 'movimento') return openTool('movimento');
   if (key === 'admin') return openTool('admin');
   if (key === 'meditate') return openTool('meditate');
   if (key === 'thoughts') return openTool('thoughts');
@@ -2990,6 +3013,7 @@ function renderTool(keepScroll){
   else if (k === 'trails') { title.textContent = 'Trilhas'; renderTrailsList(body); }
   else if (k === 'grat') { title.textContent = 'Algo bom de hoje'; renderGrat(body); }
   else if (k === 'wall') { title.textContent = 'Mural'; renderWall(body); }
+  else if (k === 'movimento') { title.textContent = 'Movimento'; renderMove(body); }
   else if (k === 'admin') { title.textContent = 'Painel do administrador'; renderAdmin(body); }
 }
 
@@ -3041,6 +3065,7 @@ function renderCare(){
       ${row("runTool('help')", 'estetoscopio', 'Buscar ajuda profissional', 'Psicologia, psiquiatria, SUS e urgência', '')}
       ${row("runTool('apoio')", 'carta', 'Como me apoiar', 'Um texto para enviar a quem você confia', '')}
       ${row("runTool('wall')", 'flor', 'Palavras que florescem', 'Recados de quem também usa o Florescer', '')}
+      ${row("runTool('movimento')", 'mov', 'O movimento muda vidas', 'Histórias de quem mudou a rotina com atividade física', '')}
     </div>
     <div class="rep-foot" style="text-align:center;margin:14px 8px 18px">As práticas se baseiam em TCC, mindfulness e autocompaixão. O Florescer é um apoio e não substitui acompanhamento profissional.</div>`;
 }
@@ -3444,15 +3469,27 @@ function togPillarHome(k){ togPillar(k, 'home'); }
 function togPillarLog(k){ togPillar(k, 'log'); }
 function togPillarPlan(k){ togPillar(k, 'plan'); }
 function renderLogPillars(){ const el = document.getElementById('log-pillars'); if (el) el.innerHTML = pillarButtons('togPillarLog'); }
+// Uma dica curta por dia sobre rotina e corpo, com a leitura que explica.
+const ROUTINE_TIPS = [
+  ['sono', 'Uma noite mal dormida deixa a ansiedade mais alta no dia seguinte. Dormir também é cuidar da mente.'],
+  ['rotina', 'Acordar e comer em horários parecidos ajuda o relógio do corpo — e deixa o humor mais estável.'],
+  ['corpo', 'Dia de pouca energia? Adaptar a intensidade é autocuidado, não fraqueza.'],
+  ['alimentacao', 'Muitas horas sem comer podem parecer irritação ou cansaço. Um lanche simples já ajuda.'],
+  ['movimento', 'Algum movimento é melhor que nenhum. Cinco minutos contam.'],
+  ['rotina', 'Quando o humor cai, a rotina costuma se desfazer primeiro. Uma âncora pequena por dia ajuda a retomar.'],
+  ['corpo', 'Cansaço, tensão, fome, sono fora de hora: o corpo avisa. Perceber já é um jeito de se cuidar.'],
+];
 function renderHomePillars(){
   const el = document.getElementById('home-pillars');
   if (!el) return;
   const c = {};
   for (let i = 0; i < 7; i++) { const d = new Date(); d.setDate(d.getDate() - i); pillarsOn(dateKey(d)).forEach(k => c[k] = (c[k] || 0) + 1); }
   const week = PILLARS.filter(p => c[p.k]).map(p => `${p.l} ${c[p.k]}`);
+  const tip = ROUTINE_TIPS[Math.floor(Date.now() / 864e5) % ROUTINE_TIPS.length];
   el.innerHTML = planReviewCard() + `<div class="section-lbl">Hoje eu…</div>
     <div class="card" style="padding:14px 10px 12px">${pillarButtons('togPillarHome')}
       <div class="pil-foot" style="text-align:center">${week.length ? 'Nos últimos 7 dias: ' + week.join(' · ') : 'Toque no que fez parte do seu dia. Pequenas coisas contam.'}</div>
+      <button class="pil-tip" onclick="runTool('art:${tip[0]}')"><span>${tip[1]}</span><b>Ler ${ico('chev', 'chev')}</b></button>
     </div>`;
 }
 
@@ -3497,6 +3534,7 @@ function toggleMicro(id, btn){
   S.progress.planWeek = weekKey();
   save(); progressSave();
   if (window.saveHabitsCloud) window.saveHabitsCloud();
+  scheduleHabitReminders();
   if (btn) { btn.textContent = '✓ Adicionado aos seus hábitos de hoje'; btn.disabled = true; }
   else renderTool(1);
 }
@@ -3999,22 +4037,86 @@ window.cancelReminders = async function(){
 async function setReminder(on, h, m){
   const ln = reminderPlugin();
   if (!ln) return;
-  if (on) {
-    try {
-      let p = await ln.checkPermissions();
-      if (p.display !== 'granted') p = await ln.requestPermissions();
-      if (p.display !== 'granted') { alert('Para receber o lembrete, permita as notificações do Florescer nas configurações do Android.'); on = false; }
-    } catch (e) { on = false; }
-  }
+  if (on && !(await notifPermissionOk())) { notifBlocked(); on = false; }
   REMINDER = {on, h: h == null ? REMINDER.h : h, m: m == null ? REMINDER.m : m};
   try { localStorage.setItem('fl_reminder', JSON.stringify(REMINDER)); } catch (e) {}
   await scheduleReminders();
+  if (on) toast('Lembrete do diário: todo dia às ' + hhmmOf(REMINDER.h, REMINDER.m) + '.');
   if (document.getElementById('s-more').classList.contains('active')) renderMore();
 }
 function setReminderTime(v){
   const [h, m] = String(v || '').split(':').map(Number);
   if (isNaN(h) || isNaN(m)) return;
   setReminder(true, h, m);
+}
+
+// Pergunta dos hábitos: um aviso por dia, no horário escolhido, só quando falta algum hábito.
+// "set" = a decisão já foi tomada (pela pessoa, ou pelo app quando a permissão já existia); o app não religa sozinho.
+var HABIT_CHECK = (function(){
+  const d = {on:false, h:19, m:0, set:false};
+  try { return Object.assign(d, JSON.parse(localStorage.getItem('fl_habit_check') || '{}')); } catch (e) { return d; }
+})();
+function saveHabitCheck(){ try { localStorage.setItem('fl_habit_check', JSON.stringify(HABIT_CHECK)); } catch (e) {} }
+function hhmmOf(h, m){ return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0'); }
+async function setHabitCheck(on, h, m){
+  if (!reminderPlugin()) return;
+  if (on && !(await notifPermissionOk())) { notifBlocked(); on = false; }
+  HABIT_CHECK = {on, h: h == null ? HABIT_CHECK.h : h, m: m == null ? HABIT_CHECK.m : m, set: true};
+  saveHabitCheck();
+  await scheduleHabitReminders();
+  if (on) toast(S.habits.length ? 'Pergunta dos hábitos: todo dia às ' + hhmmOf(HABIT_CHECK.h, HABIT_CHECK.m) + ', se faltar algum.' : 'Ligado. Crie um hábito para começar a receber.');
+  if (document.getElementById('s-more').classList.contains('active')) renderMore();
+}
+function setHabitCheckTime(v){
+  const [h, m] = String(v || '').split(':').map(Number);
+  if (isNaN(h) || isNaN(m)) return;
+  setHabitCheck(true, h, m);
+}
+// Quando o Android bloqueia as notificações, o app não consegue pedir de novo: mostra o caminho.
+function notifBlocked(){
+  closeHelpSheet();
+  const ov = document.createElement('div');
+  ov.className = 'empathy-overlay';
+  ov.id = 'share-sheet';
+  ov.addEventListener('click', (ev) => { if (ev.target === ov) ov.remove(); });
+  ov.innerHTML = `<div class="empathy-sheet help-sheet" role="dialog" aria-label="Notificações desligadas"><i class="grab"></i>
+    <div class="hs-title">As notificações estão desligadas</div>
+    <div class="hs-sub">Para o Florescer poder avisar você, libere as notificações no celular:</div>
+    <ul class="check-list">
+      <li>Abra as Configurações do Android</li>
+      <li>Toque em Aplicativos e depois em Florescer</li>
+      <li>Toque em Notificações e ative “Permitir notificações”</li>
+    </ul>
+    <button class="btn btn-p" onclick="closeHelpSheet()">Entendi</button>
+  </div>`;
+  document.getElementById('app').appendChild(ov);
+}
+async function testNotification(){
+  const ln = reminderPlugin();
+  if (!ln) return;
+  if (!(await notifPermissionOk())) { notifBlocked(); return; }
+  try {
+    await ln.schedule({notifications: [{id: 999, title: 'Florescer', body: 'É assim que o lembrete chega. Tocar nele abre o app.', smallIcon: 'ic_stat_florescer', iconColor: '#2a7d63'}]});
+    toast('Pronto. Olhe a barra de notificações.');
+  } catch (e) {
+    toast('Não deu para mostrar o aviso agora.');
+  }
+}
+// Seção "Lembretes" em Você.
+function reminderRows(){
+  if (!reminderPlugin()) return `<div class="list"><div class="row"><span class="r-ic">${ico('sino')}</span><span class="r-t"><b>Lembretes</b><small>Funcionam no app para Android.</small></span></div></div>`;
+  const dT = hhmmOf(REMINDER.h, REMINDER.m), hT = hhmmOf(HABIT_CHECK.h, HABIT_CHECK.m);
+  const sw = (on, fn, label) => `<label class="switch"><input type="checkbox" ${on ? 'checked' : ''} onchange="${fn}(this.checked)" aria-label="${label}"><span></span></label>`;
+  const time = (v, fn, label) => `<div class="row"><span class="r-t"><small>Horário</small></span><input type="time" class="inp time-inp" value="${v}" onchange="${fn}(this.value)" aria-label="${label}"></div>`;
+  const habSub = !S.habits.length ? 'Crie um hábito para receber a pergunta.'
+    : HABIT_CHECK.on ? 'Todo dia às ' + hT + ', só se faltar algum hábito.' : 'Um aviso por dia perguntando se você já fez seus hábitos.';
+  return `<div class="list">
+      <div class="row"><span class="r-ic">${ico('diario')}</span><span class="r-t"><b>Lembrete do diário</b><small>${REMINDER.on ? 'Todo dia às ' + dT + '. Não aparece se você já registrou.' : 'Um aviso por dia para registrar como você está.'}</small></span>${sw(REMINDER.on, 'setReminder', 'Lembrete do diário')}</div>
+      ${REMINDER.on ? time(dT, 'setReminderTime', 'Horário do lembrete do diário') : ''}
+      <div class="row"><span class="r-ic">${ico('check')}</span><span class="r-t"><b>Pergunta dos hábitos</b><small>${habSub}</small></span>${sw(HABIT_CHECK.on, 'setHabitCheck', 'Pergunta dos hábitos')}</div>
+      ${HABIT_CHECK.on ? time(hT, 'setHabitCheckTime', 'Horário da pergunta dos hábitos') : ''}
+    </div>
+    <button class="btn-link" onclick="testNotification()">Ver como o aviso chega</button>`;
 }
 
 // ═══════════ PDF DO RELATÓRIO ═══════════
@@ -4209,11 +4311,18 @@ async function exportReportPdf(){
 }
 async function deliverPdf(doc, fname){
   const C = window.Capacitor;
-  const P = C && C.isNativePlatform && C.isNativePlatform() ? C.Plugins : null;
-  if (P && P.Filesystem && P.Share) {
+  if (C && C.isNativePlatform && C.isNativePlatform()) {
+    const P = C.Plugins || {};
+    // No APK, doc.save() não faz nada (o WebView ignora downloads): sem os plugins, é erro visível.
+    if (!P.Filesystem || !P.Share) throw new Error('plugins de arquivo indisponíveis');
     const b64 = doc.output('datauristring').split(',').pop();
     const f = await P.Filesystem.writeFile({path: fname, data: b64, directory: 'CACHE'});
-    await P.Share.share({title: 'Relatório Florescer', url: f.uri, dialogTitle: 'Enviar relatório'});
+    try {
+      await P.Share.share({title: 'Relatório Florescer', url: f.uri, dialogTitle: 'Enviar ou salvar o PDF'});
+    } catch (e) {
+      if (/cancel/i.test((e && e.message) || '')) return;
+      throw e;
+    }
   } else {
     doc.save(fname);
   }
@@ -4682,7 +4791,8 @@ function renderHomeHabits(){
   const list = [...S.habits].sort((a, b) => (done.includes(a.id) - done.includes(b.id)) || byTime(a).localeCompare(byTime(b)));
   const feitos = S.habits.filter(h => done.includes(h.id)).length;
   el.innerHTML = `<div class="section-lbl">Hábitos de hoje · ${feitos} de ${S.habits.length}</div><div class="list">${list.slice(0, 5).map(h => habitRow(h, done)).join('')}</div>
-    <div class="hab-links">${S.habits.length > 5 ? `<button class="btn-link" onclick="moreTab('habits');goTo('more')">Ver todos os ${S.habits.length}</button>` : '<span></span>'}<button class="btn-link" onclick="openHabitSheet()">+ Novo hábito</button></div>`;
+    <div class="hab-links">${S.habits.length > 5 ? `<button class="btn-link" onclick="moreTab('habits');goTo('more')">Ver todos os ${S.habits.length}</button>`
+      : reminderPlugin() ? `<button class="btn-link" onclick="moreTab('lembretes');goTo('more')">${HABIT_CHECK && HABIT_CHECK.on ? 'Pergunta às ' + hhmmOf(HABIT_CHECK.h, HABIT_CHECK.m) : 'Receber a pergunta diária'}</button>` : '<span></span>'}<button class="btn-link" onclick="openHabitSheet()">+ Novo hábito</button></div>`;
 }
 
 // ═══════════ DIÁRIO — registros por dia ═══════════
@@ -4824,7 +4934,6 @@ function renderMore() {
   const entrou = u.provider === 'google.com' ? 'Google' : 'e-mail e senha';
   const desde = u.created ? new Date(u.created).toLocaleDateString('pt-BR', {day:'numeric', month:'long', year:'numeric'}) : '—';
   const goals = (PROFILE && PROFILE.goals && PROFILE.goals.length) ? PROFILE.goals.map(g => (GOALS.find(x => x.k === g) || {l:g}).l).join(' · ') : 'Conte o que traz você ao Florescer';
-  const hhmm = String(REMINDER.h).padStart(2, '0') + ':' + String(REMINDER.m).padStart(2, '0');
   const chev = ico('chev', 'chev');
   body.innerHTML = `
     <div class="me">
@@ -4849,6 +4958,8 @@ function renderMore() {
     <div class="list">${S.habits.length ? S.habits.map(h => habitRow(h, done, true)).join('') : '<div class="row"><span class="r-t"><small>Nenhum hábito ainda. Comece por um pequeno.</small></span></div>'}</div>
     <button class="btn btn-soft" style="margin-top:10px" onclick="openHabitSheet()">${ico('mais')}Novo hábito</button>
     <button class="btn-link" onclick="runTool('plan')">Escolher pequenos passos para a semana</button>
+    <div class="section-lbl" id="me-lembretes">Lembretes</div>
+    ${reminderRows()}
     <div class="section-lbl">Rede de apoio</div>
     <div class="list">
       <button class="row" onclick="goTo('sos')"><span class="r-ic">${ico('tel')}</span><span class="r-t"><b>Minhas pessoas</b><small>${CONTACTS.length ? esc(CONTACTS.map(c => c.name).join(', ')) : 'Guarde até 3 pessoas de confiança'}</small></span>${chev}</button>
@@ -4857,11 +4968,7 @@ function renderMore() {
     <div class="section-lbl">Preferências</div>
     <div class="list">
       <button class="row" onclick="openOnboard(true)"><span class="r-ic">${ico('broto')}</span><span class="r-t"><b>Seu perfil</b><small>${esc(goals)}</small></span>${chev}</button>
-      ${reminderPlugin()
-        ? `<div class="row"><span class="r-ic">${ico('sino')}</span><span class="r-t"><b>Lembrete gentil</b><small>${REMINDER.on ? 'Todo dia às ' + hhmm + ', só se ainda não registrou' : 'Desligado · no máximo 1 por dia'}</small></span>
-            <label class="switch"><input type="checkbox" ${REMINDER.on ? 'checked' : ''} onchange="setReminder(this.checked)" aria-label="Lembrete gentil"><span></span></label></div>
-          ${REMINDER.on ? `<div class="row"><span class="r-t"><small>Horário do lembrete</small></span><input type="time" class="inp time-inp" value="${hhmm}" onchange="setReminderTime(this.value)" aria-label="Horário do lembrete"></div>` : ''}`
-        : `<div class="row"><span class="r-ic">${ico('sino')}</span><span class="r-t"><b>Lembrete gentil</b><small>Disponível no app para Android</small></span></div>`}
+
     </div>
     <div class="list" style="margin-top:8px">
       <div class="row"><span class="r-ic">${ico('relatorio')}</span><span class="r-t"><b>Estatísticas anônimas</b><small>Números somados de todas as pessoas, para melhorar o Florescer. Nunca levam seu nome nem o que você escreve.</small></span>
@@ -4875,8 +4982,9 @@ function renderMore() {
     </div>
     <button class="btn btn-soft" style="margin-top:18px" onclick="doLogout()">${ico('sair')}Sair da conta</button>
     <button class="btn-link danger" onclick="alert('A exclusão de conta pelo app chega em breve. Enquanto isso, escreva para o suporte que apagamos tudo.')">Excluir minha conta</button>`;
-  if (moreCurrentTab === 'habits' || moreCurrentTab === 'conta') {
-    const target = document.getElementById(moreCurrentTab === 'habits' ? 'me-habits' : 'me-conta');
+  const targetId = {habits: 'me-habits', conta: 'me-conta', lembretes: 'me-lembretes'}[moreCurrentTab];
+  if (targetId) {
+    const target = document.getElementById(targetId);
     moreCurrentTab = null;
     if (target) setTimeout(() => target.scrollIntoView({block: 'start'}), 30);
   }
@@ -5021,17 +5129,18 @@ function toast(msg){
 // Frases anônimas, sempre por escolha de quem escreve, publicadas só depois da aprovação do administrador.
 // Cada frase guarda o idioma em que foi escrita e aparece para quem usa o app nesse idioma.
 function appLang(){ return window.LANG || 'pt'; }
-const WALL_SOURCES = {bom:'Algo bom de um dia', recado:'Recado para quem está num dia difícil', trilha:'Frase de uma trilha concluída'};
+const WALL_SOURCES = {bom:'Algo bom de um dia', recado:'Recado para quem está num dia difícil', trilha:'Frase de uma trilha concluída', movimento:'História de movimento'};
 let WALL = {items: null, loading: false, error: false, loadedAt: 0, reacted: {}};
 try { WALL.reacted = JSON.parse(localStorage.getItem('fl_wall_reacted') || '{}') || {}; } catch (e) {}
 const WALL_BLOCK = /(^|[^a-zà-ú])(porra|caralho|merda|puta|putas|puto|foda|foder|fdp|vtnc|vsf|buceta|cacete|arrombad[oa]|viad[oa]|idiota|imbecil|ot[aá]ri[oa])([^a-zà-ú]|$)/i;
 const WALL_CRISIS = /(suic[ií]d|me\s+matar|se\s+matar|tirar\s+(a\s+)?(minha\s+)?(pr[oó]pria\s+)?vida|n[ãa]o\s+quero\s+(mais\s+)?viver|quero\s+morrer|me\s+cortar|acabar\s+com\s+tudo|sumir\s+para\s+sempre)/i;
 
-function wallCheck(text){
+function wallCheck(text, max){
+  max = max || 160;
   const t = String(text || '').trim().replace(/\s+/g, ' ');
   if (WALL_CRISIS.test(t)) return {ok:false, crisis:true};
   if (t.length < 3) return {ok:false, msg:'Escreva pelo menos algumas palavras.'};
-  if (t.length > 160) return {ok:false, msg:'Use até 160 caracteres.'};
+  if (t.length > max) return {ok:false, msg:'Use até ' + max + ' caracteres.'};
   if (/(\d[\s().-]*){8,}/.test(t)) return {ok:false, msg:'Para proteger você, o mural não aceita números de telefone.'};
   if (/[\w.+-]+@[\w-]+\.[\w.]+|https?:\/\/|www\.|\.(com|br|net|org)\b|@\w{2,}/i.test(t)) return {ok:false, msg:'O mural não aceita e-mails, links ou perfis.'};
   if (WALL_BLOCK.test(t)) return {ok:false, msg:'Essa mensagem tem palavras que o mural não aceita.'};
@@ -5044,13 +5153,13 @@ function wallCrisis(){
   toast('Essa mensagem não vai para o mural. Você não precisa passar por isso sem apoio.');
 }
 // true = enviado · false = sinal de crise (a ajuda já foi aberta) · texto = motivo para corrigir
-async function wallSubmit(text, source){
-  const c = wallCheck(text);
+async function wallSubmit(text, source, extra){
+  const c = wallCheck(text, source === 'movimento' ? 280 : 160);
   if (c.crisis) { wallCrisis(); return false; }
   if (!c.ok) return c.msg;
   if (!window.wallPost) return 'O mural está sem conexão agora. Tente mais tarde.';
   try {
-    await window.wallPost({text: c.text, source, lang: appLang()});
+    await window.wallPost(Object.assign({text: c.text, source, lang: appLang()}, extra || {}));
     statTool('mural');
     return true;
   } catch (e) {
@@ -5063,7 +5172,7 @@ async function loadWall(force){
   if (!window.wallApproved) { WALL.items = []; return; }
   WALL.loading = true;
   try {
-    WALL.items = (await window.wallApproved(appLang())).filter(w => (w.reports || 0) < 3);
+    WALL.items = (await window.wallApproved(appLang())).filter(w => (w.reports || 0) < 3 && w.source !== 'movimento');
     WALL.error = false;
     WALL.loadedAt = Date.now();
   } catch (e) {
@@ -5102,6 +5211,7 @@ function renderWall(body){
       <div class="wall-row"><span class="r-meta" id="wall-count">0/160</span><button class="btn btn-p" id="wall-send" onclick="wallSendRecado()">Enviar</button></div>
       <div class="tr-warn" id="wall-warn"></div>
     </div>
+    <button class="tool-row" onclick="runTool('movimento')"><span class="r-ic">${ico('mov')}</span><span class="r-t"><b>O movimento muda vidas</b><small>Histórias de quem mudou a rotina com atividade física</small></span>${ico('chev', 'chev')}</button>
     <div class="section-lbl">No mural</div>
     ${items === null
       ? '<div class="empty">Carregando…</div>'
@@ -5127,13 +5237,14 @@ function wallReactUi(id, field){
   WALL.reacted[id] = field;
   try { localStorage.setItem('fl_wall_reacted', JSON.stringify(WALL.reacted)); } catch (e) {}
   if (window.wallReact) window.wallReact(id, field);
-  const w = (WALL.items || []).find(x => x.id === id);
-  if (w) {
+  [WALL, MOVE].forEach(store => {
+    const w = (store.items || []).find(x => x.id === id);
+    if (!w) return;
     if (field === 'helped') w.helped = (w.helped || 0) + 1;
-    else WALL.items = WALL.items.filter(x => x.id !== id);
-  }
+    else store.items = store.items.filter(x => x.id !== id);
+  });
   renderTool(1);
-  toast(field === 'helped' ? 'Que bom que ajudou.' : 'Obrigado por avisar. A frase será revisada.');
+  toast(field === 'helped' ? (TOOL.kind === 'movimento' ? 'Que bom que inspirou.' : 'Que bom que ajudou.') : 'Obrigado por avisar. Vai ser revisado.');
 }
 function openShareSheet(text, source){
   closeHelpSheet();
@@ -5162,6 +5273,110 @@ function openWallShareTrail(id){
   if (!st || !tr) return;
   const text = st.notes['d' + tr.days.length] || Object.values(st.notes || {}).pop() || '';
   openShareSheet(text, 'trilha');
+}
+
+// ═══════════ MURAL DO MOVIMENTO — "O movimento muda vidas" ═══════════
+// Histórias de quem mudou a rotina com atividade física: o que fez bem para a mente e para o corpo.
+// Mesmo cuidado do mural (anônimo, filtro de dados pessoais e de crise, aprovação do administrador),
+// com texto mais longo (280), a atividade e o que melhorou.
+const MOVE_ACTIVITIES = ['Caminhada', 'Corrida', 'Academia', 'Bicicleta', 'Dança', 'Futebol', 'Natação', 'Yoga ou alongamento', 'Luta', 'Outra'];
+const MOVE_TAGS = [['mente', 'Mente mais leve'], ['ansiedade', 'Menos ansiedade'], ['humor', 'Humor'], ['sono', 'Sono'], ['energia', 'Energia'], ['corpo', 'Corpo'], ['autoestima', 'Autoestima'], ['amizades', 'Novas amizades']];
+const MOVE_ENERGY = {
+  pouca: 'Alongar 5 minutos ou uma caminhada curta e leve. Se o corpo pedir descanso, descansar também é cuidado.',
+  media: 'Uma caminhada de 15 a 20 minutos em ritmo confortável, ou dançar algumas músicas.',
+  boa: 'Sua atividade de sempre. Se no meio do caminho o corpo pedir menos, tudo bem diminuir.',
+};
+// Relatos de parar remédio por conta própria não entram (o app nunca orienta sobre medicação).
+const MOVE_MED = /(parei|larguei|deixei|abandonei|sem)\s+(de\s+tomar\s+)?(o\s+|os\s+|a\s+|meu\s+|meus\s+|minha\s+)?(rem[eé]dio|medica[çc]|antidepressiv|ansiol[ií]tic)/i;
+let MOVE = {items: null, loading: false, error: false, loadedAt: 0, activity: '', tags: [], draft: '', energy: ''};
+async function loadMove(force){
+  if (MOVE.loading) return;
+  if (!force && MOVE.items && Date.now() - MOVE.loadedAt < 10 * 60000) return;
+  if (!window.wallApproved) { MOVE.items = []; return; }
+  MOVE.loading = true;
+  try {
+    MOVE.items = (await window.wallApproved(appLang(), 'movimento')).filter(w => (w.reports || 0) < 3);
+    MOVE.error = false;
+    MOVE.loadedAt = Date.now();
+  } catch (e) {
+    console.log('mural do movimento:', e && e.message);
+    MOVE.items = MOVE.items || [];
+    MOVE.error = true;
+  }
+  MOVE.loading = false;
+}
+function moveTagLabel(k){ const t = MOVE_TAGS.find(x => x[0] === k); return t ? t[1] : k; }
+function moveItemRow(w){
+  const done = WALL.reacted[w.id];
+  const meta = [w.activity, (w.tags || []).map(moveTagLabel).join(' · ')].filter(Boolean).join(' — ');
+  return `<div class="wall-item"><p>“${esc(w.text)}”</p>
+    <div class="wall-meta"><span>${esc(meta)}</span>
+      <button class="pbtn ${done === 'helped' ? 'on' : ''}" onclick="wallReactUi('${w.id}','helped')" ${done ? 'disabled' : ''}>${ico('coracao')}${done === 'helped' ? 'Me inspirou' : 'Isso me inspira'}${w.helped ? ' · ' + w.helped : ''}</button>
+      ${done ? '' : `<button class="pbtn pbtn-x" onclick="wallReactUi('${w.id}','reports')">Denunciar</button>`}</div></div>`;
+}
+function renderMove(body){
+  const items = MOVE.items;
+  const counts = {};
+  (items || []).forEach(w => (w.tags || []).forEach(t => { counts[t] = (counts[t] || 0) + 1; }));
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 4);
+  body.innerHTML = `<div class="hero-ic">${ico('mov')}</div>
+    <div class="art-title">O movimento muda vidas</div>
+    <p class="sub">Histórias de quem colocou o corpo em movimento: o que mudou na mente, no corpo e na rotina. Sem nomes, e tudo passa por aprovação antes de aparecer.</p>
+    <div class="card">
+      <div class="card-title">No seu ritmo</div>
+      <div class="card-sub">Como está sua energia hoje? Adaptar a intensidade é autocuidado, não fraqueza.</div>
+      <div class="tags" style="margin-top:10px">${[['pouca', 'Pouca'], ['media', 'Média'], ['boa', 'Boa']].map(([k, l]) => `<button class="chip ${MOVE.energy === k ? 'sel' : ''}" onclick="moveEnergy('${k}')">${l}</button>`).join('')}</div>
+      ${MOVE.energy ? `<p class="move-tip">${MOVE_ENERGY[MOVE.energy]}</p>` : ''}
+      <button class="btn-link" style="margin-top:6px" onclick="runTool('art:corpo')">Ler: escutar o corpo sem se cobrar</button>
+    </div>
+    ${items && items.length >= 3 && top.length ? `<div class="card"><div class="card-title">O que mais mudou, segundo quem contou</div>${hbars(top.map(([k, n]) => [moveTagLabel(k), n]), items.length, () => '#8fc9b0', (v) => String(v))}</div>` : ''}
+    <div class="section-lbl">Histórias</div>
+    ${items === null
+      ? '<div class="empty">Carregando…</div>'
+      : MOVE.error && !items.length
+        ? '<div class="empty">Não deu para carregar as histórias agora. Tente de novo mais tarde.</div>'
+        : items.length
+          ? `<div class="list">${items.map(moveItemRow).join('')}</div>`
+          : '<div class="empty">Ainda não há histórias aprovadas. A sua pode ser a primeira.</div>'}
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">Conte a sua história</div>
+      <div class="card-sub">O que a atividade física fez ou faz por você? O que você sente quando muda a rotina?</div>
+      <div class="card-sub" style="margin-top:12px">Qual atividade?</div>
+      <div class="tags" style="margin-top:8px">${MOVE_ACTIVITIES.map(a => `<button class="chip ${MOVE.activity === a ? 'sel' : ''}" data-v="${a}" onclick="moveAct(this)">${a}</button>`).join('')}</div>
+      <div class="card-sub" style="margin-top:12px">O que melhorou? Escolha até 4.</div>
+      <div class="tags" style="margin-top:8px">${MOVE_TAGS.map(([k, l]) => `<button class="chip ${MOVE.tags.includes(k) ? 'sel' : ''}" onclick="moveTag('${k}', this)">${l}</button>`).join('')}</div>
+      <textarea class="inp" id="move-text" rows="4" maxlength="280" style="margin-top:12px" placeholder="Ex.: Comecei caminhando 10 minutos depois do trabalho. Hoje durmo melhor e chego em casa mais calmo.">${esc(MOVE.draft)}</textarea>
+      <div class="wall-row"><span class="r-meta" id="move-count">${MOVE.draft.length}/280</span><button class="btn btn-p" id="move-send" onclick="moveSend()">Enviar</button></div>
+      <div class="tr-warn" id="move-warn"></div>
+    </div>
+    <p class="rep-foot">Cada corpo tem seu ritmo. Antes de começar algo mais intenso, vale conversar com um profissional de saúde.</p>`;
+  const ta = document.getElementById('move-text');
+  if (ta) ta.addEventListener('input', () => { MOVE.draft = ta.value; document.getElementById('move-count').textContent = ta.value.length + '/280'; });
+  if (items === null && !MOVE.loading) loadMove(true).then(() => { if (TOOL.kind === 'movimento' && document.getElementById('s-tool').classList.contains('active')) renderTool(1); });
+}
+function moveEnergy(k){ MOVE.energy = MOVE.energy === k ? '' : k; renderTool(1); }
+function moveAct(btn){
+  MOVE.activity = MOVE.activity === btn.dataset.v ? '' : btn.dataset.v;
+  btn.parentNode.querySelectorAll('.chip').forEach(b => b.classList.toggle('sel', b.dataset.v === MOVE.activity));
+}
+function moveTag(k, btn){
+  const i = MOVE.tags.indexOf(k);
+  if (i >= 0) MOVE.tags.splice(i, 1);
+  else if (MOVE.tags.length < 4) MOVE.tags.push(k);
+  btn.classList.toggle('sel', MOVE.tags.includes(k));
+}
+async function moveSend(){
+  const ta = document.getElementById('move-text'), warn = document.getElementById('move-warn'), btn = document.getElementById('move-send');
+  if (!ta) return;
+  if (MOVE_MED.test(ta.value)) { warn.textContent = 'Relatos sobre parar ou mudar remédios não entram no mural. Essa conversa é com quem acompanha você.'; return; }
+  btn.disabled = true;
+  const r = await wallSubmit(ta.value, 'movimento', {activity: MOVE.activity, tags: MOVE.tags.slice()});
+  btn.disabled = false;
+  if (r === true) {
+    MOVE.draft = ''; MOVE.activity = ''; MOVE.tags = [];
+    renderTool(1);
+    toast('Obrigado por contar. Sua história aparece depois de aprovada, sem seu nome.');
+  } else if (typeof r === 'string') warn.textContent = r;
 }
 
 // ═══════════ ESTATÍSTICAS ANÔNIMAS ═══════════
@@ -5363,14 +5578,14 @@ function adminMural(){
   const pend = ADMIN.data.pending || [], appr = ADMIN.data.approved || [];
   const reported = appr.filter(w => (w.reports || 0) > 0).sort((a, b) => b.reports - a.reports);
   const langName = {pt: 'PT', en: 'EN', es: 'ES'};
-  const item = (w, actions) => `<div class="wall-item"><p>“${esc(w.text)}”</p><div class="wall-meta"><span>${WALL_SOURCES[w.source] || ''} · ${langName[w.lang] || 'PT'} · ${w.createdAt ? new Date(w.createdAt).toLocaleDateString('pt-BR') : ''}${w.reports ? ' · ' + w.reports + ' ' + pl(w.reports, 'denúncia', 'denúncias') : ''}</span>${actions}</div></div>`;
+  const item = (w, actions) => `<div class="wall-item"><p>“${esc(w.text)}”</p><div class="wall-meta"><span>${WALL_SOURCES[w.source] || ''}${w.activity ? ' · ' + esc(w.activity) : ''} · ${langName[w.lang] || 'PT'} · ${w.createdAt ? new Date(w.createdAt).toLocaleDateString('pt-BR') : ''}${w.reports ? ' · ' + w.reports + ' ' + pl(w.reports, 'denúncia', 'denúncias') : ''}</span>${actions}</div></div>`;
   return `<div class="section-lbl" style="margin-top:4px">Aguardando aprovação · ${pend.length}</div>
     ${pend.length ? `<div class="list">${pend.map(w => item(w, `<button class="pbtn" onclick="adminMod('${w.id}','approved')">Aprovar</button><button class="pbtn pbtn-x" onclick="adminMod('${w.id}','rejected')">Recusar</button>`)).join('')}</div>` : '<div class="rep-empty">Nada pendente.</div>'}
     <div class="section-lbl">Com denúncia · ${reported.length}</div>
     ${reported.length ? `<div class="list">${reported.map(w => item(w, `<button class="pbtn pbtn-x" onclick="adminMod('${w.id}','rejected')">Retirar</button>`)).join('')}</div>` : '<div class="rep-empty">Nenhuma denúncia.</div>'}
     <div class="section-lbl">No ar · ${appr.length}</div>
     ${appr.length ? `<div class="list">${appr.slice(0, 40).map(w => item(w, `<span class="r-meta">${w.helped || 0} ajudou</span><button class="pbtn pbtn-x" onclick="adminMod('${w.id}','rejected')">Retirar</button>`)).join('')}</div>` : '<div class="rep-empty">Nenhuma frase no ar.</div>'}
-    <p class="rep-foot">Aprove frases gentis e gerais. Recuse conselhos médicos, promessas de cura, dados pessoais, religião imposta ou qualquer coisa que possa machucar alguém.</p>`;
+    <p class="rep-foot">Aprove frases gentis e gerais. Recuse conselhos médicos, promessas de cura, dados pessoais, religião imposta ou qualquer coisa que possa machucar alguém. Nas histórias de movimento, recuse também relatos de parar remédio por conta própria, dietas extremas e comparações de corpo.</p>`;
 }
 async function adminMod(id, status){
   if (!window.adminModerate) return;
@@ -5466,6 +5681,23 @@ document.addEventListener('click', (ev) => {
 const HABIT_NOTIF_KEY = 'fl_habit_notif_ids';
 let HABIT_EDIT = null;
 let HABIT_ACTION_QUEUE = [];
+const HABIT_CHECK_TITLES = ['Já cuidou de você hoje?', 'Como estão seus hábitos hoje?', 'Um minuto para você?'];
+function habitCheckBody(list, seed){
+  const names = list.map(h => h.name);
+  const shown = names.slice(0, 3).join(', ') + (names.length > 3 ? ' e mais ' + (names.length - 3) : '');
+  const head = list.length === 1 ? 'Você já fez “' + names[0] + '” hoje?' : 'Faltam ' + list.length + ': ' + shown + '.';
+  return head + (seed % 2 ? ' Se já fez, é só marcar.' : ' Em dia de pouca energia, uma versão menor também conta.');
+}
+// Quem já tem hábitos e já permitiu notificações passa a receber a pergunta (dá para desligar em Você › Lembretes).
+async function habitCheckAuto(ln){
+  if (HABIT_CHECK.set || !S.habits.length) return;
+  try {
+    const p = await ln.checkPermissions();
+    if (p.display !== 'granted') return;
+    HABIT_CHECK = {on: true, h: HABIT_CHECK.h, m: HABIT_CHECK.m, set: true};
+    saveHabitCheck();
+  } catch (e) {}
+}
 function habitDoneToday(id){ return (S.habitDone[new Date().toDateString()] || []).includes(id); }
 async function notifPermissionOk(){
   const ln = reminderPlugin();
@@ -5486,8 +5718,10 @@ async function scheduleHabitReminders(){
     if (old.length) await ln.cancel({notifications: old.map(id => ({id}))});
     const list = [];
     if (S.user) {
+      await habitCheckAuto(ln);
       const now = new Date();
       let seq = 0;
+      // Lembrete de cada hábito com horário próprio.
       S.habits.filter(h => h.remind).forEach(h => {
         const [hh, mm] = String(h.remind).split(':').map(Number);
         if (isNaN(hh) || isNaN(mm)) return;
@@ -5501,6 +5735,23 @@ async function scheduleHabitReminders(){
             actionTypeId: 'HABIT', extra: {kind: 'habit', habitId: String(h.id), day: at.toDateString()}});
         }
       });
+      // Pergunta do dia (IDs 300–313): hoje lista só o que falta; nos próximos dias, todos (reagenda ao marcar).
+      if (HABIT_CHECK.on && S.habits.length) {
+        const doneToday = S.habitDone[now.toDateString()] || [];
+        for (let d = 0; d < 14; d++) {
+          const at = new Date();
+          at.setDate(at.getDate() + d);
+          at.setHours(HABIT_CHECK.h, HABIT_CHECK.m, 0, 0);
+          if (at <= now) continue;
+          const pend = d === 0 ? S.habits.filter(h => !doneToday.includes(h.id)) : S.habits;
+          if (!pend.length) continue;
+          const one = pend.length === 1, day = at.toDateString();
+          list.push({id: 300 + d, title: HABIT_CHECK_TITLES[at.getDate() % HABIT_CHECK_TITLES.length], body: habitCheckBody(pend, at.getDate()),
+            schedule: {at, allowWhileIdle: true}, smallIcon: 'ic_stat_florescer', iconColor: '#2a7d63',
+            actionTypeId: one ? 'HABIT' : 'HABIT_ALL',
+            extra: one ? {kind: 'habit', habitId: String(pend[0].id), day} : {kind: 'habit-all', day}});
+        }
+      }
     }
     if (list.length) await ln.schedule({notifications: list});
     localStorage.setItem(HABIT_NOTIF_KEY, JSON.stringify(list.map(n => n.id)));
@@ -5512,12 +5763,19 @@ function setupHabitNotifications(){
   const ln = reminderPlugin();
   if (!ln || setupHabitNotifications.done) return;
   setupHabitNotifications.done = true;
-  try { ln.registerActionTypes({types: [{id: 'HABIT', actions: [{id: 'done', title: 'Marcar como feito'}]}]}); } catch (e) {}
+  try {
+    const r = ln.registerActionTypes({types: [
+      {id: 'HABIT', actions: [{id: 'done', title: 'Marcar como feito'}]},
+      {id: 'HABIT_ALL', actions: [{id: 'all', title: 'Já fiz todos'}]},
+    ]});
+    if (r && r.catch) r.catch(() => {});
+  } catch (e) {}
   try {
     ln.addListener('localNotificationActionPerformed', (e) => {
       const x = (e && e.notification && e.notification.extra) || {};
-      if (x.kind !== 'habit') return;
-      HABIT_ACTION_QUEUE.push({habitId: x.habitId, day: x.day, done: e.actionId === 'done'});
+      if (x.kind === 'habit') HABIT_ACTION_QUEUE.push({habitId: x.habitId, day: x.day, done: e.actionId === 'done'});
+      else if (x.kind === 'habit-all') HABIT_ACTION_QUEUE.push({all: true, day: x.day, done: e.actionId === 'all'});
+      else return;
       processHabitActions();
     });
   } catch (e) {}
@@ -5526,14 +5784,26 @@ function setupHabitNotifications(){
 function processHabitActions(){
   if (!S.user || !HABIT_ACTION_QUEUE.length) return;
   const queue = HABIT_ACTION_QUEUE.splice(0);
+  const today = new Date().toDateString();
   queue.forEach(a => {
+    if (!a.done || a.day !== today) return;
+    if (a.all) {
+      const pend = S.habits.filter(h => !habitDoneToday(h.id));
+      pend.forEach(h => toggleHabit(h.id));
+      if (pend.length) toast('Tudo marcado. Bom cuidado hoje.');
+      return;
+    }
     const h = S.habits.find(x => String(x.id) === String(a.habitId));
-    if (h && a.done && a.day === new Date().toDateString() && !habitDoneToday(h.id)) {
+    if (h && !habitDoneToday(h.id)) {
       toggleHabit(h.id);
       toast('Feito: ' + h.name + '.');
     }
   });
-  if (queue.some(a => !a.done) && !document.getElementById('s-cover').classList.contains('active')) goTo('home');
+  // Tocar na notificação (sem botão) abre a Home nos hábitos.
+  if (queue.some(a => !a.done) && !document.getElementById('s-cover').classList.contains('active')) {
+    goTo('home');
+    setTimeout(() => { const el = document.getElementById('home-habits'); if (el) el.scrollIntoView({block: 'center', behavior: 'smooth'}); }, 250);
+  }
 }
 function openHabitSheet(id){
   closeHelpSheet();
@@ -5554,6 +5824,7 @@ function openHabitSheet(id){
         <label class="switch"><input type="checkbox" id="hab-remind" ${remind ? 'checked' : ''} ${native ? '' : 'disabled'} onchange="document.getElementById('hab-time-row').hidden = !this.checked" aria-label="Me lembrar todo dia"><span></span></label></div>
       <div class="row" id="hab-time-row" ${remind ? '' : 'hidden'}><span class="r-t"><b style="font-weight:400">Horário</b></span><input type="time" class="inp time-inp" id="hab-time" value="${remind || '08:00'}" aria-label="Horário do lembrete"></div>
     </div>
+    ${native ? `<p class="rep-foot" style="margin:0 2px">${HABIT_CHECK.on ? 'Todo dia às ' + hhmmOf(HABIT_CHECK.h, HABIT_CHECK.m) + ' o Florescer pergunta se você já fez seus hábitos.' : HABIT_CHECK.set ? 'A pergunta diária dos hábitos está desligada.' : 'Ao salvar, o Florescer passa a perguntar todo dia às ' + hhmmOf(HABIT_CHECK.h, HABIT_CHECK.m) + ' se você já fez seus hábitos.'} Ajuste em Você › Lembretes.</p>` : ''}
     <div class="tr-warn" id="hab-warn"></div>
     <button class="btn btn-p" onclick="saveHabitSheet()">Salvar</button>
     ${h ? `<button class="btn-link danger" style="margin:2px auto 0" onclick="deleteHabit(${h.id})">Excluir hábito</button>` : `<button class="btn-link hs-more" onclick="closeHelpSheet()">Cancelar</button>`}
@@ -5578,11 +5849,20 @@ async function saveHabitSheet(){
     if (remind) nh.remind = remind;
     S.habits.push(nh);
   }
+  // Primeiro hábito criado: liga a pergunta diária (pede a permissão, se ainda não houver).
+  let checkOn = false;
+  if (!editing && !HABIT_CHECK.set && reminderPlugin()) {
+    const ok = await notifPermissionOk();
+    HABIT_CHECK = {on: ok, h: HABIT_CHECK.h, m: HABIT_CHECK.m, set: true};
+    saveHabitCheck();
+    checkOn = ok;
+  }
   save();
   if (window.saveHabitsCloud) window.saveHabitsCloud();
   closeHelpSheet();
   scheduleHabitReminders();
-  toast(remind ? 'Pronto. O lembrete vem todo dia às ' + remind + '.' : 'Hábito salvo.');
+  toast(checkOn ? 'Hábito salvo. Todo dia às ' + hhmmOf(HABIT_CHECK.h, HABIT_CHECK.m) + ' o Florescer pergunta se você já fez.'
+    : remind ? 'Pronto. O lembrete vem todo dia às ' + remind + '.' : 'Hábito salvo.');
   renderHome();
   if (document.getElementById('s-more').classList.contains('active')) renderMore();
 }
@@ -5600,9 +5880,11 @@ function deleteHabit(id){
 // Marcar ou desmarcar um hábito reagenda os lembretes (o do dia some quando já foi feito).
 (function(){
   const _toggle = toggleHabit;
+  let timer = null;
   toggleHabit = function(){
     const result = _toggle.apply(this, arguments);
-    scheduleHabitReminders();
+    clearTimeout(timer);
+    timer = setTimeout(scheduleHabitReminders, 400);
     return result;
   };
 })();

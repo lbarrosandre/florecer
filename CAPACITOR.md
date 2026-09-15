@@ -100,3 +100,5 @@ F2.3 (passos 1–3) → F2.4 (passo 4) → F2.5 (passo 5) → **F2.6 (passo 6)**
 `jspdf` não é plugin: `scripts/build-www.mjs` copia `node_modules/jspdf/dist/jspdf.umd.min.js` para `www/vendor/`, e o app carrega sob demanda ao gerar o PDF.
 
 Depois de instalar/atualizar plugin: `npm run cap:sync` e gerar novo APK/AAB (mudança nativa não chega por atualização do `index.html`).
+
+> ⚠️ Antes de gerar o APK, rode `npm run check:android`. Se um plugin ficar fora de `android/capacitor.settings.gradle`, `android/app/capacitor.build.gradle` ou `capacitor.plugins.json`, o app compila, mas a função some sem erro — aconteceu em 15/09 com notificações, PDF e compartilhar. Rode o `cap sync` no próprio projeto (os arquivos gerados são versionados), não só numa cópia usada para o build.

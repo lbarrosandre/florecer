@@ -7,7 +7,8 @@
   "scripts": {
     "build": "node scripts/build-www.mjs",
     "serve": "python -m http.server 8000 --bind 127.0.0.1",
-    "cap:sync": "npm run build && npx cap sync android",
+    "cap:sync": "npm run build && npx cap sync android && npm run check:android",
+    "check:android": "node scripts/check-android-plugins.mjs",
     "cap:open": "npx cap open android"
   },
   "dependencies": {
