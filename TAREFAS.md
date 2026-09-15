@@ -194,7 +194,15 @@ Princípio: **nada ligado a segurança fica atrás de pagamento** (SOS, CVV, res
 | Hábitos | até 3 | ilimitados |
 | Planta, conquistas, desafios, lembrete | ✅ | ✅ |
 
-Preço sugerido (referência de mercado de apps de bem-estar no Brasil): **R$ 14,90/mês ou R$ 99,90/ano**, com **7 dias grátis**. Implementação do bloqueio só junto com o Billing (Fase 06).
+~~Preço sugerido: R$ 14,90/mês ou R$ 99,90/ano~~ → **Decidido pelo André em 15/09: 7 dias grátis, depois R$ 12,99/mês ou R$ 119,99/ano** (anual = R$ 10,00/mês, 23% de desconto sobre 12 × 12,99 = R$ 155,88). Falta decidir o que continua liberado depois dos 7 dias sem assinar (ver B11.1). Implementação no Bloco 11.
+
+### Bloco 11 — Assinatura pelo Google Play (decisão de 15/09)
+- [ ] **[B11.1]** Decidir o que fica liberado sem assinatura depois do teste. Mínimo inegociável: SOS/CVV/respiração/aterramento e **ver e exportar os próprios registros** (LGPD, art. 18 — acesso e portabilidade).
+- [ ] **[B11.2]** Play Console: perfil de pagamentos (conta bancária) → 1 assinatura `florescer_premium` com 2 planos base (`mensal` R$ 12,99 e `anual` R$ 119,99, renovação automática) + oferta `teste-7-dias` só para quem nunca assinou. Os produtos só podem ser criados depois de enviar um AAB com a biblioteca de Billing.
+- [ ] **[B11.3]** App: plugin de compras (avaliar RevenueCat `@revenuecat/purchases-capacitor` × `cordova-plugin-purchase`), tela de planos com preço, data da cobrança e como cancelar (exigência da política de assinaturas do Google), "Gerenciar assinatura" em Você (link para a Play Store), "Restaurar compra".
+- [ ] **[B11.4]** Validação da compra fora do aparelho (RevenueCat ou Cloud Function com Real-time Developer Notifications) gravando o direito Premium por usuário; bloqueios conforme B11.1.
+- [ ] **[B11.5]** Textos da entrada e da loja: "Começar grátis" → "Teste grátis por 7 dias"; política de privacidade e página da loja citando assinatura.
+- [ ] **[B11.6]** Testes com contas de teste de licença do Play Console (compra sem cobrança, renovação acelerada) no teste fechado com os 12 testadores.
 
 ### Bloco 5 — Florescer na vida real (pedido do André em 12/09, a partir de material sobre ansiedade/depressão)
 - [x] **[B5.1]** `P0` **Pilares do cuidado** — Movimento, Sono, Alimentação, Conexão, Pausa. Card "Hoje eu…" na Home e no registro; respiração, meditação, aterramento e hábitos com pilar marcam sozinhos. Relatório, Descobertas e PDF cruzam pilares × humor. Mostra o que apareceu, nunca o que faltou. Salvo em `progress.pillars`.
