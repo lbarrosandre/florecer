@@ -858,6 +858,10 @@ div.row{cursor:default}
 .adm-kpi{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px}
 .adm-kpi b{display:block;font-size:24px;font-weight:300;color:var(--ink);font-variant-numeric:tabular-nums}
 .adm-kpi span{font-size:11.5px;color:var(--muted);line-height:1.35}
+/* ── Compartilhar e hábitos ── */
+.help-sheet [hidden]{display:none !important}
+.hab-done{color:var(--muted) !important;font-weight:400 !important}
+.hab-links{display:flex;justify-content:space-between;align-items:center;gap:8px}
 </style>
 
   <!-- Firebase SDK (versão compat - mais estável) -->
@@ -925,6 +929,8 @@ div.row{cursor:default}
         if (window.scheduleReminders) window.scheduleReminders();
         checkAdmin(user);
         touchMember(user);
+        if (window.scheduleHabitReminders) window.scheduleHabitReminders();
+        if (window.processHabitActions) window.processHabitActions();
       } else {
         window.S.user = null;
         localStorage.removeItem('fl_user');
@@ -3681,15 +3687,7 @@ function renderApoio(body){
 async function shareApoio(){
   const text = document.getElementById('apoio-txt').value.trim();
   if (!text) return;
-  const C = window.Capacitor;
-  const P = C && C.isNativePlatform && C.isNativePlatform() ? C.Plugins : null;
-  try {
-    if (P && P.Share) await P.Share.share({title: 'Como me apoiar', text, dialogTitle: 'Enviar para'});
-    else if (navigator.share) await navigator.share({title: 'Como me apoiar', text});
-    else { await navigator.clipboard.writeText(text); alert('Texto copiado. É só colar na conversa.'); }
-  } catch (e) {
-    if (!/cancel|abort/i.test((e && e.message) || '')) alert('Não deu para abrir o compartilhamento. Copie o texto e cole na conversa.');
-  }
+  openShareOptions(text, 'Como me apoiar');
 }
 
 // ═══════════ PERFIL (onboarding) ═══════════
@@ -3974,7 +3972,10 @@ async function scheduleReminders(){
 }
 window.cancelReminders = async function(){
   const ln = reminderPlugin();
-  if (ln) try { await ln.cancel({notifications: REMINDER_IDS.map(id => ({id}))}); } catch (e) {}
+  if (!ln) return;
+  let habitIds = [];
+  try { habitIds = JSON.parse(localStorage.getItem('fl_habit_notif_ids') || '[]'); } catch (e) {}
+  try { await ln.cancel({notifications: [...REMINDER_IDS, ...habitIds].map(id => ({id}))}); } catch (e) {}
 };
 async function setReminder(on, h, m){
   const ln = reminderPlugin();
@@ -4640,19 +4641,29 @@ function renderHomeSeal(){
   el.setAttribute('aria-label', 'Sua jornada');
   el.innerHTML = `<span class="seal-ic">${ico('broto')}</span><span>${grew ? 'Sua planta cresceu — ver' : days + ' ' + pl(days, 'dia', 'dias') + ' de cuidado'}</span>`;
 }
-function habitRow(h, done){
+function habitRow(h, done, editable){
   const on = done.includes(h.id);
+  const meta = h.remind
+    ? `<span class="r-meta">${h.remind}</span>`
+    : (h.pillar ? `<span class="r-meta">${ico(PILLAR_ICON[h.pillar] || 'broto', 'chev')}</span>` : '');
   return `<div class="row"><button class="habit-check${on ? ' done' : ''}" onclick="toggleHabit(${h.id})" aria-pressed="${on}" aria-label="${esc(h.name)}">${on ? ico('check') : ''}</button>
-    <span class="r-t"><b>${esc(h.name)}</b>${h.streak > 0 ? `<small>${h.streak} ${pl(h.streak, 'dia', 'dias')} de cuidado</small>` : ''}</span>${h.pillar ? `<span class="r-meta">${ico(PILLAR_ICON[h.pillar] || 'broto', 'chev')}</span>` : ''}</div>`;
+    <span class="r-t"><b class="${on ? 'hab-done' : ''}">${esc(h.name)}</b>${h.streak > 0 ? `<small>${h.streak} ${pl(h.streak, 'dia', 'dias')} de cuidado</small>` : ''}</span>${meta}
+    ${editable ? `<button class="pbtn" onclick="openHabitSheet(${h.id})" aria-label="Editar ${esc(h.name)}">${ico('editar')}</button>` : ''}</div>`;
 }
 function renderHomeHabits(){
   const el = document.getElementById('home-habits');
   if (!el) return;
-  if (!S.habits.length) { el.innerHTML = ''; return; }
+  if (!S.habits.length) {
+    el.innerHTML = `<div class="section-lbl">Hábitos de hoje</div>
+      <button class="tool-row" onclick="openHabitSheet()"><span class="r-ic">${ico('mais')}</span><span class="r-t"><b>Criar um hábito</b><small>Algo pequeno para fazer todo dia, com lembrete se quiser</small></span>${ico('chev', 'chev')}</button>`;
+    return;
+  }
   const done = S.habitDone[new Date().toDateString()] || [];
-  const list = [...S.habits].sort((a, b) => (b.plan ? 1 : 0) - (a.plan ? 1 : 0)).slice(0, 3);
-  el.innerHTML = `<div class="section-lbl">Hábitos de hoje</div><div class="list">${list.map(h => habitRow(h, done)).join('')}</div>`
-    + (S.habits.length > 3 ? `<button class="btn-link" onclick="moreTab('habits');goTo('more')">Ver todos os ${S.habits.length} hábitos</button>` : '');
+  const byTime = (h) => h.remind || '99:99';
+  const list = [...S.habits].sort((a, b) => (done.includes(a.id) - done.includes(b.id)) || byTime(a).localeCompare(byTime(b)));
+  const feitos = S.habits.filter(h => done.includes(h.id)).length;
+  el.innerHTML = `<div class="section-lbl">Hábitos de hoje · ${feitos} de ${S.habits.length}</div><div class="list">${list.slice(0, 5).map(h => habitRow(h, done)).join('')}</div>
+    <div class="hab-links">${S.habits.length > 5 ? `<button class="btn-link" onclick="moreTab('habits');goTo('more')">Ver todos os ${S.habits.length}</button>` : '<span></span>'}<button class="btn-link" onclick="openHabitSheet()">+ Novo hábito</button></div>`;
 }
 
 // ═══════════ DIÁRIO — registros por dia ═══════════
@@ -4815,8 +4826,9 @@ function renderMore() {
     ${S.isAdmin ? `<div class="section-lbl">Gestão</div>
     <div class="list"><button class="row" onclick="runTool('admin')"><span class="r-ic">${ico('relatorio')}</span><span class="r-t"><b>Painel do administrador</b><small>Pessoas, panorama, evolução e mural</small></span>${chev}</button></div>` : ''}
     <div class="section-lbl" id="me-habits">Hábitos</div>
-    <div class="list">${S.habits.length ? S.habits.map(h => habitRow(h, done)).join('') : '<div class="row"><span class="r-t"><small>Nenhum hábito ainda. Comece por um pequeno.</small></span></div>'}</div>
-    <div class="add-row"><input class="inp" id="new-habit-name" maxlength="40" placeholder="Novo hábito, ex.: caminhar 10 min"><button class="btn btn-p" onclick="addHabit()">Adicionar</button></div>
+    <p class="rep-foot" style="margin:-2px 2px 8px">Toque no lápis para mudar o nome, escolher um horário de lembrete ou excluir.</p>
+    <div class="list">${S.habits.length ? S.habits.map(h => habitRow(h, done, true)).join('') : '<div class="row"><span class="r-t"><small>Nenhum hábito ainda. Comece por um pequeno.</small></span></div>'}</div>
+    <button class="btn btn-soft" style="margin-top:10px" onclick="openHabitSheet()">${ico('mais')}Novo hábito</button>
     <button class="btn-link" onclick="runTool('plan')">Escolher pequenos passos para a semana</button>
     <div class="section-lbl">Rede de apoio</div>
     <div class="list">
@@ -5357,11 +5369,231 @@ async function adminMod(id, status){
   }
 }
 
+// ═══════════ COMPARTILHAR — WhatsApp, e-mail, SMS, copiar ═══════════
+let SHARE_PAYLOAD = {text: '', subject: ''};
+function isNativeApp(){ const C = window.Capacitor; return !!(C && C.isNativePlatform && C.isNativePlatform()); }
+function openExternal(url){
+  if (isNativeApp() || /^(mailto|sms|tel):/i.test(url)) window.location.href = url;
+  else window.open(url, '_blank', 'noopener');
+}
+async function copyText(text){
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (e) {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'absolute';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand('copy');
+      ta.remove();
+      return ok;
+    } catch (e2) { return false; }
+  }
+}
+function openShareOptions(text, subject){
+  closeHelpSheet();
+  SHARE_PAYLOAD = {text: String(text || ''), subject: subject || 'Florescer'};
+  const C = window.Capacitor;
+  const canMore = (isNativeApp() && C.Plugins && C.Plugins.Share) || !!navigator.share;
+  const opt = (kind, icon, title, sub) => `<button class="big-act" onclick="shareVia('${kind}')"><span class="r-ic">${ico(icon)}</span><span class="r-t"><b>${title}</b><small>${sub}</small></span></button>`;
+  const ov = document.createElement('div');
+  ov.className = 'empathy-overlay';
+  ov.id = 'share-sheet';
+  ov.addEventListener('click', (ev) => { if (ev.target === ov) ov.remove(); });
+  ov.innerHTML = `<div class="empathy-sheet help-sheet" role="dialog" aria-label="Enviar para alguém"><i class="grab"></i>
+    <div class="hs-title">Enviar para alguém</div>
+    <div class="hs-sub">Escolha por onde. Você escolhe a pessoa e ainda pode ajustar antes de mandar.</div>
+    ${opt('whatsapp', 'conexao', 'WhatsApp', 'Abre o WhatsApp para escolher a conversa')}
+    ${opt('email', 'carta', 'E-mail', 'Abre seu aplicativo de e-mail')}
+    ${opt('sms', 'tel', 'Mensagem de texto (SMS)', 'Abre o aplicativo de mensagens')}
+    ${opt('copy', 'doc', 'Copiar texto', 'Para colar onde você quiser')}
+    ${canMore ? opt('more', 'mais', 'Outros aplicativos', 'Telegram, Instagram e o que mais houver no celular') : ''}
+    <button class="btn-link hs-more" onclick="closeHelpSheet()">Cancelar</button>
+  </div>`;
+  document.getElementById('app').appendChild(ov);
+}
+async function shareVia(kind){
+  const {text, subject} = SHARE_PAYLOAD;
+  const enc = encodeURIComponent;
+  closeHelpSheet();
+  if (kind === 'whatsapp') openExternal('https://wa.me/?text=' + enc(text));
+  else if (kind === 'email') openExternal('mailto:?subject=' + enc(subject) + '&body=' + enc(text));
+  else if (kind === 'sms') openExternal('sms:?body=' + enc(text));
+  else if (kind === 'copy') toast((await copyText(text)) ? 'Texto copiado. É só colar na conversa.' : 'Não deu para copiar. Selecione o texto e copie.');
+  else if (kind === 'more') {
+    const C = window.Capacitor;
+    try {
+      if (isNativeApp() && C.Plugins && C.Plugins.Share) await C.Plugins.Share.share({title: subject, text, dialogTitle: 'Enviar para'});
+      else if (navigator.share) await navigator.share({title: subject, text});
+    } catch (e) {
+      if (!/cancel|abort/i.test((e && e.message) || '')) toast('Não deu para abrir os outros aplicativos. Tente WhatsApp, e-mail ou copiar.');
+    }
+  }
+}
+// No app Android, links que abririam outra janela (ex.: WhatsApp de "Minhas pessoas") vão direto para o aplicativo certo.
+document.addEventListener('click', (ev) => {
+  const a = ev.target.closest && ev.target.closest('a[target="_blank"]');
+  if (!a || !isNativeApp()) return;
+  ev.preventDefault();
+  window.location.href = a.href;
+});
+
+// ═══════════ HÁBITOS — lembrete por hábito e "marcar como feito" na notificação ═══════════
+const HABIT_NOTIF_KEY = 'fl_habit_notif_ids';
+let HABIT_EDIT = null;
+let HABIT_ACTION_QUEUE = [];
+function habitDoneToday(id){ return (S.habitDone[new Date().toDateString()] || []).includes(id); }
+async function notifPermissionOk(){
+  const ln = reminderPlugin();
+  if (!ln) return false;
+  try {
+    let p = await ln.checkPermissions();
+    if (p.display !== 'granted') p = await ln.requestPermissions();
+    return p.display === 'granted';
+  } catch (e) { return false; }
+}
+// Reagenda os próximos 14 dias de cada hábito com horário. Pula o dia se o hábito já foi marcado.
+async function scheduleHabitReminders(){
+  const ln = reminderPlugin();
+  if (!ln) return;
+  try {
+    let old = [];
+    try { old = JSON.parse(localStorage.getItem(HABIT_NOTIF_KEY) || '[]'); } catch (e) {}
+    if (old.length) await ln.cancel({notifications: old.map(id => ({id}))});
+    const list = [];
+    if (S.user) {
+      const now = new Date();
+      let seq = 0;
+      S.habits.filter(h => h.remind).forEach(h => {
+        const [hh, mm] = String(h.remind).split(':').map(Number);
+        if (isNaN(hh) || isNaN(mm)) return;
+        for (let d = 0; d < 14; d++) {
+          const at = new Date();
+          at.setDate(at.getDate() + d);
+          at.setHours(hh, mm, 0, 0);
+          if (at <= now || (d === 0 && habitDoneToday(h.id))) continue;
+          list.push({id: 5000 + seq++, title: 'Florescer', body: 'Seu hábito de hoje: ' + h.name + '. Quando fizer, é só marcar.',
+            schedule: {at, allowWhileIdle: true}, smallIcon: 'ic_stat_florescer', iconColor: '#2a7d63',
+            actionTypeId: 'HABIT', extra: {kind: 'habit', habitId: String(h.id), day: at.toDateString()}});
+        }
+      });
+    }
+    if (list.length) await ln.schedule({notifications: list});
+    localStorage.setItem(HABIT_NOTIF_KEY, JSON.stringify(list.map(n => n.id)));
+  } catch (e) {
+    console.log('lembrete de hábito:', e && e.message);
+  }
+}
+function setupHabitNotifications(){
+  const ln = reminderPlugin();
+  if (!ln || setupHabitNotifications.done) return;
+  setupHabitNotifications.done = true;
+  try { ln.registerActionTypes({types: [{id: 'HABIT', actions: [{id: 'done', title: 'Marcar como feito'}]}]}); } catch (e) {}
+  try {
+    ln.addListener('localNotificationActionPerformed', (e) => {
+      const x = (e && e.notification && e.notification.extra) || {};
+      if (x.kind !== 'habit') return;
+      HABIT_ACTION_QUEUE.push({habitId: x.habitId, day: x.day, done: e.actionId === 'done'});
+      processHabitActions();
+    });
+  } catch (e) {}
+}
+// Ações vindas da notificação esperam o login ser recuperado.
+function processHabitActions(){
+  if (!S.user || !HABIT_ACTION_QUEUE.length) return;
+  const queue = HABIT_ACTION_QUEUE.splice(0);
+  queue.forEach(a => {
+    const h = S.habits.find(x => String(x.id) === String(a.habitId));
+    if (h && a.done && a.day === new Date().toDateString() && !habitDoneToday(h.id)) {
+      toggleHabit(h.id);
+      toast('Feito: ' + h.name + '.');
+    }
+  });
+  if (queue.some(a => !a.done) && !document.getElementById('s-cover').classList.contains('active')) goTo('home');
+}
+function openHabitSheet(id){
+  closeHelpSheet();
+  const h = id ? S.habits.find(x => x.id === id) : null;
+  HABIT_EDIT = {id: h ? h.id : null};
+  const native = !!reminderPlugin();
+  const remind = h && h.remind ? h.remind : '';
+  const ov = document.createElement('div');
+  ov.className = 'empathy-overlay';
+  ov.id = 'share-sheet';
+  ov.addEventListener('click', (ev) => { if (ev.target === ov) ov.remove(); });
+  ov.innerHTML = `<div class="empathy-sheet help-sheet" role="dialog" aria-label="${h ? 'Editar hábito' : 'Novo hábito'}"><i class="grab"></i>
+    <div class="hs-title">${h ? 'Editar hábito' : 'Novo hábito'}</div>
+    <div class="hs-sub">Algo pequeno que você quer fazer todo dia. Quando fizer, é só marcar.</div>
+    <input class="inp" id="hab-name" maxlength="40" placeholder="Ex.: caminhar 10 minutos" value="${h ? esc(h.name) : ''}">
+    <div class="list">
+      <div class="row"><span class="r-ic">${ico('sino')}</span><span class="r-t"><b>Me lembrar todo dia</b><small>${native ? 'Se já estiver marcado como feito, o lembrete do dia não aparece.' : 'Os lembretes funcionam no app para Android.'}</small></span>
+        <label class="switch"><input type="checkbox" id="hab-remind" ${remind ? 'checked' : ''} ${native ? '' : 'disabled'} onchange="document.getElementById('hab-time-row').hidden = !this.checked" aria-label="Me lembrar todo dia"><span></span></label></div>
+      <div class="row" id="hab-time-row" ${remind ? '' : 'hidden'}><span class="r-t"><b style="font-weight:400">Horário</b></span><input type="time" class="inp time-inp" id="hab-time" value="${remind || '08:00'}" aria-label="Horário do lembrete"></div>
+    </div>
+    <div class="tr-warn" id="hab-warn"></div>
+    <button class="btn btn-p" onclick="saveHabitSheet()">Salvar</button>
+    ${h ? `<button class="btn-link danger" style="margin:2px auto 0" onclick="deleteHabit(${h.id})">Excluir hábito</button>` : `<button class="btn-link hs-more" onclick="closeHelpSheet()">Cancelar</button>`}
+  </div>`;
+  document.getElementById('app').appendChild(ov);
+}
+async function saveHabitSheet(){
+  const name = (document.getElementById('hab-name').value || '').trim().slice(0, 40);
+  const warn = document.getElementById('hab-warn');
+  if (!name) { warn.textContent = 'Dê um nome ao hábito.'; return; }
+  let remind = null;
+  if (document.getElementById('hab-remind').checked) {
+    remind = document.getElementById('hab-time').value || '08:00';
+    if (!(await notifPermissionOk())) { warn.textContent = 'Para receber o lembrete, permita as notificações do Florescer nas configurações do Android.'; return; }
+  }
+  const editing = HABIT_EDIT && HABIT_EDIT.id ? S.habits.find(x => x.id === HABIT_EDIT.id) : null;
+  if (editing) {
+    editing.name = name;
+    if (remind) editing.remind = remind; else delete editing.remind;
+  } else {
+    const nh = {id: Date.now(), name, icon: '', streak: 0};
+    if (remind) nh.remind = remind;
+    S.habits.push(nh);
+  }
+  save();
+  if (window.saveHabitsCloud) window.saveHabitsCloud();
+  closeHelpSheet();
+  scheduleHabitReminders();
+  toast(remind ? 'Pronto. O lembrete vem todo dia às ' + remind + '.' : 'Hábito salvo.');
+  renderHome();
+  if (document.getElementById('s-more').classList.contains('active')) renderMore();
+}
+function deleteHabit(id){
+  const h = S.habits.find(x => x.id === id);
+  if (!h || !confirm('Excluir o hábito "' + h.name + '"? O que você já marcou continua no seu histórico.')) return;
+  S.habits = S.habits.filter(x => x.id !== id);
+  save();
+  if (window.saveHabitsCloud) window.saveHabitsCloud();
+  closeHelpSheet();
+  scheduleHabitReminders();
+  renderHome();
+  if (document.getElementById('s-more').classList.contains('active')) renderMore();
+}
+// Marcar ou desmarcar um hábito reagenda os lembretes (o do dia some quando já foi feito).
+(function(){
+  const _toggle = toggleHabit;
+  toggleHabit = function(){
+    const result = _toggle.apply(this, arguments);
+    scheduleHabitReminders();
+    return result;
+  };
+})();
+
 // ═══════════ INIT ═══════════
 // (Dados de demonstração removidos — o app começa vazio e usa os estados
 //  vazios de cada tela. A sincronização com a nuvem é feita no
 //  onAuthStateChanged / syncFromCloud.)
 renderNavs();
+setupHabitNotifications();
 </script>
 </body>
 </html>
