@@ -5371,9 +5371,9 @@ async function adminMod(id, status){
 
 // ═══════════ COMPARTILHAR — WhatsApp, e-mail, SMS, copiar ═══════════
 let SHARE_PAYLOAD = {text: '', subject: ''};
-function isNativeApp(){ const C = window.Capacitor; return !!(C && C.isNativePlatform && C.isNativePlatform()); }
+function onNativeApp(){ const C = window.Capacitor; return !!(C && C.isNativePlatform && C.isNativePlatform()); }
 function openExternal(url){
-  if (isNativeApp() || /^(mailto|sms|tel):/i.test(url)) window.location.href = url;
+  if (onNativeApp() || /^(mailto|sms|tel):/i.test(url)) window.location.href = url;
   else window.open(url, '_blank', 'noopener');
 }
 async function copyText(text){
@@ -5399,7 +5399,7 @@ function openShareOptions(text, subject){
   closeHelpSheet();
   SHARE_PAYLOAD = {text: String(text || ''), subject: subject || 'Florescer'};
   const C = window.Capacitor;
-  const canMore = (isNativeApp() && C.Plugins && C.Plugins.Share) || !!navigator.share;
+  const canMore = (onNativeApp() && C.Plugins && C.Plugins.Share) || !!navigator.share;
   const opt = (kind, icon, title, sub) => `<button class="big-act" onclick="shareVia('${kind}')"><span class="r-ic">${ico(icon)}</span><span class="r-t"><b>${title}</b><small>${sub}</small></span></button>`;
   const ov = document.createElement('div');
   ov.className = 'empathy-overlay';
@@ -5428,7 +5428,7 @@ async function shareVia(kind){
   else if (kind === 'more') {
     const C = window.Capacitor;
     try {
-      if (isNativeApp() && C.Plugins && C.Plugins.Share) await C.Plugins.Share.share({title: subject, text, dialogTitle: 'Enviar para'});
+      if (onNativeApp() && C.Plugins && C.Plugins.Share) await C.Plugins.Share.share({title: subject, text, dialogTitle: 'Enviar para'});
       else if (navigator.share) await navigator.share({title: subject, text});
     } catch (e) {
       if (!/cancel|abort/i.test((e && e.message) || '')) toast('Não deu para abrir os outros aplicativos. Tente WhatsApp, e-mail ou copiar.');
@@ -5438,7 +5438,7 @@ async function shareVia(kind){
 // No app Android, links que abririam outra janela (ex.: WhatsApp de "Minhas pessoas") vão direto para o aplicativo certo.
 document.addEventListener('click', (ev) => {
   const a = ev.target.closest && ev.target.closest('a[target="_blank"]');
-  if (!a || !isNativeApp()) return;
+  if (!a || !onNativeApp()) return;
   ev.preventDefault();
   window.location.href = a.href;
 });
