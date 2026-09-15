@@ -862,6 +862,23 @@ div.row{cursor:default}
 .help-sheet [hidden]{display:none !important}
 .hab-done{color:var(--muted) !important;font-weight:400 !important}
 .hab-links{display:flex;justify-content:space-between;align-items:center;gap:8px}
+/* ── Entrada (capa + login) ── */
+#s-cover{background:var(--bg)}
+.cover-scroll{padding:0 22px 26px}
+.cv-brand{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 0 2px}
+.cv-mark{width:88px;height:88px;object-fit:contain}
+.cv-name{font-size:22px;font-weight:300;letter-spacing:.03em;color:#1F5A4A}
+.cv-hero{text-align:center;padding:22px 4px 4px}
+.cv-title{font-size:29px;font-weight:300;line-height:1.2;letter-spacing:-.015em;color:var(--ink);text-wrap:balance}
+.cv-lede{font-size:14.5px;color:var(--muted);line-height:1.6;margin:12px auto 20px;max-width:34ch}
+.cv-cta{display:flex;flex-direction:column;gap:8px}
+.cv-section{margin-top:26px}
+.cv-help{display:flex;align-items:center;gap:12px;margin-top:12px;padding:12px 14px;border:1px solid #EFDCD7;background:#FDF8F6;border-radius:16px;color:var(--ink);text-decoration:none}
+.cv-help .r-ic{color:var(--urgent);border-color:#EFDCD7;background:#fff}
+.cv-auth{margin-top:26px;padding:18px 16px 14px;background:var(--surface);border:1px solid var(--line);border-radius:22px}
+.cv-auth-h{font-size:19px;font-weight:300;color:var(--ink);margin:0 2px 12px}
+.cv-foot{text-align:center;font-size:11.5px;color:var(--faint);line-height:1.8;padding:18px 0 4px}
+.cv-foot .cover-link{font-size:11.5px}
 </style>
 
   <!-- Firebase SDK (versão compat - mais estável) -->
@@ -1422,80 +1439,81 @@ div.row{cursor:default}
 
     <!-- ══════════════════════════════ COVER / LOGIN ══ -->
     <div class="screen active" id="s-cover">
-      <!-- Fundo animado -->
-      <div class="cover-bg">
-        <div class="cover-circle c1"></div>
-        <div class="cover-circle c2"></div>
-        <div class="cover-circle c3"></div>
+      <div class="status"><span>9:41</span><span>100%</span></div>
+      <div class="scroll cover-scroll">
 
-      </div>
+        <header class="cv-brand">
+          <img src="logo-mark.png" class="cv-mark" alt="">
+          <div class="cv-name">florescer</div>
+        </header>
 
-      <!-- Conteúdo -->
-      <div class="cover-content">
+        <section class="cv-hero">
+          <h1 class="cv-title">Entenda o que você sente.<br>Cuide disso, um dia de cada vez.</h1>
+          <p class="cv-lede">Um diário emocional com ferramentas práticas, feito com base em terapia cognitivo-comportamental, mindfulness e autocompaixão.</p>
+          <div class="cv-cta">
+            <button class="btn btn-p" onclick="coverStart('register')">Começar grátis</button>
+            <button class="btn btn-soft" onclick="coverStart('login')">Já tenho conta</button>
+          </div>
+        </section>
 
-        <!-- Logo + tagline -->
-        <div class="cover-top">
-          <img src="icon-512.png" class="cover-logo" alt="Florescer">
-          <p class="cover-tagline">Cuide da sua mente,<br>um dia de cada vez.</p>
-        </div>
+        <section class="cv-section">
+          <div class="section-lbl" style="margin-top:0">O que o Florescer faz por você</div>
+          <div class="list">
+            <div class="row"><span class="r-ic"><svg class="ic" aria-hidden="true"><use href="#i-diario"/></svg></span><span class="r-t"><b>Registro em 1 minuto</b><small>Humor, emoções e o que marcou o dia, em passos curtos.</small></span></div>
+            <div class="row"><span class="r-ic"><svg class="ic" aria-hidden="true"><use href="#i-relatorio"/></svg></span><span class="r-t"><b>Descubra seus padrões</b><small>Relatório da semana e do mês, e um PDF para levar à terapia.</small></span></div>
+            <div class="row"><span class="r-ic"><svg class="ic" aria-hidden="true"><use href="#i-cuidar"/></svg></span><span class="r-t"><b>Ajuda na hora certa</b><small>Respiração, meditação, trilhas e exercícios da TCC.</small></span></div>
+            <div class="row"><span class="r-ic"><svg class="ic" aria-hidden="true"><use href="#i-escudo"/></svg></span><span class="r-t"><b>O que você escreve é seu</b><small>Sem anúncios. Seus registros não são vendidos nem compartilhados.</small></span></div>
+          </div>
+          <a class="cv-help" href="tel:188"><span class="r-ic"><svg class="ic" aria-hidden="true"><use href="#i-coracao"/></svg></span><span class="r-t"><b>Precisa de ajuda agora?</b><small>Ligue 188 — CVV, gratuito e 24 horas. Não precisa de conta.</small></span></a>
+        </section>
 
-        <!-- Cards de login/cadastro -->
-        <div class="cover-card" id="cover-card">
+        <section class="cv-auth" id="cover-card">
+          <div class="cv-auth-h" id="cover-auth-title">Entre ou crie sua conta</div>
 
-          <!-- Tabs -->
           <div class="cover-tabs">
             <button class="cover-tab active" id="ctab-login" onclick="coverTab('login')">Entrar</button>
             <button class="cover-tab" id="ctab-register" onclick="coverTab('register')">Criar conta</button>
           </div>
 
-          <!-- Campo nome (só cadastro) -->
+          <button class="cover-btn-google" id="cover-google-btn" onclick="window.doGoogleLogin ? window.doGoogleLogin() : doCoverLogin()" disabled style="opacity:.6">
+            <svg width="18" height="18" viewBox="0 0 48 48" style="flex-shrink:0" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+            Continuar com Google
+          </button>
+
+          <div class="cover-divider" style="margin-top:14px"><span>ou com e-mail</span></div>
+
           <div id="cover-name-field" style="display:none;margin-bottom:12px">
             <div class="cover-inp-wrap">
               <span class="cover-inp-icon"><svg class="ic" aria-hidden="true"><use href="#i-voce"/></svg></span>
-              <input class="cover-inp" type="text" id="cover-name" placeholder="Seu nome completo">
+              <input class="cover-inp" type="text" id="cover-name" placeholder="Seu nome" autocomplete="name">
             </div>
           </div>
 
-          <!-- Email -->
           <div class="cover-inp-wrap" style="margin-bottom:12px">
             <span class="cover-inp-icon"><svg class="ic" aria-hidden="true"><use href="#i-carta"/></svg></span>
-            <input class="cover-inp" type="email" id="cover-email" placeholder="Seu e-mail">
+            <input class="cover-inp" type="email" id="cover-email" placeholder="Seu e-mail" autocomplete="email">
           </div>
 
-          <!-- Senha -->
           <div class="cover-inp-wrap" style="margin-bottom:6px">
             <span class="cover-inp-icon"><svg class="ic" aria-hidden="true"><use href="#i-cadeado"/></svg></span>
-            <input class="cover-inp" type="password" id="cover-pass" placeholder="Senha">
+            <input class="cover-inp" type="password" id="cover-pass" placeholder="Senha" autocomplete="current-password">
           </div>
 
-          <!-- Esqueci senha (só login) -->
           <div id="cover-forgot" style="text-align:right;margin-bottom:14px">
             <button class="cover-link" onclick="doForgotPassword()">Esqueci minha senha</button>
           </div>
           <div id="cover-terms" style="display:none;margin-bottom:14px">
-            <div style="font-size:11px;color:#aaa;line-height:1.5;text-align:center">Ao criar conta você concorda com os<br>
+            <div style="font-size:11.5px;color:var(--muted);line-height:1.6;text-align:center">Ao criar a conta, você concorda com os
             <button class="cover-link">Termos de Uso</button> e a <button class="cover-link">Política de Privacidade</button></div>
           </div>
 
-          <!-- Botão principal -->
           <button class="cover-btn-main" id="cover-main-btn" onclick="doCoverLogin()" disabled style="opacity:.6">Carregando...</button>
+        </section>
 
-          <!-- Divisor -->
-          <div class="cover-divider"><span>ou continue com</span></div>
-
-          <!-- Google -->
-          <button class="cover-btn-google" id="cover-google-btn" onclick="window.doGoogleLogin ? window.doGoogleLogin() : doCoverLogin()" disabled style="opacity:.6">
-            <svg width="18" height="18" viewBox="0 0 48 48" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-            Continuar com Google
-          </button>
-
-        </div>
-
-        <!-- Rodapé -->
-        <div class="cover-footer">
-          <span style="color:#ffffff60;font-size:11px">Florescer © 2026 · </span>
-          <button class="cover-link" style="font-size:11px;color:#ffffff60">Privacidade</button>
-        </div>
+        <footer class="cv-foot">
+          O Florescer é um apoio para o dia a dia e não substitui acompanhamento profissional.<br>
+          © 2026 Florescer · <button class="cover-link" onclick="alert('Página em preparação.')">Privacidade</button>
+        </footer>
 
       </div>
     </div>
@@ -3730,7 +3748,7 @@ function renderOnboard(){
   const native = !!reminderPlugin();
   const remSel = OB.rem !== undefined ? OB.rem : (REMINDER.on ? REMINDER.h : null);
   body.innerHTML = `<div style="text-align:center;margin:4px 0 16px">
-      <img src="icon-512.png" style="width:78px;height:78px;object-fit:contain;margin:0 auto 6px;display:block;border-radius:22px" alt="">
+      <img src="logo-mark.png" style="width:72px;height:72px;object-fit:contain;margin:0 auto 8px;display:block" alt="">
       <div class="tr-q">${OB.edit ? 'Seu perfil' : 'Que bom ter você aqui'}</div>
       <p class="sub" style="margin:0;line-height:1.5">${OB.edit ? 'Ajuste quando quiser — as sugestões do app mudam junto.' : 'Três perguntas rápidas para o Florescer se ajustar a você. Dá para mudar depois.'}</p>
     </div>
@@ -5587,6 +5605,15 @@ function deleteHabit(id){
     return result;
   };
 })();
+
+// ═══════════ ENTRADA — botões do topo levam ao formulário ═══════════
+function coverStart(mode){
+  coverTab(mode);
+  const title = document.getElementById('cover-auth-title');
+  if (title) title.textContent = mode === 'register' ? 'Crie sua conta grátis' : 'Bem-vindo de volta';
+  const card = document.getElementById('cover-card');
+  if (card) card.scrollIntoView({behavior: 'smooth', block: 'start'});
+}
 
 // ═══════════ INIT ═══════════
 // (Dados de demonstração removidos — o app começa vazio e usa os estados
