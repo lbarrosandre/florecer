@@ -4116,7 +4116,8 @@ function reminderRows(){
       <div class="row"><span class="r-ic">${ico('check')}</span><span class="r-t"><b>Pergunta dos hábitos</b><small>${habSub}</small></span>${sw(HABIT_CHECK.on, 'setHabitCheck', 'Pergunta dos hábitos')}</div>
       ${HABIT_CHECK.on ? time(hT, 'setHabitCheckTime', 'Horário da pergunta dos hábitos') : ''}
     </div>
-    <button class="btn-link" onclick="testNotification()">Ver como o aviso chega</button>`;
+    <button class="btn-link" onclick="testNotification()">Ver como o aviso chega</button>
+    <p class="rep-foot" style="margin:6px 2px 0">Os avisos podem chegar alguns minutos depois do horário: o Florescer não usa a permissão "Alarmes e lembretes" do Android, para poupar bateria. Não é preciso ativá-la.</p>`;
 }
 
 // ═══════════ PDF DO RELATÓRIO ═══════════
