@@ -1,0 +1,16 @@
+# Netlify publica somente as páginas públicas do Florescer (pasta site/):
+# política de privacidade, termos de uso e exclusão de conta.
+# O app em si é Android e NÃO vai para a web.
+[build]
+  publish = "site"
+  command = "echo sem-etapa-de-build"
+  # Só publica de novo quando as páginas mudam (commits do app não gastam build).
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- site/ netlify.toml"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"

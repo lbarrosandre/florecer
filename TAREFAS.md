@@ -252,6 +252,15 @@ Decisões do André: evolução **só agregada e anônima**; mural com **aprova�
 - [x] **[B12.7]** ~~**André:** publicar~~ — **feito em 15/09** (regras publicadas e índice do `wall` criado). Validado no Galaxy A36 ponta a ponta: envio aceito, história na fila com `activity` e `tags`, aprovação pelo painel, listagem no mural e remoção — a lista voltou a zero, sem deixar o teste no ar. Publicar o `firestore.rules` novo (origem `movimento`, campos `activity` e `tags`) e criar o índice do `wall` (status ↑, lang ↑, source ↑, createdAt ↓). Sem isso o envio de histórias é recusado e a lista não carrega.
 - [ ] **[B12.8]** Testar no celular: PDF, lembrete do diário, pergunta dos hábitos (inclusive "Já fiz todos") e mural do movimento. Revisão do psicólogo nas leituras novas (DP-C2).
 
+### Bloco 14 — Páginas públicas no Netlify (16/09)
+Decisão do André: **só as páginas legais** vão para o Netlify (o app continua só Android), publicadas a partir do GitHub. Contato público: **leviai.br@gmail.com** · desenvolvedor: **André Luiz Barros**.
+- [x] **[B14.1]** Pasta `site/` com início, **Política de Privacidade** (LGPD: dados sensíveis de saúde com base em consentimento, tabela do que é coletado/onde fica/quem vê, estatísticas anônimas, mural, Firebase como operador, retenção, direitos do art. 18, público 18+), **Termos de Uso** (não é serviço de saúde, regras do mural, assinatura pela Google Play, CDC) e **Excluir conta** (formato exigido pela Play: nome do app e do desenvolvedor, passos, o que é apagado e o que fica). `netlify.toml` publica só `site/` e ignora commits que não mexem nas páginas.
+- [ ] **[B14.2]** **André:** criar o projeto no Netlify ligado ao GitHub (repositório `florecer`, branch `main`) e escolher o nome do endereço.
+- [ ] **[B14.3]** Ligar as páginas no app: links "Termos de Uso" e "Política de Privacidade" do cadastro (hoje não levam a lugar nenhum) e "Privacidade e termos" em Você.
+- [ ] **[B14.4]** `P0` **Cumprir o que as páginas prometem:** exclusão de conta dentro do app (Play exige) apagando também mensagens do mural e reações; **consentimento explícito para dados de saúde** no cadastro (caixa de seleção própria, LGPD art. 11); responder pedidos em até 15 dias e excluir em até 30.
+- [ ] **[B14.5]** Informar os endereços no Play Console (política de privacidade e exclusão de conta).
+- [ ] **[B14.6]** Revisão dos textos legais (idealmente com advogado) antes da produção.
+
 ### Bloco 8 — Três idiomas: PT, EN, ES — ⏸️ ADIADO (decisão do André em 16/09)
 **O app fica só em português por enquanto.** Nada de estrutura de tradução nem textos em EN/ES. Na Play Store, publicar **só no Brasil** (CVV, SAMU e SUS são brasileiros). Se for retomado: PT continua a língua-mãe e a ajuda de crise precisa de linhas por país.
 - [ ] **[B8.1]** Estrutura de tradução (`t('chave')`), idioma pelo aparelho + troca manual em Você; datas e números no formato de cada idioma.
@@ -357,3 +366,4 @@ Decisões do André: evolução **só agregada e anônima**; mural com **aprova�
 - **15/09/2026** — **Mural do movimento no ar.** André publicou as regras e criou o índice (status, lang, source, createdAt). Teste ponta a ponta no aparelho: enviar → fila de aprovação → aprovar → aparecer na lista → retirar, tudo funcionando. Falta só a conferência manual do compartilhamento do PDF e a revisão do psicólogo nas leituras novas.
 - **16/09/2026** — **Ícone e abertura do app.** O ícone do Android e a tela de abertura ainda eram os padrões do Capacitor (X azul, fundo branco). Novo ícone adaptativo verde com o broto dourado, camada para ícones temáticos, ícone 512 da Play Store e abertura com a marca do Florescer.
 - **16/09/2026** — **Idiomas:** André decidiu manter o app **só em português**; Bloco 8 (EN/ES) adiado. Distribuição na Play Store só no Brasil.
+- **16/09/2026** — **Páginas legais prontas para o Netlify** (`site/`): política de privacidade, termos de uso e exclusão de conta, no visual do app. Falta o André conectar o repositório no Netlify e informar o endereço.
