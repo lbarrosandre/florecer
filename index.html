@@ -5908,6 +5908,16 @@ function coverStart(mode){
 //  onAuthStateChanged / syncFromCloud.)
 renderNavs();
 setupHabitNotifications();
+// Se o Android descartar os alarmes (economia de bateria, reinício do aparelho), os lembretes
+// voltam sozinhos quando a pessoa abre o app de novo — antes só voltavam no próximo login.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible' || !S.user || !reminderPlugin()) return;
+  const agora = Date.now();
+  if (agora - (window._ultimoReagendamento || 0) < 30 * 60000) return;
+  window._ultimoReagendamento = agora;
+  scheduleReminders();
+  scheduleHabitReminders();
+});
 </script>
 </body>
 </html>
