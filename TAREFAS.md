@@ -252,8 +252,8 @@ Decisões do André: evolução **só agregada e anônima**; mural com **aprova�
 - [x] **[B12.7]** ~~**André:** publicar~~ — **feito em 15/09** (regras publicadas e índice do `wall` criado). Validado no Galaxy A36 ponta a ponta: envio aceito, história na fila com `activity` e `tags`, aprovação pelo painel, listagem no mural e remoção — a lista voltou a zero, sem deixar o teste no ar. Publicar o `firestore.rules` novo (origem `movimento`, campos `activity` e `tags`) e criar o índice do `wall` (status ↑, lang ↑, source ↑, createdAt ↓). Sem isso o envio de histórias é recusado e a lista não carrega.
 - [ ] **[B12.8]** Testar no celular: PDF, lembrete do diário, pergunta dos hábitos (inclusive "Já fiz todos") e mural do movimento. Revisão do psicólogo nas leituras novas (DP-C2).
 
-### Bloco 8 — Três idiomas: PT, EN, ES (pedido em 14/09)
-Regra: **PT é a língua-mãe; todo texto aprovado em PT é replicado para EN e ES no mesmo commit.**
+### Bloco 8 — Três idiomas: PT, EN, ES — ⏸️ ADIADO (decisão do André em 16/09)
+**O app fica só em português por enquanto.** Nada de estrutura de tradução nem textos em EN/ES. Na Play Store, publicar **só no Brasil** (CVV, SAMU e SUS são brasileiros). Se for retomado: PT continua a língua-mãe e a ajuda de crise precisa de linhas por país.
 - [ ] **[B8.1]** Estrutura de tradução (`t('chave')`), idioma pelo aparelho + troca manual em Você; datas e números no formato de cada idioma.
 - [ ] **[B8.2]** Traduzir telas, sugestões, leituras, práticas, trilhas, PDF, notificações e textos da Play Store.
 - [ ] **[B8.3]** Ajuda de crise por país (CVV/SAMU só valem no Brasil): linhas locais conhecidas + diretório internacional e número de emergência local.
@@ -356,3 +356,4 @@ Regra: **PT é a língua-mãe; todo texto aprovado em PT é replicado para EN e 
 - **15/09/2026** — **Lembretes resolvidos de ponta a ponta.** Três defeitos em sequência: APK sem os plugins nativos; agendamento apagando tudo antes do login voltar; e o plugin abrindo a tela "Alarmes e lembretes" a cada agendamento (alarme exato por padrão). Agora o app agenda em modo econômico, reagenda ao voltar do segundo plano e mostra 52 avisos ativos no Galaxy A36.
 - **15/09/2026** — **Mural do movimento no ar.** André publicou as regras e criou o índice (status, lang, source, createdAt). Teste ponta a ponta no aparelho: enviar → fila de aprovação → aprovar → aparecer na lista → retirar, tudo funcionando. Falta só a conferência manual do compartilhamento do PDF e a revisão do psicólogo nas leituras novas.
 - **16/09/2026** — **Ícone e abertura do app.** O ícone do Android e a tela de abertura ainda eram os padrões do Capacitor (X azul, fundo branco). Novo ícone adaptativo verde com o broto dourado, camada para ícones temáticos, ícone 512 da Play Store e abertura com a marca do Florescer.
+- **16/09/2026** — **Idiomas:** André decidiu manter o app **só em português**; Bloco 8 (EN/ES) adiado. Distribuição na Play Store só no Brasil.
