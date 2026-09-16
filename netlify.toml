@@ -4,8 +4,6 @@
 [build]
   publish = "site"
   command = "echo sem-etapa-de-build"
-  # Só publica de novo quando as páginas mudam (commits do app não gastam build).
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- site/ netlify.toml"
 
 [[headers]]
   for = "/*"
