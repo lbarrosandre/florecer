@@ -1531,7 +1531,7 @@ div.row{cursor:default}
           </div>
           <div id="cover-terms" style="display:none;margin-bottom:14px">
             <div style="font-size:11.5px;color:var(--muted);line-height:1.6;text-align:center">Ao criar a conta, você concorda com os
-            <button class="cover-link">Termos de Uso</button> e a <button class="cover-link">Política de Privacidade</button></div>
+            <button class="cover-link" onclick="openExternal(SITE_URL + '/termos/')">Termos de Uso</button> e a <button class="cover-link" onclick="openExternal(SITE_URL + '/privacidade/')">Política de Privacidade</button></div>
           </div>
 
           <button class="cover-btn-main" id="cover-main-btn" onclick="doCoverLogin()" disabled style="opacity:.6">Carregando...</button>
@@ -4997,10 +4997,11 @@ function renderMore() {
     <div class="list">
       <div class="row"><span class="r-ic">${ico('escudo')}</span><span class="r-t"><b>Cadastro</b><small>Entrou com ${entrou} · desde ${desde}</small></span></div>
       <div class="row"><span class="r-ic">${ico('flor')}</span><span class="r-t"><b>Plano</b><small>Gratuito · Premium em breve</small></span></div>
-      <button class="row" onclick="alert('Página em preparação.')"><span class="r-ic">${ico('doc')}</span><span class="r-t"><b>Privacidade e termos</b><small>Seus registros são seus. O administrador vê só cadastro e uso — nunca o que você registra ou escreve.</small></span>${chev}</button>
+      <button class="row" onclick="openExternal(SITE_URL + '/privacidade/')"><span class="r-ic">${ico('doc')}</span><span class="r-t"><b>Privacidade e termos</b><small>Seus registros são seus. O administrador vê só cadastro e uso — nunca o que você registra ou escreve.</small></span>${chev}</button>
     </div>
     <button class="btn btn-soft" style="margin-top:18px" onclick="doLogout()">${ico('sair')}Sair da conta</button>
-    <button class="btn-link danger" onclick="alert('A exclusão de conta pelo app chega em breve. Enquanto isso, escreva para o suporte que apagamos tudo.')">Excluir minha conta</button>`;
+    <button class="btn-link danger" onclick="openExternal(SITE_URL + '/excluir-conta/')">Excluir minha conta</button>
+    <button class="btn-link" onclick="openExternal(SITE_URL + '/termos/')">Termos de uso</button>`;
   const targetId = {habits: 'me-habits', conta: 'me-conta', lembretes: 'me-lembretes'}[moreCurrentTab];
   if (targetId) {
     const target = document.getElementById(targetId);
@@ -5634,6 +5635,8 @@ async function adminMod(id, status){
 
 // ═══════════ COMPARTILHAR — WhatsApp, e-mail, SMS, copiar ═══════════
 let SHARE_PAYLOAD = {text: '', subject: ''};
+// Páginas públicas (Netlify): política de privacidade, termos de uso e exclusão de conta.
+const SITE_URL = 'https://app-florescer.netlify.app';
 function onNativeApp(){ const C = window.Capacitor; return !!(C && C.isNativePlatform && C.isNativePlatform()); }
 function openExternal(url){
   if (onNativeApp() || /^(mailto|sms|tel):/i.test(url)) window.location.href = url;
