@@ -1223,9 +1223,25 @@ div.row{cursor:default}
       const snap = await q.orderBy('createdAt', 'desc').limit(60).get();
       return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     };
+    // Uma reação por pessoa em cada mensagem: grava wall/{id}/reactions/{uid} e soma o contador
+    // no mesmo lote. A regra só deixa somar enquanto esse documento não existir, então a segunda
+    // tentativa — inclusive em outro aparelho ou depois de reinstalar — é recusada pelo servidor.
     window.wallReact = async (id, field) => {
-      if (field !== 'helped' && field !== 'reports') return;
-      try { await db.collection('wall').doc(id).update({ [field]: firebase.firestore.FieldValue.increment(1) }); } catch (e) { console.log('mural:', e && e.message); }
+      if (field !== 'helped' && field !== 'reports') return 'invalido';
+      const uid = window.S.user && window.S.user.uid;
+      if (!uid) return 'sem-login';
+      const post = db.collection('wall').doc(id);
+      const lote = db.batch();
+      lote.set(post.collection('reactions').doc(uid), { kind: field, at: new Date().toISOString() });
+      lote.update(post, { [field]: firebase.firestore.FieldValue.increment(1) });
+      try {
+        await lote.commit();
+        return 'ok';
+      } catch (e) {
+        const msg = (e && e.message) || '';
+        console.log('mural:', msg);
+        return /permission|insufficient/i.test(msg) ? 'ja-reagiu' : 'erro';
+      }
     };
     window.adminFetch = async (what, days) => {
       const list = (snap) => snap.docs.map((d) => ({ id: d.id, ...d.data() }));
@@ -5171,7 +5187,7 @@ async function wallSubmit(text, source, extra){
 }
 async function loadWall(force){
   if (WALL.loading) return;
-  if (!force && WALL.items && Date.now() - WALL.loadedAt < 10 * 60000) return;
+  if (!force && WALL.items && Date.now() - WALL.loadedAt < 2 * 60000) return;
   if (!window.wallApproved) { WALL.items = []; return; }
   WALL.loading = true;
   try {
@@ -5189,6 +5205,7 @@ function renderHomeWall(){
   const el = document.getElementById('home-wall');
   if (!el) return;
   if (WALL.items === null) { el.innerHTML = ''; loadWall().then(renderHomeWall); return; }
+  if (!WALL.loading && Date.now() - WALL.loadedAt > 5 * 60000) loadWall(true).then(renderHomeWall);
   const mine = S.user && S.user.uid;
   const list = WALL.items.filter(w => w.uid !== mine);
   if (!list.length) { el.innerHTML = ''; return; }
@@ -5225,7 +5242,11 @@ function renderWall(body){
           : '<div class="empty">Ainda não há frases aprovadas. A sua pode ser a primeira.</div>'}`;
   const ta = document.getElementById('wall-text');
   if (ta) ta.addEventListener('input', () => { document.getElementById('wall-count').textContent = ta.value.length + '/160'; });
-  if (items === null && !WALL.loading) loadWall(true).then(() => { if (TOOL.kind === 'wall' && document.getElementById('s-tool').classList.contains('active')) renderTool(1); });
+  // Recarrega sempre que a tela é aberta: o que o administrador aprova em um aparelho
+  // precisa aparecer no outro sem precisar sair e entrar na conta.
+  if (!WALL.loading && (items === null || Date.now() - WALL.loadedAt > 30000)) {
+    loadWall(true).then(() => { if (TOOL.kind === 'wall' && document.getElementById('s-tool').classList.contains('active')) renderTool(1); });
+  }
 }
 async function wallSendRecado(){
   const ta = document.getElementById('wall-text'), warn = document.getElementById('wall-warn'), btn = document.getElementById('wall-send');
@@ -5235,19 +5256,22 @@ async function wallSendRecado(){
   if (r === true) { ta.value = ''; warn.textContent = ''; document.getElementById('wall-count').textContent = '0/160'; toast('Enviado. Aparece no mural depois de aprovado, sem seu nome.'); }
   else if (typeof r === 'string') warn.textContent = r;
 }
-function wallReactUi(id, field){
+async function wallReactUi(id, field){
   if (field === 'reports' && !confirm('Denunciar esta frase? Ela sai do seu mural e será revisada.')) return;
   WALL.reacted[id] = field;
   try { localStorage.setItem('fl_wall_reacted', JSON.stringify(WALL.reacted)); } catch (e) {}
-  if (window.wallReact) window.wallReact(id, field);
+  const r = window.wallReact ? await window.wallReact(id, field) : 'ok';
   [WALL, MOVE].forEach(store => {
     const w = (store.items || []).find(x => x.id === id);
     if (!w) return;
-    if (field === 'helped') w.helped = (w.helped || 0) + 1;
-    else store.items = store.items.filter(x => x.id !== id);
+    if (field === 'reports') { store.items = store.items.filter(x => x.id !== id); return; }
+    if (r === 'ok') w.helped = (w.helped || 0) + 1;
   });
   renderTool(1);
-  toast(field === 'helped' ? (TOOL.kind === 'movimento' ? 'Que bom que inspirou.' : 'Que bom que ajudou.') : 'Obrigado por avisar. Vai ser revisado.');
+  if (r === 'ja-reagiu') toast('Você já tinha reagido a esta mensagem.');
+  else if (r === 'erro' || r === 'sem-login') toast('Não deu para registrar agora. Tente mais tarde.');
+  else if (field === 'helped') toast(TOOL.kind === 'movimento' ? 'Que bom que inspirou.' : 'Que bom que ajudou.');
+  else toast('Obrigado por avisar. Vai ser revisado.');
 }
 function openShareSheet(text, source){
   closeHelpSheet();
@@ -5294,7 +5318,7 @@ const MOVE_MED = /(parei|larguei|deixei|abandonei|sem)\s+(de\s+tomar\s+)?(o\s+|o
 let MOVE = {items: null, loading: false, error: false, loadedAt: 0, activity: '', tags: [], draft: '', energy: ''};
 async function loadMove(force){
   if (MOVE.loading) return;
-  if (!force && MOVE.items && Date.now() - MOVE.loadedAt < 10 * 60000) return;
+  if (!force && MOVE.items && Date.now() - MOVE.loadedAt < 2 * 60000) return;
   if (!window.wallApproved) { MOVE.items = []; return; }
   MOVE.loading = true;
   try {
@@ -5355,7 +5379,9 @@ function renderMove(body){
     <p class="rep-foot">Cada corpo tem seu ritmo. Antes de começar algo mais intenso, vale conversar com um profissional de saúde.</p>`;
   const ta = document.getElementById('move-text');
   if (ta) ta.addEventListener('input', () => { MOVE.draft = ta.value; document.getElementById('move-count').textContent = ta.value.length + '/280'; });
-  if (items === null && !MOVE.loading) loadMove(true).then(() => { if (TOOL.kind === 'movimento' && document.getElementById('s-tool').classList.contains('active')) renderTool(1); });
+  if (!MOVE.loading && (items === null || Date.now() - MOVE.loadedAt > 30000)) {
+    loadMove(true).then(() => { if (TOOL.kind === 'movimento' && document.getElementById('s-tool').classList.contains('active')) renderTool(1); });
+  }
 }
 function moveEnergy(k){ MOVE.energy = MOVE.energy === k ? '' : k; renderTool(1); }
 function moveAct(btn){
@@ -5911,7 +5937,13 @@ setupHabitNotifications();
 // Se o Android descartar os alarmes (economia de bateria, reinício do aparelho), os lembretes
 // voltam sozinhos quando a pessoa abre o app de novo — antes só voltavam no próximo login.
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState !== 'visible' || !S.user || !reminderPlugin()) return;
+  if (document.visibilityState !== 'visible' || !S.user) return;
+  // Ao voltar para o app, o mural é buscado de novo (aprovações feitas em outro aparelho).
+  WALL.loadedAt = 0;
+  MOVE.loadedAt = 0;
+  if (document.getElementById('s-tool').classList.contains('active') && (TOOL.kind === 'wall' || TOOL.kind === 'movimento')) renderTool(1);
+  else if (document.getElementById('s-home').classList.contains('active')) renderHomeWall();
+  if (!reminderPlugin()) return;
   const agora = Date.now();
   if (agora - (window._ultimoReagendamento || 0) < 30 * 60000) return;
   window._ultimoReagendamento = agora;

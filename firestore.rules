@@ -44,6 +44,11 @@ service cloud.firestore {
              || (resource != null && request.resource.data.isPremium == resource.data.isPremium);
     }
 
+    // Verdadeiro quando esta pessoa ainda não reagiu a esta mensagem.
+    function semReacao(postId) {
+      return !exists(/databases/$(database)/documents/wall/$(postId)/reactions/$(request.auth.uid));
+    }
+
     // ── Perfil ────────────────────────────────────────────────
     match /users/{uid} {
       allow read: if isOwner(uid);
@@ -126,10 +131,23 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['text', 'source', 'lang', 'status', 'uid', 'createdAt', 'helped', 'reports', 'activity', 'tags']);
       allow update: if isAdmin()
         || (signedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['helped'])
-            && request.resource.data.helped == resource.data.helped + 1)
+            && request.resource.data.helped == resource.data.helped + 1
+            && semReacao(postId))
         || (signedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reports'])
-            && request.resource.data.reports == resource.data.reports + 1);
+            && request.resource.data.reports == resource.data.reports + 1
+            && semReacao(postId));
       allow delete: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+
+      // Uma reação por pessoa em cada mensagem. O documento só pode ser criado (nunca alterado
+      // nem apagado), e o contador acima só sobe enquanto ele não existir — por isso a segunda
+      // curtida é recusada, mesmo em outro aparelho ou depois de reinstalar o app.
+      match /reactions/{uid} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow create: if isOwner(uid)
+          && request.resource.data.kind in ['helped', 'reports']
+          && request.resource.data.keys().hasOnly(['kind', 'at']);
+        allow update, delete: if false;
+      }
     }
 
     // Qualquer caminho não previsto acima é negado por padrão.
