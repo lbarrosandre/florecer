@@ -5,6 +5,13 @@
   publish = "site"
   command = "echo sem-etapa-de-build"
 
+[build.environment]
+  # A verificação de segredos do Netlify examina o repositório inteiro e acusa a chave "AIza..."
+  # do Firebase no index.html do app. Ela é a chave pública do Firebase para web: fica no app
+  # de propósito, não dá acesso a dados (quem protege são as regras do Firestore) e nem faz parte
+  # da pasta publicada. Só esse valor é liberado; o resto da verificação continua ativo.
+  SECRETS_SCAN_SMART_DETECTION_OMIT_VALUES = "AIzaSyCXWZOVseHAj8Lz28CrTMmhW2UzO4qArfc"
+
 [[headers]]
   for = "/*"
   [headers.values]
