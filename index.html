@@ -4024,7 +4024,7 @@ async function scheduleReminders(){
       const at = new Date(); at.setDate(at.getDate() + d); at.setHours(REMINDER.h, REMINDER.m, 0, 0);
       if (at <= now || (d === 0 && loggedToday)) continue;
       list.push({id: 100 + d, title: 'Florescer', body: REMINDER_TEXTS[at.getDate() % REMINDER_TEXTS.length],
-        schedule: {at, allowWhileIdle: true}, smallIcon: 'ic_stat_florescer', iconColor: '#2a7d63'});
+        schedule: {at, allowWhileIdle: true}, smallIcon: 'ic_stat_florescer', iconColor: '#2a7d63', isExactNotification: false});
     }
     if (list.length) await ln.schedule({notifications: list});
   } catch (e) { console.log('lembrete:', e && e.message); }
@@ -4098,7 +4098,7 @@ async function testNotification(){
   if (!ln) return;
   if (!(await notifPermissionOk())) { notifBlocked(); return; }
   try {
-    await ln.schedule({notifications: [{id: 999, title: 'Florescer', body: 'É assim que o lembrete chega. Tocar nele abre o app.', smallIcon: 'ic_stat_florescer', iconColor: '#2a7d63'}]});
+    await ln.schedule({notifications: [{id: 999, title: 'Florescer', body: 'É assim que o lembrete chega. Tocar nele abre o app.', smallIcon: 'ic_stat_florescer', iconColor: '#2a7d63', isExactNotification: false}]});
     toast('Pronto. Olhe a barra de notificações.');
   } catch (e) {
     toast('Não deu para mostrar o aviso agora.');
@@ -5735,7 +5735,7 @@ async function scheduleHabitReminders(){
           at.setHours(hh, mm, 0, 0);
           if (at <= now || (d === 0 && habitDoneToday(h.id))) continue;
           list.push({id: 5000 + seq++, title: 'Florescer', body: 'Seu hábito de hoje: ' + h.name + '. Quando fizer, é só marcar.',
-            schedule: {at, allowWhileIdle: true}, smallIcon: 'ic_stat_florescer', iconColor: '#2a7d63',
+            schedule: {at, allowWhileIdle: true}, smallIcon: 'ic_stat_florescer', iconColor: '#2a7d63', isExactNotification: false,
             actionTypeId: 'HABIT', extra: {kind: 'habit', habitId: String(h.id), day: at.toDateString()}});
         }
       });
@@ -5751,7 +5751,7 @@ async function scheduleHabitReminders(){
           if (!pend.length) continue;
           const one = pend.length === 1, day = at.toDateString();
           list.push({id: 300 + d, title: HABIT_CHECK_TITLES[at.getDate() % HABIT_CHECK_TITLES.length], body: habitCheckBody(pend, at.getDate()),
-            schedule: {at, allowWhileIdle: true}, smallIcon: 'ic_stat_florescer', iconColor: '#2a7d63',
+            schedule: {at, allowWhileIdle: true}, smallIcon: 'ic_stat_florescer', iconColor: '#2a7d63', isExactNotification: false,
             actionTypeId: one ? 'HABIT' : 'HABIT_ALL',
             extra: one ? {kind: 'habit', habitId: String(pend[0].id), day} : {kind: 'habit-all', day}});
         }
