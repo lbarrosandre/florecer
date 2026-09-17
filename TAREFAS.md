@@ -268,6 +268,15 @@ Além de curtir, uma marcação mais forte: a frase **plantou algo bom** em quem
 - [ ] **[B15.3]** **André:** publicar o `firestore.rules` novo (sem ele, "Brotou em mim" é recusado).
 - [ ] **[B15.4]** Testar no celular: Brotou direto; Gostei → Brotou (troca); segunda marcação recusada; contagens no painel.
 
+### Bloco 16 — Distribuição pela Play, sem cabo (16/09)
+- [x] **[B16.1]** Projeto movido para **C:\dev\florescer** (clone do GitHub + `google-services.json` e `local.properties` copiados + identidade git local). A pasta antiga no OneDrive da empresa não deve mais ser usada.
+- [x] **[B16.2]** Chave de envio: `C:\dev\florescer-chaves\florescer-upload.jks` (RSA 4096, válida até 2054). Senha só em `android/keystore.properties` (ignorado pelo git). SHA-1 `F0:F5:94:AB:0F:31:B9:86:9A:25:A6:12:A0:30:DB:AC:74:D1:0E:09` · SHA-256 `90:C8:B4:CB:A2:F0:56:ED:5E:DD:2F:C7:33:A7:E0:B2:FB:9C:A7:9C:CD:FD:E5:62:DA:67:34:9F:34:CD:73:08`. A primeira chave gerada teve a senha exposta num log de erro e foi descartada antes de qualquer uso.
+- [x] **[B16.3]** `build.gradle` assina a versão de lançamento com o `keystore.properties`; versionName 0.9.0, versionCode 1; AAB assinado gerado e conferido (`4f0f333`).
+- [ ] **[B16.4]** **André:** backup do `.jks` e do `keystore.properties` em local pessoal (gerenciador de senhas ou armazenamento pessoal — não no OneDrive da empresa).
+- [ ] **[B16.5]** Criar o app no Play Console (**Gratuito**, português do Brasil) com a Assinatura de apps do Google Play.
+- [ ] **[B16.6]** Firebase: cadastrar SHA-1 e SHA-256 da chave de envio e da chave de assinatura da Play; baixar o `google-services.json` novo.
+- [ ] **[B16.7]** Enviar o AAB para o **Teste interno** e cadastrar os e-mails dos testadores (fim da instalação por cabo).
+
 ### Bloco 8 — Três idiomas: PT, EN, ES — ⏸️ ADIADO (decisão do André em 16/09)
 **O app fica só em português por enquanto.** Nada de estrutura de tradução nem textos em EN/ES. Na Play Store, publicar **só no Brasil** (CVV, SAMU e SUS são brasileiros). Se for retomado: PT continua a língua-mãe e a ajuda de crise precisa de linhas por país.
 - [ ] **[B8.1]** Estrutura de tradução (`t('chave')`), idioma pelo aparelho + troca manual em Você; datas e números no formato de cada idioma.
@@ -376,3 +385,4 @@ Além de curtir, uma marcação mais forte: a frase **plantou algo bom** em quem
 - **16/09/2026** — **Páginas legais prontas para o Netlify** (`site/`): política de privacidade, termos de uso e exclusão de conta, no visual do app. Falta o André conectar o repositório no Netlify e informar o endereço.
 - **16/09/2026** — **Páginas legais no ar:** https://app-florescer.netlify.app (privacidade, termos, excluir-conta), publicadas automaticamente a cada commit. Links ligados no app.
 - **16/09/2026** — **Bloco 15:** reação "Brotou em mim" no mural, "Isso me ajudou" virou "Gostei", troca permitida de Gostei para Brotou. Regras do Firestore reforçadas (contador só muda junto com o registro da reação).
+- **16/09/2026** — **Bloco 16:** projeto em C:\dev\florescer, chave de envio criada e AAB 0.9.0 assinado — pronto para o Teste interno da Play.

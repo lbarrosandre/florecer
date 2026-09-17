@@ -102,3 +102,18 @@ F2.3 (passos 1–3) → F2.4 (passo 4) → F2.5 (passo 5) → **F2.6 (passo 6)**
 Depois de instalar/atualizar plugin: `npm run cap:sync` e gerar novo APK/AAB (mudança nativa não chega por atualização do `index.html`).
 
 > ⚠️ Antes de gerar o APK, rode `npm run check:android`. Se um plugin ficar fora de `android/capacitor.settings.gradle`, `android/app/capacitor.build.gradle` ou `capacitor.plugins.json`, o app compila, mas a função some sem erro — aconteceu em 15/09 com notificações, PDF e compartilhar. Rode o `cap sync` no próprio projeto (os arquivos gerados são versionados), não só numa cópia usada para o build.
+
+## Versão de lançamento (Play Store)
+
+O projeto fica em `C:\dev\florescer` (fora do OneDrive). A chave de envio fica em `C:\dev\florescer-chaves` e a senha em `android/keystore.properties` — os dois fora do git e com backup pessoal.
+
+```
+cd C:\dev\florescer
+npm run build
+npx cap sync android
+npm run check:android
+cd android
+gradlew.bat bundleRelease
+```
+
+O arquivo para enviar à Play fica em `android/app/build/outputs/bundle/release/app-release.aab`. **A cada envio, aumente o `versionCode`** em `android/app/build.gradle`.
