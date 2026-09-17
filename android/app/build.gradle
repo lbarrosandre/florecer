@@ -1,5 +1,13 @@
 apply plugin: 'com.android.application'
 
+// Assinatura da versão de lançamento (Play Store). Os dados ficam em android/keystore.properties,
+// que NÃO vai para o git. Sem esse arquivo, o build de lançamento sai sem assinatura.
+def arquivoChave = rootProject.file('keystore.properties')
+def chave = new Properties()
+if (arquivoChave.exists()) {
+    arquivoChave.withInputStream { chave.load(it) }
+}
+
 android {
     namespace = "br.com.florescer.app"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,8 +15,10 @@ android {
         applicationId "br.com.florescer.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        // A cada envio para a Play Store, aumente o versionCode (1, 2, 3...).
+        // O versionName é o número que as pessoas veem na loja.
         versionCode 1
-        versionName "1.0"
+        versionName "0.9.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,10 +26,23 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (arquivoChave.exists()) {
+                storeFile file(chave['storeFile'])
+                storePassword chave['storePassword']
+                keyAlias chave['keyAlias']
+                keyPassword chave['keyPassword']
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (arquivoChave.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
