@@ -261,6 +261,13 @@ Decisão do André: **só as páginas legais** vão para o Netlify (o app contin
 - [ ] **[B14.5]** Informar os endereços no Play Console (política de privacidade e exclusão de conta).
 - [ ] **[B14.6]** Revisão dos textos legais (idealmente com advogado) antes da produção.
 
+### Bloco 15 — "Brotou em mim" no mural (pedido em 16/09)
+Além de curtir, uma marcação mais forte: a frase **plantou algo bom** em quem leu. Decisões do André: nome **"Brotou em mim"** com ícone de muda; o curtir virou **"Gostei"**; cada pessoa escolhe um dos dois, e quem deu "Gostei" pode trocar para "Brotou em mim" (não o contrário).
+- [x] **[B15.1]** Botões "Gostei" (coração) e "Brotou em mim" (muda; marcado em dourado com folhas preenchidas) nos dois murais; contagens no painel do administrador.
+- [x] **[B15.2]** Firestore: contador `sprouted` e reação `kind: sprouted`; troca helped → sprouted num lote só. Regras reescritas: o contador só muda no mesmo lote em que a reação é criada ou trocada (`getAfter`), o que também fecha a brecha de somar sem registrar reação.
+- [ ] **[B15.3]** **André:** publicar o `firestore.rules` novo (sem ele, "Brotou em mim" é recusado).
+- [ ] **[B15.4]** Testar no celular: Brotou direto; Gostei → Brotou (troca); segunda marcação recusada; contagens no painel.
+
 ### Bloco 8 — Três idiomas: PT, EN, ES — ⏸️ ADIADO (decisão do André em 16/09)
 **O app fica só em português por enquanto.** Nada de estrutura de tradução nem textos em EN/ES. Na Play Store, publicar **só no Brasil** (CVV, SAMU e SUS são brasileiros). Se for retomado: PT continua a língua-mãe e a ajuda de crise precisa de linhas por país.
 - [ ] **[B8.1]** Estrutura de tradução (`t('chave')`), idioma pelo aparelho + troca manual em Você; datas e números no formato de cada idioma.
@@ -368,3 +375,4 @@ Decisão do André: **só as páginas legais** vão para o Netlify (o app contin
 - **16/09/2026** — **Idiomas:** André decidiu manter o app **só em português**; Bloco 8 (EN/ES) adiado. Distribuição na Play Store só no Brasil.
 - **16/09/2026** — **Páginas legais prontas para o Netlify** (`site/`): política de privacidade, termos de uso e exclusão de conta, no visual do app. Falta o André conectar o repositório no Netlify e informar o endereço.
 - **16/09/2026** — **Páginas legais no ar:** https://app-florescer.netlify.app (privacidade, termos, excluir-conta), publicadas automaticamente a cada commit. Links ligados no app.
+- **16/09/2026** — **Bloco 15:** reação "Brotou em mim" no mural, "Isso me ajudou" virou "Gostei", troca permitida de Gostei para Brotou. Regras do Firestore reforçadas (contador só muda junto com o registro da reação).

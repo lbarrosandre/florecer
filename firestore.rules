@@ -17,7 +17,8 @@ rules_version = '2';
 //   members/{uid}        — cadastro e uso { name, email, createdAt, lastSeen, careDays, logs, platform } — o admin lê
 //   stats/{aaaa-mm-dd}   — contadores anônimos do dia (humor, emoções, gatilhos, ferramentas) — só o admin lê
 //   evolution/{idAleat}  — retrato anônimo de evolução por aparelho (sem uid) — só o admin lê
-//   wall/{autoId}        — mural { text, source, lang, status, uid, createdAt, helped, reports }
+//   wall/{autoId}        — mural { text, source, lang, status, uid, createdAt, helped, sprouted, reports }
+//   wall/{id}/reactions/{uid} — reação de cada pessoa { kind: helped | sprouted | reports, at }
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -44,9 +45,35 @@ service cloud.firestore {
              || (resource != null && request.resource.data.isPremium == resource.data.isPremium);
     }
 
-    // Verdadeiro quando esta pessoa ainda não reagiu a esta mensagem.
-    function semReacao(postId) {
-      return !exists(/databases/$(database)/documents/wall/$(postId)/reactions/$(request.auth.uid));
+    // ── Reações do mural ──────────────────────────────────────
+    // Cada pessoa tem no máximo um documento wall/{id}/reactions/{uid}, com kind "helped" (Gostei),
+    // "sprouted" (Brotou em mim) ou "reports" (denúncia). O contador da mensagem só muda no mesmo
+    // lote em que esse documento é criado ou trocado — por isso não dá para somar mais de uma vez.
+    function temReacao(postId) {
+      return exists(/databases/$(database)/documents/wall/$(postId)/reactions/$(request.auth.uid));
+    }
+    function reacaoAntes(postId) {
+      return get(/databases/$(database)/documents/wall/$(postId)/reactions/$(request.auth.uid)).data;
+    }
+    function reacaoDepois(postId) {
+      return getAfter(/databases/$(database)/documents/wall/$(postId)/reactions/$(request.auth.uid)).data;
+    }
+    // Primeira reação: soma 1 só no contador escolhido e cria a reação do mesmo tipo no mesmo lote.
+    function primeiraReacao(postId, campo) {
+      return !temReacao(postId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([campo])
+        && request.resource.data[campo] == resource.data.get(campo, 0) + 1
+        && reacaoDepois(postId).kind == campo;
+    }
+    // Troca de "Gostei" para "Brotou em mim": tira 1 de helped e soma 1 em sprouted, enquanto a
+    // reação da pessoa passa de helped para sprouted no mesmo lote. Só acontece uma vez.
+    function trocaParaBrotou(postId) {
+      return temReacao(postId)
+        && reacaoAntes(postId).kind == 'helped'
+        && reacaoDepois(postId).kind == 'sprouted'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['helped', 'sprouted'])
+        && request.resource.data.helped == resource.data.helped - 1
+        && request.resource.data.get('sprouted', 0) == resource.data.get('sprouted', 0) + 1;
     }
 
     // ── Perfil ────────────────────────────────────────────────
@@ -130,23 +157,24 @@ service cloud.firestore {
             || (request.resource.data.tags is list && request.resource.data.tags.size() <= 6))
         && request.resource.data.keys().hasOnly(['text', 'source', 'lang', 'status', 'uid', 'createdAt', 'helped', 'reports', 'activity', 'tags']);
       allow update: if isAdmin()
-        || (signedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['helped'])
-            && request.resource.data.helped == resource.data.helped + 1
-            && semReacao(postId))
-        || (signedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reports'])
-            && request.resource.data.reports == resource.data.reports + 1
-            && semReacao(postId));
+        || (signedIn() && (primeiraReacao(postId, 'helped')
+                           || primeiraReacao(postId, 'sprouted')
+                           || primeiraReacao(postId, 'reports')
+                           || trocaParaBrotou(postId)));
       allow delete: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
 
-      // Uma reação por pessoa em cada mensagem. O documento só pode ser criado (nunca alterado
-      // nem apagado), e o contador acima só sobe enquanto ele não existir — por isso a segunda
-      // curtida é recusada, mesmo em outro aparelho ou depois de reinstalar o app.
+      // Uma reação por pessoa em cada mensagem (vale em qualquer aparelho, mesmo reinstalando o app).
       match /reactions/{uid} {
         allow read: if isOwner(uid) || isAdmin();
         allow create: if isOwner(uid)
-          && request.resource.data.kind in ['helped', 'reports']
+          && request.resource.data.kind in ['helped', 'sprouted', 'reports']
           && request.resource.data.keys().hasOnly(['kind', 'at']);
-        allow update, delete: if false;
+        // Única troca permitida: de "Gostei" para "Brotou em mim".
+        allow update: if isOwner(uid)
+          && resource.data.kind == 'helped'
+          && request.resource.data.kind == 'sprouted'
+          && request.resource.data.keys().hasOnly(['kind', 'at']);
+        allow delete: if false;
       }
     }
 
