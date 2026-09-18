@@ -17,7 +17,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         // A cada envio para a Play Store, aumente o versionCode (1, 2, 3...).
         // O versionName é o número que as pessoas veem na loja.
-        versionCode 1
+        versionCode 2
         versionName "0.9.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
