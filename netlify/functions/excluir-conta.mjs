@@ -7,13 +7,19 @@
 //
 // Variáveis de ambiente (painel do Netlify, nunca no repositório):
 //   FIREBASE_SERVICE_ACCOUNT  — JSON da conta de serviço do Firebase (uma linha)
-//   RESEND_API_KEY            — chave da conta do Resend
-//   EMAIL_REMETENTE           — ex.: Florescer <contato@seudominio.com.br>
+//   EMAIL_REMETENTE           — ex.: Florescer <seuendereco@gmail.com>
 //   EMAIL_COPIA               — opcional: recebe uma cópia do aviso
+//
+// E um dos dois caminhos de envio (o Gmail tem prioridade se estiver configurado):
+//   SMTP_USER + SMTP_PASS     — seu Gmail e uma "senha de app" de 16 letras. Entrega para
+//                               qualquer pessoa, sem domínio próprio, até 500 por dia.
+//   RESEND_API_KEY            — chave do Resend. Sem domínio verificado, o Resend só entrega
+//                               para o e-mail dono da conta — serve para testar, não para uso real.
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -77,8 +83,8 @@ async function apagarDados(db, uid) {
 }
 
 async function avisar(email, nome, contagem) {
-  if (!process.env.RESEND_API_KEY) return 'sem-envio';
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const porGmail = !!(process.env.SMTP_USER && process.env.SMTP_PASS);
+  if (!porGmail && !process.env.RESEND_API_KEY) return 'sem-envio';
   const total = Object.values(contagem).reduce((a, b) => a + b, 0);
   const texto = `Olá, ${nome || 'tudo bem'}?
 
@@ -91,14 +97,32 @@ Se você não pediu isso, responda este e-mail — vamos apurar imediatamente.
 
 Cuide-se. Você sempre pode recomeçar quando quiser.
 Equipe Florescer`;
-  const html = texto.split('\n\n').map((p) => `<p style="margin:0 0 14px">${p.replace(/\n/g, '<br>')}</p>`).join('');
+  const corpoHtml = texto.split('\n\n').map((p) => `<p style="margin:0 0 14px">${p.replace(/\n/g, '<br>')}</p>`).join('');
+  const html = `<div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.6;color:#22322c">${corpoHtml}</div>`;
+  const assunto = 'Sua conta do Florescer foi excluída';
+  const de = process.env.EMAIL_REMETENTE
+    || (porGmail ? 'Florescer <' + process.env.SMTP_USER + '>' : 'Florescer <onboarding@resend.dev>');
+
+  if (porGmail) {
+    const transporte = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    });
+    await transporte.sendMail({
+      from: de, to: email, bcc: process.env.EMAIL_COPIA || undefined,
+      subject: assunto, text: texto, html,
+    });
+    return 'enviado';
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const envio = await resend.emails.send({
-    from: process.env.EMAIL_REMETENTE || 'Florescer <onboarding@resend.dev>',
+    from: de,
     to: [email],
     bcc: process.env.EMAIL_COPIA ? [process.env.EMAIL_COPIA] : undefined,
-    subject: 'Sua conta do Florescer foi excluída',
+    subject: assunto,
     text: texto,
-    html: `<div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.6;color:#22322c">${html}</div>`,
+    html,
   });
   return envio && envio.error ? 'falhou: ' + envio.error.message : 'enviado';
 }
