@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Verde do logo (círculo do símbolo). Antes era branco, o que deixava o ícone com cara de quadrado branco. -->
-    <color name="ic_launcher_background">#309060</color>
+    <!-- Fundo claro do app: a marca (círculo verde e dourado) fica por cima. -->
+    <color name="ic_launcher_background">#F4F7F5</color>
 </resources>
