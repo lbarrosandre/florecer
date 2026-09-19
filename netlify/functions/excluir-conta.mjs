@@ -43,43 +43,55 @@ const PORTADOC = ['users', 'habits', 'habitDone', 'members'];
 // Coleções com id automático e campo uid.
 const PORCAMPO = ['logs', 'gratitude', 'thoughts'];
 
+// Tolerância a falha, pelo mesmo motivo do Bússola Finance: se uma coleção falhar, seguimos
+// para as próximas e devolvemos a lista do que ficou. Parar na primeira falha deixaria MAIS
+// dado da pessoa para trás — exatamente o contrário do que ela pediu.
 async function apagarDados(db, uid) {
   const contagem = {};
-  const lote = db.batch();
-  let pendentes = 0;
-  const gravar = async () => { if (pendentes) { await lote.commit(); pendentes = 0; } };
+  const falharam = [];
 
   for (const col of PORTADOC) {
-    const ref = db.collection(col).doc(uid);
-    if ((await ref.get()).exists) { await ref.delete(); contagem[col] = 1; }
+    try {
+      const ref = db.collection(col).doc(uid);
+      if ((await ref.get()).exists) { await ref.delete(); contagem[col] = 1; }
+    } catch (e) { falharam.push(col); console.error('excluir-conta: falhou em ' + col, e); }
   }
 
   for (const col of PORCAMPO) {
-    const achados = await db.collection(col).where('uid', '==', uid).get();
-    contagem[col] = achados.size;
-    for (const d of achados.docs) await d.ref.delete();
+    try {
+      const achados = await db.collection(col).where('uid', '==', uid).get();
+      contagem[col] = achados.size;
+      for (const d of achados.docs) await d.ref.delete();
+    } catch (e) { falharam.push(col); console.error('excluir-conta: falhou em ' + col, e); }
   }
 
-  // Mural: as mensagens da pessoa saem junto (foi a decisão de produto), e as reações dela
-  // em mensagens de outras pessoas também — elas guardam o uid.
-  const posts = await db.collection('wall').where('uid', '==', uid).get();
-  contagem.wall = posts.size;
-  for (const p of posts.docs) {
-    const reacoes = await p.ref.collection('reactions').get();
-    for (const r of reacoes.docs) await r.ref.delete();
-    await p.ref.delete();
-  }
-  const minhasReacoes = await db.collectionGroup('reactions').get();
-  let soltas = 0;
-  for (const r of minhasReacoes.docs) {
-    if (r.id !== uid) continue;
-    await r.ref.delete();
-    soltas++;
-  }
-  contagem.reacoes = soltas;
+  // Mural: as mensagens da pessoa saem junto (decisão de produto) e as reações dela em
+  // mensagens de outras pessoas também — elas guardam o uid no id do documento.
+  try {
+    const posts = await db.collection('wall').where('uid', '==', uid).get();
+    contagem.wall = posts.size;
+    for (const p of posts.docs) {
+      const reacoes = await p.ref.collection('reactions').get();
+      for (const r of reacoes.docs) await r.ref.delete();
+      await p.ref.delete();
+    }
+  } catch (e) { falharam.push('wall'); console.error('excluir-conta: falhou no mural', e); }
 
-  await gravar();
-  return contagem;
+  try {
+    // O id do documento de reação é o uid, então varremos o grupo e ficamos com os dela.
+    // Enquanto o mural é pequeno isso é barato; quando crescer, vale guardar um campo uid
+    // na reação e criar índice de grupo para consultar direto.
+    const todas = await db.collectionGroup('reactions').get();
+    let soltas = 0;
+    for (const r of todas.docs) {
+      if (r.id !== uid) continue;
+      await r.ref.delete();
+      soltas++;
+    }
+    contagem.reacoes = soltas;
+  } catch (e) { falharam.push('reactions'); console.error('excluir-conta: falhou nas reações', e); }
+
+  return { contagem, falharam };
 }
 
 async function avisar(email, nome, contagem) {
@@ -151,14 +163,16 @@ export default async (req) => {
     const email = (registro && registro.email) || conta.email || '';
     const nome = (registro && registro.displayName) || '';
 
-    const contagem = await apagarDados(db, conta.uid);
+    const { contagem, falharam } = await apagarDados(db, conta.uid);
     await auth.revokeRefreshTokens(conta.uid);
     await auth.deleteUser(conta.uid);
 
+    // O e-mail é cortesia: exclusão de conta é obrigação legal e não pode depender de
+    // provedor de e-mail estar de pé. Se falhar, a exclusão continua valendo.
     let aviso = 'sem-email';
-    if (email) { try { aviso = await avisar(email, nome, contagem); } catch (e) { aviso = 'falhou: ' + e.message; } }
+    if (email) { try { aviso = await avisar(email, nome, contagem); } catch (e) { aviso = 'falhou: ' + e.message; console.error('excluir-conta: e-mail', e); } }
 
-    return responder(200, { ok: true, apagados: contagem, email: aviso });
+    return responder(200, { ok: true, apagados: contagem, naoApagados: falharam, email: aviso });
   } catch (e) {
     // Mensagem humana para o app; o detalhe fica no log do Netlify.
     console.error('excluir-conta:', e);
