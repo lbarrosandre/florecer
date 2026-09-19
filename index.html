@@ -890,6 +890,20 @@ div.row{cursor:default}
 .cv-auth-h{font-size:19px;font-weight:300;color:var(--ink);margin:0 2px 12px}
 .cv-foot{text-align:center;font-size:11.5px;color:var(--faint);line-height:1.8;padding:18px 0 4px}
 .cv-foot .cover-link{font-size:11.5px}
+/* ── Bloqueio do app (código e digital) ───────────────────── */
+.lockscr{position:fixed;inset:0;z-index:2000;background:#f4f7f5;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 24px;gap:12px}
+.lockscr .lk-mark{width:58px;height:58px;color:#2a7d63}
+.lockscr .lk-mark svg{width:100%;height:100%}
+.lockscr .lk-t{font-size:17px;font-weight:600;color:#22322c}
+.lockscr .lk-s{font-size:13px;color:#6b7d74;text-align:center;min-height:19px;max-width:280px}
+.lockscr .lk-s.lk-err{color:#b4503f}
+.lk-dots{display:flex;gap:12px;margin:6px 0 10px}
+.lk-dots i{width:12px;height:12px;border-radius:50%;background:#dde7e2;transition:transform .12s,background .12s}
+.lk-dots i.on{background:#2a7d63;transform:scale(1.15)}
+.lk-pad{display:grid;grid-template-columns:repeat(3,66px);gap:13px;justify-content:center}
+.lk-pad button{height:66px;border-radius:50%;border:none;background:#fff;font-size:23px;font-weight:500;color:#22322c;box-shadow:0 1px 3px rgba(0,0,0,.08);cursor:pointer;font-family:inherit}
+.lk-pad button:active{background:#eaf2ee}
+.lk-pad button.ghost{background:transparent;box-shadow:none;font-size:13px;color:#6b7d74;font-weight:500}
 </style>
 
   <!-- Firebase SDK (versão compat - mais estável) -->
@@ -1073,8 +1087,8 @@ div.row{cursor:default}
     };
 
     // ═══════════ LOGOUT ═══════════
-    window.doLogout = async () => {
-      if (!confirm('Deseja sair da sua conta?')) return;
+    window.doLogout = async (jaConfirmado) => {
+      if (!jaConfirmado && !confirm('Deseja sair da sua conta?')) return;
       if (window.cancelReminders) await window.cancelReminders();
       if (window.resetProfile) window.resetProfile();
       await auth.signOut();
@@ -1323,8 +1337,10 @@ div.row{cursor:default}
         'auth/email-already-in-use': 'Este e-mail já está cadastrado. Faça login.',
         'auth/invalid-email': 'E-mail inválido.',
         'auth/weak-password': 'Senha muito fraca. Use pelo menos 6 caracteres.',
-        'auth/user-not-found': 'Conta não encontrada. Crie uma conta primeiro.',
-        'auth/wrong-password': 'Senha incorreta. Tente novamente.',
+        // Resposta igual para e-mail inexistente e senha errada: dizer "conta não encontrada"
+        // confirmaria, para qualquer um, que uma pessoa usa um app de saúde mental.
+        'auth/user-not-found': 'E-mail ou senha incorretos.',
+        'auth/wrong-password': 'E-mail ou senha incorretos.',
         'auth/invalid-credential': 'E-mail ou senha incorretos.',
         'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos.',
         'auth/network-request-failed': 'Sem conexão. Verifique sua internet.',
@@ -5016,11 +5032,13 @@ function renderMore() {
     <div class="section-lbl" id="me-conta">Conta</div>
     <div class="list">
       <div class="row"><span class="r-ic">${ico('escudo')}</span><span class="r-t"><b>Cadastro</b><small>Entrou com ${entrou} · desde ${desde}</small></span></div>
+      <button class="row" onclick="openLockSheet()"><span class="r-ic">${ico('cadeado')}</span><span class="r-t"><b>Bloqueio do app</b><small>${lockLigado() ? 'Código pedido ao abrir' + (LOCK.bio ? ' · digital ativa' : '') : 'Peça um código ou a digital para abrir'}</small></span>${chev}</button>
+      ${u.provider === 'google.com' ? '' : `<button class="row" onclick="mudarSenha()"><span class="r-ic">${ico('cadeado')}</span><span class="r-t"><b>Alterar senha</b><small>Enviamos um link para o seu e-mail</small></span>${chev}</button>`}
       <div class="row"><span class="r-ic">${ico('flor')}</span><span class="r-t"><b>Plano</b><small>Gratuito · Premium em breve</small></span></div>
       <button class="row" onclick="openExternal(SITE_URL + '/privacidade/')"><span class="r-ic">${ico('doc')}</span><span class="r-t"><b>Privacidade e termos</b><small>Seus registros são seus. O administrador vê só cadastro e uso — nunca o que você registra ou escreve.</small></span>${chev}</button>
     </div>
     <button class="btn btn-soft" style="margin-top:18px" onclick="doLogout()">${ico('sair')}Sair da conta</button>
-    <button class="btn-link danger" onclick="openExternal(SITE_URL + '/excluir-conta/')">Excluir minha conta</button>
+    <button class="btn-link danger" onclick="openDeleteSheet()">Excluir minha conta</button>
     <button class="btn-link" onclick="openExternal(SITE_URL + '/termos/')">Termos de uso</button>`;
   const targetId = {habits: 'me-habits', conta: 'me-conta', lembretes: 'me-lembretes'}[moreCurrentTab];
   if (targetId) {
@@ -5874,6 +5892,324 @@ function processHabitActions(){
     setTimeout(() => { const el = document.getElementById('home-habits'); if (el) el.scrollIntoView({block: 'center', behavior: 'smooth'}); }, 250);
   }
 }
+// ═══════════ BLOQUEIO DO APP (código e digital) ═══════════
+// Trava local, para quem pega o celular já desbloqueado. Não é criptografia dos dados: o que
+// protege os registros no servidor continua sendo a senha da conta e as regras do Firestore.
+// O texto na tela diz exatamente isso — prometer mais seria mentira confortável.
+var LOCK = (function(){ try { return JSON.parse(localStorage.getItem('fl_lock') || '{}'); } catch (e) { return {}; } })();
+var LOCK_BUF = '', LOCK_ERROS = 0, LOCK_ESPERA = 0, LOCK_SAIU = 0, LOCK_BIO_INDO = false, LOCK_NOVO = '';
+
+function saveLock(){ try { localStorage.setItem('fl_lock', JSON.stringify(LOCK)); } catch (e) {} }
+function lockLigado(){ return !!(LOCK.on && LOCK.hash); }
+function lockVisivel(){ return !!document.getElementById('lock-screen'); }
+
+// PBKDF2 com 200 mil rodadas em vez de um hash direto: um código de 6 dígitos tem só um milhão
+// de combinações, e com hash simples quem tiver acesso ao armazenamento do aparelho testa todas
+// em segundos. Com derivação lenta, a mesma varredura leva dias.
+async function lockHash(pin, salt){
+  const enc = new TextEncoder();
+  const base = await crypto.subtle.importKey('raw', enc.encode(String(pin)), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits({name: 'PBKDF2', salt: enc.encode(salt), iterations: 200000, hash: 'SHA-256'}, base, 256);
+  return Array.from(new Uint8Array(bits)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+function lockSalt(){
+  const a = new Uint8Array(16);
+  crypto.getRandomValues(a);
+  return Array.from(a).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function bioPlugin(){
+  const C = window.Capacitor;
+  return (C && C.Plugins && C.Plugins.NativeBiometric) || null;
+}
+async function bioDisponivel(){
+  const P = bioPlugin();
+  if (!P) return false;
+  try { const r = await P.isAvailable({useFallback: false}); return !!(r && r.isAvailable); } catch (e) { return false; }
+}
+async function bioPedir(){
+  const P = bioPlugin();
+  if (!P) return false;
+  try {
+    await P.verifyIdentity({reason: 'Abrir o Florescer', title: 'Florescer', subtitle: '', description: 'Confirme que é você'});
+    return true;
+  } catch (e) { return false; }
+}
+
+function lockShow(){
+  if (lockVisivel() || !lockLigado()) return;
+  LOCK_BUF = '';
+  const el = document.createElement('div');
+  el.className = 'lockscr';
+  el.id = 'lock-screen';
+  el.innerHTML = '<div class="lk-mark">' + ico('flor') + '</div>'
+    + '<div class="lk-t">Florescer</div>'
+    + '<div class="lk-s" id="lk-msg">Digite seu código</div>'
+    + '<div class="lk-dots" id="lk-dots">' + '<i></i>'.repeat(6) + '</div>'
+    + '<div class="lk-pad">'
+    + [1,2,3,4,5,6,7,8,9].map(n => '<button type="button" onclick="lockDigita(\'' + n + '\')">' + n + '</button>').join('')
+    + '<button type="button" class="ghost" id="lk-bio" onclick="lockBio()" hidden>digital</button>'
+    + '<button type="button" onclick="lockDigita(\'0\')">0</button>'
+    + '<button type="button" class="ghost" onclick="lockApaga()">apagar</button>'
+    + '</div>'
+    + '<button class="btn-link" style="margin-top:6px" onclick="lockEsqueci()">Esqueci meu código</button>';
+  document.body.appendChild(el);
+  if (LOCK.bio) {
+    const b = document.getElementById('lk-bio');
+    if (b) b.hidden = false;
+    setTimeout(lockBio, 300);
+  }
+}
+function lockAbre(){
+  const el = document.getElementById('lock-screen');
+  if (el) el.remove();
+  LOCK_BUF = '';
+}
+function lockPinta(){
+  const d = document.getElementById('lk-dots');
+  if (d) Array.from(d.children).forEach((i, k) => i.classList.toggle('on', k < LOCK_BUF.length));
+}
+function lockMsg(txt, erro){
+  const m = document.getElementById('lk-msg');
+  if (m) { m.textContent = txt; m.classList.toggle('lk-err', !!erro); }
+}
+async function lockDigita(n){
+  if (Date.now() < LOCK_ESPERA || LOCK_BUF.length >= 6) return;
+  LOCK_BUF += n;
+  lockPinta();
+  if (LOCK_BUF.length < 6) return;
+  const tentativa = LOCK_BUF;
+  lockMsg('Conferindo…');
+  const ok = (await lockHash(tentativa, LOCK.salt)) === LOCK.hash;
+  LOCK_BUF = '';
+  lockPinta();
+  if (ok) { LOCK_ERROS = 0; lockAbre(); return; }
+  LOCK_ERROS++;
+  // Espera crescente: atrasa a tentativa e cansativa quem está testando códigos.
+  if (LOCK_ERROS >= 5) {
+    const seg = LOCK_ERROS >= 8 ? 300 : 30;
+    LOCK_ESPERA = Date.now() + seg * 1000;
+    lockMsg('Muitas tentativas. Espere ' + (seg === 30 ? '30 segundos' : '5 minutos') + '.', true);
+    setTimeout(() => { LOCK_ESPERA = 0; lockMsg('Digite seu código'); }, seg * 1000);
+  } else {
+    lockMsg('Código incorreto. Tente de novo.', true);
+  }
+}
+function lockApaga(){ LOCK_BUF = LOCK_BUF.slice(0, -1); lockPinta(); }
+async function lockBio(){
+  if (LOCK_BIO_INDO) return;
+  LOCK_BIO_INDO = true;
+  const ok = await bioPedir();
+  LOCK_BIO_INDO = false;
+  if (ok) lockAbre();
+}
+function lockEsqueci(){
+  if (!confirm('Para criar um código novo é preciso sair da conta e entrar de novo. Nada é apagado. Deseja sair?')) return;
+  LOCK = {};
+  saveLock();
+  lockAbre();
+  if (window.doLogout) doLogout(true);
+}
+// Ao voltar para o app: bloqueia de acordo com a preferência (na hora, 1 min, 5 min).
+function lockAoVoltar(){
+  if (!lockLigado()) return;
+  const espera = (LOCK.after || 0) * 1000;
+  if (!LOCK_SAIU || Date.now() - LOCK_SAIU >= espera) lockShow();
+}
+
+// ═══════════ SENHA E EXCLUSÃO DA CONTA ═══════════
+async function mudarSenha(){
+  const email = (S.user && S.user.email) || '';
+  if (!email) return;
+  if (!confirm('Vamos enviar para ' + email + ' um link para você criar uma senha nova. Continuar?')) return;
+  try {
+    await auth.sendPasswordResetEmail(email);
+    toast('Link enviado. Confira também a caixa de spam.');
+  } catch (e) {
+    toast('Não foi possível enviar agora. Tente daqui a pouco.');
+  }
+}
+
+function openDeleteSheet(){
+  closeHelpSheet();
+  const porGoogle = (S.user && S.user.provider) === 'google.com';
+  const ov = document.createElement('div');
+  ov.className = 'empathy-overlay';
+  ov.id = 'share-sheet';
+  ov.addEventListener('click', (ev) => { if (ev.target === ov) ov.remove(); });
+  ov.innerHTML = '<div class="empathy-sheet help-sheet" role="dialog" aria-label="Excluir minha conta"><i class="grab"></i>'
+    + '<div class="hs-title">Excluir minha conta</div>'
+    + '<div class="hs-sub">Isto apaga de vez, dos nossos servidores: seus registros de humor, gratidão e pensamento, seus hábitos, seu cadastro e suas mensagens do mural. Não guardamos cópia e não dá para desfazer.</div>'
+    + '<p class="rep-foot" style="margin:2px 2px 10px">Você recebe um e-mail confirmando a exclusão. Se quiser guardar seu histórico antes, gere o PDF em Diário › Relatório.</p>'
+    + (porGoogle
+        ? '<p class="rep-foot" style="margin:0 2px 10px">Como você entrou com o Google, vamos pedir a confirmação da sua conta Google.</p>'
+        : '<input class="inp" id="del-pass" type="password" autocomplete="current-password" placeholder="Sua senha" style="margin-bottom:8px">')
+    + '<input class="inp" id="del-conf" maxlength="8" autocomplete="off" placeholder="Digite EXCLUIR para confirmar">'
+    + '<div class="tr-warn" id="del-warn"></div>'
+    + '<button class="btn btn-p" id="del-btn" style="background:#b4503f" onclick="confirmaExclusao()">Excluir definitivamente</button>'
+    + '<button class="btn-link hs-more" onclick="closeHelpSheet()">Cancelar</button></div>';
+  document.getElementById('app').appendChild(ov);
+}
+
+async function confirmaExclusao(){
+  const aviso = document.getElementById('del-warn'), botao = document.getElementById('del-btn');
+  const conf = ((document.getElementById('del-conf') || {}).value || '').trim().toUpperCase();
+  if (conf !== 'EXCLUIR') { aviso.textContent = 'Digite EXCLUIR para confirmar.'; return; }
+  const usuario = auth.currentUser;
+  if (!usuario) { aviso.textContent = 'Sua sessão expirou. Entre de novo e tente outra vez.'; return; }
+  botao.disabled = true;
+  try {
+    // Exclusão é irreversível: o servidor só aceita quem acabou de confirmar a identidade.
+    aviso.textContent = 'Confirmando que é você…';
+    const porGoogle = (usuario.providerData || []).some((p) => p.providerId === 'google.com');
+    if (porGoogle) {
+      const C = window.Capacitor;
+      if (C && C.isNativePlatform && C.isNativePlatform() && C.Plugins && C.Plugins.FirebaseAuthentication) {
+        const res = await C.Plugins.FirebaseAuthentication.signInWithGoogle();
+        const idToken = res && res.credential && res.credential.idToken;
+        if (!idToken) throw new Error('confirmação cancelada');
+        await usuario.reauthenticateWithCredential(
+          firebase.auth.GoogleAuthProvider.credential(idToken, res.credential.accessToken));
+      } else {
+        await usuario.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider());
+      }
+    } else {
+      const senha = (document.getElementById('del-pass') || {}).value || '';
+      if (!senha) { aviso.textContent = 'Digite sua senha.'; botao.disabled = false; return; }
+      await usuario.reauthenticateWithCredential(
+        firebase.auth.EmailAuthProvider.credential(usuario.email, senha));
+    }
+
+    aviso.textContent = 'Apagando seus dados…';
+    if (window.cancelReminders) { try { await window.cancelReminders(); } catch (e) {} }
+    const token = await usuario.getIdToken(true);
+    const resposta = await fetch(SITE_URL + '/api/excluir-conta', {
+      method: 'POST',
+      headers: {Authorization: 'Bearer ' + token},
+    });
+    const corpo = await resposta.json().catch(() => ({}));
+    if (!resposta.ok) throw new Error(corpo.erro || 'servidor indisponível');
+
+    try { localStorage.clear(); } catch (e) {}
+    try { await auth.signOut(); } catch (e) {}
+    closeHelpSheet();
+    alert('Sua conta foi excluída e seus dados foram apagados.'
+      + (corpo.email === 'enviado' ? ' A confirmação foi enviada para o seu e-mail.' : ''));
+    location.reload();
+  } catch (e) {
+    const codigo = (e && e.code) || '';
+    const msg = codigo === 'auth/wrong-password' || codigo === 'auth/invalid-credential'
+      ? 'Senha incorreta.'
+      : /cancel/i.test((e && e.message) || '')
+        ? 'Confirmação cancelada.'
+        : 'Não foi possível concluir agora: ' + ((e && e.message) || 'erro desconhecido');
+    aviso.textContent = msg;
+    botao.disabled = false;
+  }
+}
+
+function openLockSheet(){
+  closeHelpSheet();
+  const ligado = lockLigado();
+  const ov = document.createElement('div');
+  ov.className = 'empathy-overlay';
+  ov.id = 'share-sheet';
+  ov.addEventListener('click', (ev) => { if (ev.target === ov) ov.remove(); });
+  ov.innerHTML = '<div class="empathy-sheet help-sheet" role="dialog" aria-label="Bloqueio do app"><i class="grab"></i>'
+    + '<div class="hs-title">Bloqueio do app</div>'
+    + '<div class="hs-sub">Um código de 6 dígitos para abrir o Florescer neste aparelho. Serve para quem pega seu celular já desbloqueado. Seus registros continuam protegidos pela senha da sua conta.</div>'
+    + '<div class="list">'
+    + '<div class="row"><span class="r-ic">' + ico('cadeado') + '</span><span class="r-t"><b>Pedir código ao abrir</b><small>' + (ligado ? 'Ativo neste aparelho' : 'Desligado') + '</small></span>'
+    + '<label class="switch"><input type="checkbox" ' + (ligado ? 'checked' : '') + ' onchange="lockLiga(this.checked)" aria-label="Pedir código ao abrir"><span></span></label></div>'
+    + (ligado ? '<div class="row"><span class="r-ic">' + ico('voce') + '</span><span class="r-t"><b>Usar a digital</b><small id="lk-bio-txt">Abrir com a digital do aparelho</small></span>'
+      + '<label class="switch"><input type="checkbox" id="lk-bio-sw" ' + (LOCK.bio ? 'checked' : '') + ' onchange="lockBioLiga(this.checked)" aria-label="Usar a digital"><span></span></label></div>'
+      + '<div class="row"><span class="r-t"><b style="font-weight:400">Quando bloquear</b></span>'
+      + '<select class="inp time-inp" style="width:auto" onchange="lockQuando(this.value)" aria-label="Quando bloquear">'
+      + '<option value="0"' + (!LOCK.after ? ' selected' : '') + '>Ao sair do app</option>'
+      + '<option value="60"' + (LOCK.after == 60 ? ' selected' : '') + '>Depois de 1 minuto</option>'
+      + '<option value="300"' + (LOCK.after == 300 ? ' selected' : '') + '>Depois de 5 minutos</option>'
+      + '</select></div>' : '')
+    + '</div>'
+    + (ligado ? '<button class="btn btn-soft" style="margin-top:10px" onclick="lockNovoCodigo()">Trocar o código</button>' : '')
+    + '<p class="rep-foot" style="margin:10px 2px 0">Se esquecer o código, a saída é sair da conta e entrar de novo — nada é apagado.</p>'
+    + '<button class="btn-link hs-more" onclick="closeHelpSheet()">Fechar</button></div>';
+  document.getElementById('app').appendChild(ov);
+  if (ligado) bioDisponivel().then((ok) => {
+    if (ok) return;
+    const t = document.getElementById('lk-bio-txt'), sw = document.getElementById('lk-bio-sw');
+    if (t) t.textContent = 'Este aparelho não tem digital configurada';
+    if (sw) { sw.checked = false; sw.disabled = true; }
+  });
+}
+function lockLiga(on){
+  if (on) { lockNovoCodigo(); return; }
+  LOCK = {};
+  saveLock();
+  closeHelpSheet();
+  openLockSheet();
+  if (document.getElementById('s-more').classList.contains('active')) renderMore();
+}
+function lockNovoCodigo(){
+  closeHelpSheet();
+  LOCK_NOVO = '';
+  const ov = document.createElement('div');
+  ov.className = 'empathy-overlay';
+  ov.id = 'share-sheet';
+  ov.innerHTML = '<div class="empathy-sheet help-sheet" role="dialog" aria-label="Criar código"><i class="grab"></i>'
+    + '<div class="hs-title" id="lk-ttl">Criar seu código</div>'
+    + '<div class="hs-sub" id="lk-sub">Seis dígitos. Evite datas de nascimento e sequências como 123456.</div>'
+    + '<input class="inp" id="lk-in" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="● ● ● ● ● ●" style="text-align:center;letter-spacing:6px;font-size:20px">'
+    + '<div class="tr-warn" id="lk-warn"></div>'
+    + '<button class="btn btn-p" onclick="lockSalvaCodigo()">Continuar</button>'
+    + '<button class="btn-link hs-more" onclick="closeHelpSheet()">Cancelar</button></div>';
+  document.getElementById('app').appendChild(ov);
+  setTimeout(() => { const i = document.getElementById('lk-in'); if (i) i.focus(); }, 150);
+}
+async function lockSalvaCodigo(){
+  const campo = document.getElementById('lk-in'), aviso = document.getElementById('lk-warn');
+  const v = (campo.value || '').replace(/\D/g, '');
+  if (v.length !== 6) { aviso.textContent = 'Use exatamente 6 dígitos.'; return; }
+  if (/^(\d)\1{5}$/.test(v) || '01234567890'.indexOf(v) >= 0 || '09876543210'.indexOf(v) >= 0) {
+    aviso.textContent = 'Esse código é fácil demais de adivinhar. Escolha outro.';
+    return;
+  }
+  if (!LOCK_NOVO) {
+    LOCK_NOVO = v;
+    campo.value = '';
+    document.getElementById('lk-ttl').textContent = 'Repita o código';
+    document.getElementById('lk-sub').textContent = 'Só para confirmar que não houve engano.';
+    aviso.textContent = '';
+    campo.focus();
+    return;
+  }
+  if (v !== LOCK_NOVO) {
+    LOCK_NOVO = '';
+    campo.value = '';
+    document.getElementById('lk-ttl').textContent = 'Criar seu código';
+    document.getElementById('lk-sub').textContent = 'Seis dígitos. Evite datas de nascimento e sequências como 123456.';
+    aviso.textContent = 'Os códigos não bateram. Comece de novo.';
+    return;
+  }
+  aviso.textContent = 'Salvando…';
+  const salt = lockSalt();
+  LOCK = {on: true, salt: salt, hash: await lockHash(v, salt), bio: !!LOCK.bio, after: LOCK.after || 0};
+  saveLock();
+  LOCK_NOVO = '';
+  closeHelpSheet();
+  toast('Bloqueio ativado neste aparelho.');
+  if (document.getElementById('s-more').classList.contains('active')) renderMore();
+}
+async function lockBioLiga(on){
+  const sw = document.getElementById('lk-bio-sw');
+  if (on) {
+    if (!(await bioDisponivel())) { if (sw) sw.checked = false; toast('Este aparelho não tem digital configurada.'); return; }
+    if (!(await bioPedir())) { if (sw) sw.checked = false; return; }
+  }
+  LOCK.bio = !!on;
+  saveLock();
+}
+function lockQuando(v){ LOCK.after = parseInt(v, 10) || 0; saveLock(); }
+
 function openHabitSheet(id){
   closeHelpSheet();
   const h = id ? S.habits.find(x => x.id === id) : null;
@@ -5975,6 +6311,14 @@ renderNavs();
 setupHabitNotifications();
 // Se o Android descartar os alarmes (economia de bateria, reinício do aparelho), os lembretes
 // voltam sozinhos quando a pessoa abre o app de novo — antes só voltavam no próximo login.
+// Bloqueio do app: guarda o instante em que o app saiu da frente e pede o código ao voltar.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') { LOCK_SAIU = Date.now(); return; }
+  lockAoVoltar();
+});
+// Ao abrir o app já logado, a tela de bloqueio aparece antes de qualquer conteúdo.
+if (lockLigado() && localStorage.getItem('fl_user')) lockShow();
+
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible' || !S.user) return;
   // Ao voltar para o app, o mural é buscado de novo (aprovações feitas em outro aparelho).

@@ -4,6 +4,14 @@
 [build]
   publish = "site"
   command = "echo sem-etapa-de-build"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[functions."excluir-conta"]
+  # firebase-admin usa código nativo e gRPC: empacotar quebra, então vai como módulo externo.
+  external_node_modules = ["firebase-admin"]
 
 [build.environment]
   # A verificação de segredos do Netlify examina o repositório inteiro e acusa a chave "AIza..."
