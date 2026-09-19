@@ -9,7 +9,8 @@
     "serve": "python -m http.server 8000 --bind 127.0.0.1",
     "cap:sync": "npm run build && npx cap sync android && npm run check:android",
     "check:android": "node scripts/check-android-plugins.mjs",
-    "cap:open": "npx cap open android"
+    "cap:open": "npx cap open android",
+    "teste:regras": "firebase emulators:exec --only firestore --project florescer-teste-regras \"node tests/regras.mjs\""
   },
   "dependencies": {
     "@capacitor-firebase/authentication": "^8.5.1",
@@ -20,5 +21,9 @@
     "@capacitor/local-notifications": "^8.3.1",
     "@capacitor/share": "^8.0.1",
     "jspdf": "^4.2.1"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "firebase-tools": "^15.30.2"
   }
 }
