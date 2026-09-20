@@ -1,30 +1,34 @@
 // Exclusão de conta do Florescer — apaga os dados, apaga a conta e avisa por e-mail.
 //
-// Por que isso roda no servidor e não no app: o celular pode ser desligado no meio da
-// exclusão e deixar dados órfãos; o app não consegue apagar a reação da pessoa em mensagens
-// de outras pessoas (a regra proíbe, de propósito, para o contador não ser fraudado); e
-// e-mail não se envia do aparelho de forma confiável.
+// Por que roda no servidor e não no app: o celular pode ser desligado no meio da exclusão e
+// deixar dados órfãos; o app não consegue apagar a reação da pessoa em mensagens de outras
+// pessoas (a regra proíbe, de propósito, para o contador não ser fraudado); e e-mail não se
+// envia do aparelho de forma confiável.
+//
+// Por que sem o SDK firebase-admin: ele arrasta dependências que não sobrevivem ao empacotador
+// da Netlify (jwks-rsa chama `jose`, que é ESM, e o pacote gerado é CommonJS → erro 502 em
+// produção). Aqui é tudo REST com o `fetch` nativo, o mesmo caminho que já funciona nas funções
+// do Bússola Finance.
 //
 // Variáveis de ambiente (painel do Netlify, nunca no repositório):
-//   FIREBASE_SERVICE_ACCOUNT  — JSON da conta de serviço do Firebase (uma linha)
-//   EMAIL_REMETENTE           — ex.: Florescer <seuendereco@gmail.com>
-//   EMAIL_COPIA               — opcional: recebe uma cópia do aviso
-//
-// E um dos dois caminhos de envio (o Gmail tem prioridade se estiver configurado):
-//   SMTP_USER + SMTP_PASS     — seu Gmail e uma "senha de app" de 16 letras. Entrega para
-//                               qualquer pessoa, sem domínio próprio, até 500 por dia.
-//   RESEND_API_KEY            — chave do Resend. Sem domínio verificado, o Resend só entrega
-//                               para o e-mail dono da conta — serve para testar, não para uso real.
-import { initializeApp, cert, getApps } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
-import { getFirestore } from 'firebase-admin/firestore';
-import { Resend } from 'resend';
+//   FIREBASE_SERVICE_ACCOUNT  — JSON da conta de serviço do Firebase
+//   EMAIL_REMETENTE           — opcional, sobrepõe o remetente padrão
+//   EMAIL_COPIA               — opcional, cópia oculta
+// E um caminho de envio (opcionais; sem nenhum, a exclusão acontece e o e-mail é pulado):
+//   SMTP_USER + SMTP_PASS [+ SMTP_HOST + SMTP_PORT]  — Gmail com senha de app, ou Brevo/Mailjet
+//   RESEND_API_KEY                                   — quando houver domínio próprio verificado
+import crypto from 'node:crypto';
 import nodemailer from 'nodemailer';
 
-// Conta de envio do André, usada pelos apps dele. "naoresponda" porque a caixa não é
-// monitorada: quem acabou de excluir a conta não tem para onde responder dentro do app.
-// O canal que recebe resposta é o das páginas legais, que é outro endereço.
+// A chave web do Firebase é pública por projeto (ela já está dentro do app): identifica, não
+// autoriza. Serve aqui só para conferir o token de quem está pedindo a exclusão.
+const CHAVE_WEB = 'AIzaSyCXWZOVseHAj8Lz28CrTMmhW2UzO4qArfc';
 const EMAIL_REMETENTE_PADRAO = 'Florescer <naoresponda.noreplymail@gmail.com>';
+
+// Documentos avulsos cujo id é o uid.
+const PORTADOC = ['users', 'habits', 'habitDone', 'members'];
+// Coleções com id automático e campo uid.
+const PORCAMPO = ['logs', 'gratitude', 'thoughts'];
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -34,74 +38,166 @@ const CORS = {
 };
 const responder = (status, corpo) => new Response(JSON.stringify(corpo), { status, headers: CORS });
 
-function admin() {
-  if (!getApps().length) {
-    const chave = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
-    if (!chave.project_id) throw new Error('FIREBASE_SERVICE_ACCOUNT ausente ou inválida');
-    initializeApp({ credential: cert(chave) });
-  }
-  return { auth: getAuth(), db: getFirestore() };
+function contaDeServico() {
+  const bruto = process.env.FIREBASE_SERVICE_ACCOUNT || '';
+  const chave = JSON.parse(bruto);
+  if (!chave.project_id || !chave.private_key) throw new Error('FIREBASE_SERVICE_ACCOUNT inválida');
+  return chave;
 }
 
-// Documentos avulsos com id = uid.
-const PORTADOC = ['users', 'habits', 'habitDone', 'members'];
-// Coleções com id automático e campo uid.
-const PORCAMPO = ['logs', 'gratitude', 'thoughts'];
+const b64url = (txt) => Buffer.from(txt).toString('base64url');
 
-// Tolerância a falha, pelo mesmo motivo do Bússola Finance: se uma coleção falhar, seguimos
-// para as próximas e devolvemos a lista do que ficou. Parar na primeira falha deixaria MAIS
-// dado da pessoa para trás — exatamente o contrário do que ela pediu.
-async function apagarDados(db, uid) {
+// Troca a conta de serviço por um token de acesso, assinando um JWT — é o que o SDK faz por baixo.
+async function tokenDeAcesso(chave) {
+  const agora = Math.floor(Date.now() / 1000);
+  const cabecalho = b64url(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+  const corpo = b64url(JSON.stringify({
+    iss: chave.client_email,
+    scope: 'https://www.googleapis.com/auth/datastore https://www.googleapis.com/auth/identitytoolkit',
+    aud: 'https://oauth2.googleapis.com/token',
+    iat: agora,
+    exp: agora + 3600,
+  }));
+  const assinatura = crypto.createSign('RSA-SHA256')
+    .update(cabecalho + '.' + corpo)
+    .sign(chave.private_key.replace(/\\n/g, '\n'), 'base64url');
+
+  const r = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+      assertion: cabecalho + '.' + corpo + '.' + assinatura,
+    }),
+  });
+  const dados = await r.json();
+  if (!dados.access_token) throw new Error('não consegui o token de acesso: ' + JSON.stringify(dados).slice(0, 200));
+  return dados.access_token;
+}
+
+// Confere o token que veio do app. O endpoint recusa token inválido, expirado ou de outro
+// projeto — é a validação de verdade; o payload só é lido depois que ele aprova.
+async function conferirToken(idToken) {
+  const r = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' + CHAVE_WEB, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idToken }),
+  });
+  const dados = await r.json();
+  const pessoa = dados && dados.users && dados.users[0];
+  if (!pessoa) return null;
+  let authTime = 0;
+  try { authTime = JSON.parse(Buffer.from(idToken.split('.')[1], 'base64url').toString()).auth_time || 0; }
+  catch (e) { authTime = 0; }
+  return { uid: pessoa.localId, email: pessoa.email || '', nome: pessoa.displayName || '', authTime };
+}
+
+function fire(projeto, caminho) {
+  return 'https://firestore.googleapis.com/v1/projects/' + projeto + '/databases/(default)/documents' + caminho;
+}
+
+async function apagarDoc(projeto, token, caminho) {
+  const r = await fetch(fire(projeto, caminho), {
+    method: 'DELETE',
+    headers: { Authorization: 'Bearer ' + token },
+  });
+  return r.ok;
+}
+
+async function buscarPorUid(projeto, token, colecao, uid) {
+  const r = await fetch(fire(projeto, ':runQuery'), {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      structuredQuery: {
+        from: [{ collectionId: colecao }],
+        where: { fieldFilter: { field: { fieldPath: 'uid' }, op: 'EQUAL', value: { stringValue: uid } } },
+        limit: 2000,
+      },
+    }),
+  });
+  const linhas = await r.json();
+  if (!Array.isArray(linhas)) return [];
+  return linhas.filter((l) => l.document).map((l) => l.document.name.split('/documents')[1]);
+}
+
+async function listarCaminhos(projeto, token, colecao) {
+  const r = await fetch(fire(projeto, ':runQuery'), {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ structuredQuery: { from: [{ collectionId: colecao }], limit: 3000 } }),
+  });
+  const linhas = await r.json();
+  if (!Array.isArray(linhas)) return [];
+  return linhas.filter((l) => l.document).map((l) => l.document.name.split('/documents')[1]);
+}
+
+async function listarSub(projeto, token, caminho) {
+  const r = await fetch(fire(projeto, caminho) + '?pageSize=300', {
+    headers: { Authorization: 'Bearer ' + token },
+  });
+  if (!r.ok) return [];
+  const dados = await r.json();
+  return (dados.documents || []).map((d) => d.name.split('/documents')[1]);
+}
+
+// Tolerância a falha, como no Bússola: se uma coleção falhar, seguimos para as próximas e
+// devolvemos o que ficou. Parar na primeira falha deixaria MAIS dado da pessoa para trás.
+async function apagarDados(projeto, token, uid) {
   const contagem = {};
   const falharam = [];
 
   for (const col of PORTADOC) {
-    try {
-      const ref = db.collection(col).doc(uid);
-      if ((await ref.get()).exists) { await ref.delete(); contagem[col] = 1; }
-    } catch (e) { falharam.push(col); console.error('excluir-conta: falhou em ' + col, e); }
+    try { if (await apagarDoc(projeto, token, '/' + col + '/' + uid)) contagem[col] = 1; }
+    catch (e) { falharam.push(col); }
   }
 
   for (const col of PORCAMPO) {
     try {
-      const achados = await db.collection(col).where('uid', '==', uid).get();
-      contagem[col] = achados.size;
-      for (const d of achados.docs) await d.ref.delete();
-    } catch (e) { falharam.push(col); console.error('excluir-conta: falhou em ' + col, e); }
+      const caminhos = await buscarPorUid(projeto, token, col, uid);
+      for (const c of caminhos) await apagarDoc(projeto, token, c);
+      contagem[col] = caminhos.length;
+    } catch (e) { falharam.push(col); }
   }
 
-  // Mural: as mensagens da pessoa saem junto (decisão de produto) e as reações dela em
-  // mensagens de outras pessoas também — elas guardam o uid no id do documento.
+  // Mural: as mensagens da pessoa saem junto (decisão de produto), com as reações que estiverem
+  // dentro delas.
   try {
-    const posts = await db.collection('wall').where('uid', '==', uid).get();
-    contagem.wall = posts.size;
-    for (const p of posts.docs) {
-      const reacoes = await p.ref.collection('reactions').get();
-      for (const r of reacoes.docs) await r.ref.delete();
-      await p.ref.delete();
+    const posts = await buscarPorUid(projeto, token, 'wall', uid);
+    for (const p of posts) {
+      // Subcoleção não some junto com o documento pai no Firestore: tem de ser apagada antes.
+      for (const r of await listarSub(projeto, token, p + '/reactions')) await apagarDoc(projeto, token, r);
+      await apagarDoc(projeto, token, p);
     }
-  } catch (e) { falharam.push('wall'); console.error('excluir-conta: falhou no mural', e); }
+    contagem.wall = posts.length;
+  } catch (e) { falharam.push('wall'); }
 
+  // E as reações dela em mensagens de outras pessoas: o id do documento é o uid, então basta
+  // tentar apagar em cada mensagem do mural (apagar o que não existe não dá erro).
   try {
-    // O id do documento de reação é o uid, então varremos o grupo e ficamos com os dela.
-    // Enquanto o mural é pequeno isso é barato; quando crescer, vale guardar um campo uid
-    // na reação e criar índice de grupo para consultar direto.
-    const todas = await db.collectionGroup('reactions').get();
+    const todos = await listarCaminhos(projeto, token, 'wall');
     let soltas = 0;
-    for (const r of todas.docs) {
-      if (r.id !== uid) continue;
-      await r.ref.delete();
-      soltas++;
-    }
+    for (const p of todos) { if (await apagarDoc(projeto, token, p + '/reactions/' + uid)) soltas++; }
     contagem.reacoes = soltas;
-  } catch (e) { falharam.push('reactions'); console.error('excluir-conta: falhou nas reações', e); }
+  } catch (e) { falharam.push('reactions'); }
 
   return { contagem, falharam };
 }
 
+async function apagarConta(projeto, token, uid) {
+  const r = await fetch('https://identitytoolkit.googleapis.com/v1/projects/' + projeto + '/accounts:delete', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ localId: uid }),
+  });
+  if (!r.ok) throw new Error('não consegui apagar a conta: ' + (await r.text()).slice(0, 200));
+}
+
 async function avisar(email, nome, contagem) {
-  const porGmail = !!(process.env.SMTP_USER && process.env.SMTP_PASS);
-  if (!porGmail && !process.env.RESEND_API_KEY) return 'sem-envio';
+  const porSmtp = !!(process.env.SMTP_USER && process.env.SMTP_PASS);
+  const porResend = !!process.env.RESEND_API_KEY;
+  if (!porSmtp && !porResend) return 'sem-envio';
+
   const total = Object.values(contagem).reduce((a, b) => a + b, 0);
   const texto = `Olá, ${nome || 'tudo bem'}?
 
@@ -110,18 +206,18 @@ Sua conta do Florescer foi excluída e seus dados foram apagados dos nossos serv
 Foram removidos ${total} registros: diário, gratidão, registros de pensamento, hábitos,
 cadastro e mensagens do mural. Não guardamos cópia.
 
-Se você não pediu isso, responda este e-mail — vamos apurar imediatamente.
+Se você não pediu isso, escreva para leviai.br@gmail.com — vamos apurar imediatamente.
 
 Cuide-se. Você sempre pode recomeçar quando quiser.
 Equipe Florescer`;
-  const corpoHtml = texto.split('\n\n').map((p) => `<p style="margin:0 0 14px">${p.replace(/\n/g, '<br>')}</p>`).join('');
-  const html = `<div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.6;color:#22322c">${corpoHtml}</div>`;
+  const html = '<div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.6;color:#22322c">'
+    + texto.split('\n\n').map((p) => `<p style="margin:0 0 14px">${p.replace(/\n/g, '<br>')}</p>`).join('')
+    + '</div>';
   const assunto = 'Sua conta do Florescer foi excluída';
   const de = process.env.EMAIL_REMETENTE || EMAIL_REMETENTE_PADRAO;
 
-  if (porGmail) {
-    // SMTP_HOST vazio = Gmail (senha de app). Preenchido = qualquer outro serviço de envio
-    // (Brevo, Mailjet, SMTP2GO), que é a saída quando o Gmail não libera a senha de app.
+  if (porSmtp) {
+    // SMTP_HOST vazio = Gmail com senha de app. Preenchido = Brevo, Mailjet, SMTP2GO…
     const transporte = nodemailer.createTransport(process.env.SMTP_HOST
       ? {
           host: process.env.SMTP_HOST,
@@ -129,10 +225,7 @@ Equipe Florescer`;
           secure: Number(process.env.SMTP_PORT) === 465,
           auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
         }
-      : {
-          service: 'gmail',
-          auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-        });
+      : { service: 'gmail', auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } });
     await transporte.sendMail({
       from: de, to: email, bcc: process.env.EMAIL_COPIA || undefined,
       subject: assunto, text: texto, html,
@@ -140,16 +233,16 @@ Equipe Florescer`;
     return 'enviado';
   }
 
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  const envio = await resend.emails.send({
-    from: de,
-    to: [email],
-    bcc: process.env.EMAIL_COPIA ? [process.env.EMAIL_COPIA] : undefined,
-    subject: assunto,
-    text: texto,
-    html,
+  const r = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + process.env.RESEND_API_KEY },
+    body: JSON.stringify({
+      from: de, to: [email],
+      bcc: process.env.EMAIL_COPIA ? [process.env.EMAIL_COPIA] : undefined,
+      subject: assunto, text: texto, html,
+    }),
   });
-  return envio && envio.error ? 'falhou: ' + envio.error.message : 'enviado';
+  return r.ok ? 'enviado' : 'falhou: ' + (await r.text()).slice(0, 120);
 }
 
 export default async (req) => {
@@ -157,37 +250,32 @@ export default async (req) => {
   if (req.method !== 'POST') return responder(405, { erro: 'método não permitido' });
 
   try {
-    const { auth, db } = admin();
-
-    // Só a própria pessoa exclui a própria conta: o token vem do app e é conferido aqui.
     const cabecalho = req.headers.get('authorization') || '';
-    const token = cabecalho.startsWith('Bearer ') ? cabecalho.slice(7) : '';
-    if (!token) return responder(401, { erro: 'sem credencial' });
+    const idToken = cabecalho.startsWith('Bearer ') ? cabecalho.slice(7) : '';
+    if (!idToken) return responder(401, { erro: 'sem credencial' });
 
-    let conta;
-    try { conta = await auth.verifyIdToken(token, true); }
-    catch (e) { return responder(401, { erro: 'credencial inválida ou expirada' }); }
+    const pessoa = await conferirToken(idToken);
+    if (!pessoa) return responder(401, { erro: 'credencial inválida ou expirada' });
 
-    // Token recente: exclusão é irreversível, então exige login das últimas 10 minutos.
-    const idade = Math.floor(Date.now() / 1000) - (conta.auth_time || 0);
-    if (idade > 600) return responder(403, { erro: 'reautenticar', detalhe: 'entre de novo antes de excluir' });
+    // Exclusão é irreversível: exige identidade confirmada nos últimos 10 minutos.
+    if (Math.floor(Date.now() / 1000) - pessoa.authTime > 600) {
+      return responder(403, { erro: 'reautenticar', detalhe: 'entre de novo antes de excluir' });
+    }
 
-    const registro = await auth.getUser(conta.uid).catch(() => null);
-    const email = (registro && registro.email) || conta.email || '';
-    const nome = (registro && registro.displayName) || '';
+    const chave = contaDeServico();
+    const token = await tokenDeAcesso(chave);
+    const { contagem, falharam } = await apagarDados(chave.project_id, token, pessoa.uid);
+    await apagarConta(chave.project_id, token, pessoa.uid);
 
-    const { contagem, falharam } = await apagarDados(db, conta.uid);
-    await auth.revokeRefreshTokens(conta.uid);
-    await auth.deleteUser(conta.uid);
-
-    // O e-mail é cortesia: exclusão de conta é obrigação legal e não pode depender de
-    // provedor de e-mail estar de pé. Se falhar, a exclusão continua valendo.
+    // O e-mail é cortesia: exclusão é obrigação legal e não pode depender de provedor de e-mail.
     let aviso = 'sem-email';
-    if (email) { try { aviso = await avisar(email, nome, contagem); } catch (e) { aviso = 'falhou: ' + e.message; console.error('excluir-conta: e-mail', e); } }
+    if (pessoa.email) {
+      try { aviso = await avisar(pessoa.email, pessoa.nome, contagem); }
+      catch (e) { aviso = 'falhou: ' + e.message; console.error('excluir-conta: e-mail', e); }
+    }
 
     return responder(200, { ok: true, apagados: contagem, naoApagados: falharam, email: aviso });
   } catch (e) {
-    // Mensagem humana para o app; o detalhe fica no log do Netlify.
     console.error('excluir-conta:', e);
     return responder(500, { erro: 'não foi possível concluir agora' });
   }

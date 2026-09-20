@@ -21,10 +21,8 @@
     "@capacitor/local-notifications": "^8.3.1",
     "@capacitor/share": "^8.0.1",
     "@capgo/capacitor-native-biometric": "^8.6.11",
-    "firebase-admin": "^14.4.0",
     "jspdf": "^4.2.1",
-    "nodemailer": "^10.0.10",
-    "resend": "^6.28.1"
+    "nodemailer": "^10.0.10"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^5.0.2",

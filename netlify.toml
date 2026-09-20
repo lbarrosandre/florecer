@@ -9,9 +9,9 @@
 [functions]
   node_bundler = "esbuild"
 
-[functions."excluir-conta"]
-  # firebase-admin usa código nativo e gRPC: empacotar quebra, então vai como módulo externo.
-  external_node_modules = ["firebase-admin"]
+# Sem módulos externos aqui de propósito: o SDK firebase-admin arrastava dependências que o
+# empacotador não resolve (jwks-rsa chama `jose`, que é ESM, e o pacote sai CommonJS → 502).
+# A função fala com o Firebase por REST, como as funções do Bússola.
 
 [build.environment]
   # A verificação de segredos do Netlify examina o repositório inteiro e acusa a chave "AIza..."
