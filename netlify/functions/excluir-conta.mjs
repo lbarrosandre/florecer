@@ -21,6 +21,11 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
 
+// Conta de envio do André, usada pelos apps dele. "naoresponda" porque a caixa não é
+// monitorada: quem acabou de excluir a conta não tem para onde responder dentro do app.
+// O canal que recebe resposta é o das páginas legais, que é outro endereço.
+const EMAIL_REMETENTE_PADRAO = 'Florescer <naoresponda.noreplymail@gmail.com>';
+
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, content-type',
@@ -112,8 +117,7 @@ Equipe Florescer`;
   const corpoHtml = texto.split('\n\n').map((p) => `<p style="margin:0 0 14px">${p.replace(/\n/g, '<br>')}</p>`).join('');
   const html = `<div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.6;color:#22322c">${corpoHtml}</div>`;
   const assunto = 'Sua conta do Florescer foi excluída';
-  const de = process.env.EMAIL_REMETENTE
-    || (porGmail ? 'Florescer <' + process.env.SMTP_USER + '>' : 'Florescer <onboarding@resend.dev>');
+  const de = process.env.EMAIL_REMETENTE || EMAIL_REMETENTE_PADRAO;
 
   if (porGmail) {
     const transporte = nodemailer.createTransport({
