@@ -120,10 +120,19 @@ Equipe Florescer`;
   const de = process.env.EMAIL_REMETENTE || EMAIL_REMETENTE_PADRAO;
 
   if (porGmail) {
-    const transporte = nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-    });
+    // SMTP_HOST vazio = Gmail (senha de app). Preenchido = qualquer outro serviço de envio
+    // (Brevo, Mailjet, SMTP2GO), que é a saída quando o Gmail não libera a senha de app.
+    const transporte = nodemailer.createTransport(process.env.SMTP_HOST
+      ? {
+          host: process.env.SMTP_HOST,
+          port: Number(process.env.SMTP_PORT || 587),
+          secure: Number(process.env.SMTP_PORT) === 465,
+          auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+        }
+      : {
+          service: 'gmail',
+          auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+        });
     await transporte.sendMail({
       from: de, to: email, bcc: process.env.EMAIL_COPIA || undefined,
       subject: assunto, text: texto, html,
