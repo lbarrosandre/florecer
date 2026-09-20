@@ -17,8 +17,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         // A cada envio para a Play Store, aumente o versionCode (1, 2, 3...).
         // O versionName é o número que as pessoas veem na loja.
-        versionCode 3
-        versionName "0.9.0"
+        versionCode 4
+        versionName "0.10.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

@@ -904,6 +904,26 @@ div.row{cursor:default}
 .lk-pad button{height:66px;border-radius:50%;border:none;background:#fff;font-size:23px;font-weight:500;color:#22322c;box-shadow:0 1px 3px rgba(0,0,0,.08);cursor:pointer;font-family:inherit}
 .lk-pad button:active{background:#eaf2ee}
 .lk-pad button.ghost{background:transparent;box-shadow:none;font-size:13px;color:#6b7d74;font-weight:500}
+/* ── Boas-vindas animadas ──────────────────────────────────── */
+.tour{position:fixed;inset:0;z-index:1900;background:linear-gradient(180deg,#f7faf8 0%,#eef4f0 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 26px;text-align:center}
+.tour-art{width:120px;height:120px;color:#2a7d63;margin-bottom:22px}
+.tour-art svg{width:100%;height:100%}
+.tour-art svg path,.tour-art svg circle{stroke-dasharray:120;stroke-dashoffset:120;animation:tdraw .9s ease forwards}
+.tour-art svg *:nth-child(2){animation-delay:.18s}
+.tour-art svg *:nth-child(3){animation-delay:.36s}
+.tour-art svg *:nth-child(4){animation-delay:.54s}
+@keyframes tdraw{to{stroke-dashoffset:0}}
+.tour-t{font-size:20px;font-weight:600;color:#22322c;line-height:1.35;max-width:300px;animation:tsobe .5s ease .25s both}
+.tour-s{font-size:14.5px;color:#5d7169;line-height:1.55;max-width:300px;margin-top:10px;animation:tsobe .5s ease .4s both}
+@keyframes tsobe{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tour-dots{display:flex;gap:7px;margin-top:30px}
+.tour-dots i{width:7px;height:7px;border-radius:50%;background:#cfdcd6;transition:width .25s,background .25s}
+.tour-dots i.on{width:20px;border-radius:4px;background:#2a7d63}
+.tour-acoes{position:absolute;left:0;right:0;bottom:30px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 26px}
+.tour-acoes .btn{max-width:320px}
+/* ── Cartão de convite ─────────────────────────────────────── */
+.cv-prev{width:100%;max-width:260px;margin:12px auto 4px;display:block;border-radius:14px;border:1px solid #e3eae6}
+.cv-frase{font-size:14.5px;line-height:1.6;color:#22322c;background:#f6faf8;border:1px solid #e3eae6;border-radius:12px;padding:12px 14px;margin:10px 0 4px}
 </style>
 
   <!-- Firebase SDK (versão compat - mais estável) -->
@@ -3868,7 +3888,10 @@ function finishOnboard(skip){
   try { localStorage.setItem('fl_profile', JSON.stringify(PROFILE)); } catch (e) {}
   if (window.saveProfileCloud) window.saveProfileCloud(PROFILE);
   if (!skip && OB.rem !== undefined) setReminder(OB.rem !== null, OB.rem === null ? REMINDER.h : OB.rem, 0);
-  if (OB.edit) { moreTab('conta'); goTo('more'); } else goTo('home');
+  if (OB.edit) { moreTab('conta'); goTo('more'); return; }
+  goTo('home');
+  // Primeira vez: as boas-vindas explicam o app antes da Home aparecer vazia.
+  if (!tourVisto()) setTimeout(abrirTour, 250);
 }
 function profileTools(){
   const out = [];
@@ -5023,6 +5046,8 @@ function renderMore() {
     <div class="section-lbl">Preferências</div>
     <div class="list">
       <button class="row" onclick="openOnboard(true)"><span class="r-ic">${ico('broto')}</span><span class="r-t"><b>Seu perfil</b><small>${esc(goals)}</small></span>${chev}</button>
+      <button class="row" onclick="openConviteSheet()"><span class="r-ic">${ico('muda')}</span><span class="r-t"><b>Plante uma semente</b><small>${sementesPlantadas() ? 'Você já plantou ' + sementesPlantadas() + ' ' + pl(sementesPlantadas(), 'semente', 'sementes') : 'Envie a alguém uma frase que ajudou'}</small></span>${chev}</button>
+      <button class="row" onclick="abrirTour()"><span class="r-ic">${ico('olho')}</span><span class="r-t"><b>Como usar o Florescer</b><small>As boas-vindas, de novo</small></span>${chev}</button>
 
     </div>
     <div class="list" style="margin-top:8px">
@@ -5278,6 +5303,7 @@ function renderWall(body){
       <div class="tr-warn" id="wall-warn"></div>
     </div>
     <button class="tool-row" onclick="runTool('movimento')"><span class="r-ic">${ico('mov')}</span><span class="r-t"><b>O movimento muda vidas</b><small>Histórias de quem mudou a rotina com atividade física</small></span>${ico('chev', 'chev')}</button>
+    <button class="tool-row" onclick="openConviteSheet()"><span class="r-ic">${ico('muda')}</span><span class="r-t"><b>Plante uma semente</b><small>Envie uma destas frases a quem está num dia difícil</small></span>${ico('chev', 'chev')}</button>
     <div class="section-lbl">No mural</div>
     ${items === null
       ? '<div class="empty">Carregando…</div>'
@@ -5892,6 +5918,195 @@ function processHabitActions(){
     setTimeout(() => { const el = document.getElementById('home-habits'); if (el) el.scrollIntoView({block: 'center', behavior: 'smooth'}); }, 250);
   }
 }
+// ═══════════ BOAS-VINDAS ANIMADAS ═══════════
+// Quatro cenas curtas logo depois do cadastro. A maioria de quem desiste nos primeiros dias
+// abre o app, não sabe o que fazer primeiro e fecha — isto existe para responder isso em 25
+// segundos. "Pular" aparece desde a primeira cena: quem quer só registrar, registra.
+const TOUR_CENAS = [
+  {ic: 'hoje',  t: 'Um registro por dia',        s: 'Leva um minuto: como foi o dia, o que você sentiu, o que pesou. Só o humor é obrigatório.'},
+  {ic: 'vento', t: 'Para os dias difíceis',      s: 'Respirar, se aterrar, organizar o pensamento. Tudo fica na aba Cuidar, junto do "Preciso de ajuda".'},
+  {ic: 'broto', t: 'Hábitos pequenos',           s: 'Você escolhe, o app lembra com gentileza — e o lembrete some no dia em que você já cuidou de você.'},
+  {ic: 'flor',  t: 'Você não está sozinho nisso', s: 'No mural, frases de outras pessoas que também estão tentando. Anônimas e com moderação.'},
+];
+var TOUR_I = 0, TOUR_TIMER = null;
+
+function tourVisto(){ try { return localStorage.getItem('fl_tour') === '1'; } catch (e) { return true; } }
+function tourMarcar(){ try { localStorage.setItem('fl_tour', '1'); } catch (e) {} }
+
+function abrirTour(){
+  if (document.getElementById('tour')) return;
+  TOUR_I = 0;
+  const el = document.createElement('div');
+  el.className = 'tour';
+  el.id = 'tour';
+  el.addEventListener('click', (ev) => { if (!ev.target.closest('button')) tourProx(); });
+  document.body.appendChild(el);
+  tourPinta();
+}
+function tourPinta(){
+  const el = document.getElementById('tour');
+  if (!el) return;
+  const c = TOUR_CENAS[TOUR_I], ultima = TOUR_I === TOUR_CENAS.length - 1;
+  el.innerHTML = '<div class="tour-art">' + ico(c.ic) + '</div>'
+    + '<div class="tour-t">' + c.t + '</div>'
+    + '<div class="tour-s">' + c.s + '</div>'
+    + '<div class="tour-dots">' + TOUR_CENAS.map((x, i) => '<i class="' + (i === TOUR_I ? 'on' : '') + '"></i>').join('') + '</div>'
+    + '<div class="tour-acoes">'
+    + (ultima
+        ? '<button class="btn btn-p" onclick="fecharTour()">Começar</button>'
+        : '<button class="btn btn-soft" onclick="tourProx()">Continuar</button>'
+          + '<button class="btn-link" onclick="fecharTour()">Pular</button>')
+    + '</div>';
+  clearTimeout(TOUR_TIMER);
+  if (!ultima) TOUR_TIMER = setTimeout(tourProx, 6500);
+}
+function tourProx(){
+  if (TOUR_I >= TOUR_CENAS.length - 1) { fecharTour(); return; }
+  TOUR_I++;
+  tourPinta();
+}
+function fecharTour(){
+  clearTimeout(TOUR_TIMER);
+  tourMarcar();
+  const el = document.getElementById('tour');
+  if (el) el.remove();
+}
+
+// ═══════════ CONVITE: PLANTE UMA SEMENTE ═══════════
+// Convidar alguém no Florescer não é indicação com prêmio: é dividir uma frase que ajudou.
+// Por isso o convite leva o texto de outra pessoa, e não um anúncio do app.
+const CONVITE_FRASES = [
+  'Hoje também foi pesado para mim. Um passo de cada vez.',
+  'Dia ruim não apaga o que você já caminhou.',
+  'Descansar também é cuidar.',
+  'Você não precisa dar conta de tudo hoje.',
+  'Começar pequeno ainda é começar.',
+  'O que você sente tem nome, e entender ajuda.',
+];
+var CONVITE_FRASE = '';
+
+function conviteUrl(){ return SITE_URL + '/convite/'; }
+function sementesPlantadas(){ try { return parseInt(localStorage.getItem('fl_sementes') || '0', 10) || 0; } catch (e) { return 0; } }
+function plantouSemente(){ try { localStorage.setItem('fl_sementes', String(sementesPlantadas() + 1)); } catch (e) {} }
+
+function conviteFraseSorteada(){
+  // Usa o que está no mural aprovado, quando já foi carregado; senão, as frases do app.
+  const doMural = (WALL.items || []).filter((w) => w && w.text && w.text.length <= 140).map((w) => w.text);
+  const fonte = doMural.length >= 3 ? doMural : CONVITE_FRASES;
+  let nova = fonte[Math.floor(Math.random() * fonte.length)];
+  if (fonte.length > 1) { let n = 0; while (nova === CONVITE_FRASE && n++ < 6) nova = fonte[Math.floor(Math.random() * fonte.length)]; }
+  return nova;
+}
+
+function openConviteSheet(){
+  closeHelpSheet();
+  CONVITE_FRASE = conviteFraseSorteada();
+  const n = sementesPlantadas();
+  const ov = document.createElement('div');
+  ov.className = 'empathy-overlay';
+  ov.id = 'share-sheet';
+  ov.addEventListener('click', (ev) => { if (ev.target === ov) ov.remove(); });
+  ov.innerHTML = '<div class="empathy-sheet help-sheet" role="dialog" aria-label="Plante uma semente"><i class="grab"></i>'
+    + '<div class="hs-title">Plante uma semente</div>'
+    + '<div class="hs-sub">Envie uma frase que ajudou alguém. Quem receber vê a frase e o caminho para começar o próprio diário.</div>'
+    + '<canvas id="cv-card" width="1080" height="1080" class="cv-prev" aria-label="Prévia do cartão"></canvas>'
+    + '<div class="cv-frase" id="cv-txt">' + esc(CONVITE_FRASE) + '</div>'
+    + '<button class="btn-link" style="margin:2px auto 8px;display:block" onclick="conviteTrocar()">Trocar a frase</button>'
+    + '<div class="tr-warn" id="cv-warn"></div>'
+    + '<button class="btn btn-p" onclick="conviteEnviar()">Compartilhar</button>'
+    + (n ? '<p class="rep-foot" style="margin:10px 2px 0;text-align:center">Você já plantou ' + n + ' ' + pl(n, 'semente', 'sementes') + '.</p>' : '')
+    + '<button class="btn-link hs-more" onclick="closeHelpSheet()">Agora não</button></div>';
+  document.getElementById('app').appendChild(ov);
+  desenharCartao();
+}
+function conviteTrocar(){
+  CONVITE_FRASE = conviteFraseSorteada();
+  const t = document.getElementById('cv-txt');
+  if (t) t.textContent = CONVITE_FRASE;
+  desenharCartao();
+}
+// A marca entra ANTES do resto: com a imagem chegando depois, quem compartilhasse rápido
+// levava um cartão sem logo — o desenho já tinha sido exportado.
+function carregarMarca(){
+  return new Promise((pronto) => {
+    if (window.CONVITE_MARCA) return pronto(window.CONVITE_MARCA);
+    const img = new Image();
+    img.onload = () => { window.CONVITE_MARCA = img; pronto(img); };
+    img.onerror = () => pronto(null);
+    img.src = 'logo-mark.png';
+  });
+}
+async function desenharCartao(){
+  const cv = document.getElementById('cv-card');
+  if (!cv || !cv.getContext) return;
+  const marca = await carregarMarca();
+  const c = cv.getContext('2d');
+  c.fillStyle = '#f4f7f5';
+  c.fillRect(0, 0, 1080, 1080);
+  c.strokeStyle = '#d8c48a';
+  c.lineWidth = 6;
+  c.strokeRect(46, 46, 988, 988);
+  if (marca) { try { c.drawImage(marca, 470, 150, 140, 140); } catch (e) {} }
+
+  c.fillStyle = '#22322c';
+  c.textAlign = 'center';
+  c.font = '500 54px system-ui, sans-serif';
+  const linhas = quebraTexto(c, '“' + CONVITE_FRASE + '”', 820);
+  const alturaLinha = 78;
+  let y = 540 - ((linhas.length - 1) * alturaLinha) / 2;
+  linhas.forEach((l) => { c.fillText(l, 540, y); y += alturaLinha; });
+
+  c.fillStyle = '#5d7169';
+  c.font = '400 32px system-ui, sans-serif';
+  c.fillText('de alguém que usa o Florescer', 540, y + 46);
+  c.fillStyle = '#2a7d63';
+  c.font = '500 40px system-ui, sans-serif';
+  c.fillText('florescer', 540, 940);
+}
+function quebraTexto(c, texto, largura){
+  const palavras = String(texto).split(' ');
+  const linhas = [];
+  let atual = '';
+  for (const p of palavras) {
+    const teste = atual ? atual + ' ' + p : p;
+    if (c.measureText(teste).width > largura && atual) { linhas.push(atual); atual = p; }
+    else atual = teste;
+  }
+  if (atual) linhas.push(atual);
+  return linhas.slice(0, 8);
+}
+async function conviteEnviar(){
+  const aviso = document.getElementById('cv-warn');
+  const cv = document.getElementById('cv-card');
+  await desenharCartao();
+  const texto = '“' + CONVITE_FRASE + '”\n\nEssa frase é de alguém que usa o Florescer comigo. '
+    + 'Se quiser começar o seu: ' + conviteUrl();
+  try {
+    const C = window.Capacitor;
+    const nativo = !!(C && C.isNativePlatform && C.isNativePlatform());
+    const P = (C && C.Plugins) || {};
+    if (nativo && P.Share && P.Filesystem && cv) {
+      const b64 = cv.toDataURL('image/png').split(',').pop();
+      const arq = await P.Filesystem.writeFile({path: 'florescer-convite.png', data: b64, directory: 'CACHE'});
+      await P.Share.share({title: 'Florescer', text: texto, url: arq.uri, dialogTitle: 'Enviar convite'});
+    } else if (nativo && P.Share) {
+      await P.Share.share({title: 'Florescer', text: texto, dialogTitle: 'Enviar convite'});
+    } else if (navigator.share) {
+      await navigator.share({title: 'Florescer', text: texto});
+    } else {
+      await navigator.clipboard.writeText(texto);
+      if (aviso) aviso.textContent = 'Mensagem copiada. Agora é só colar onde quiser.';
+    }
+    plantouSemente();
+    closeHelpSheet();
+    toast('Semente plantada. Obrigado por dividir.');
+  } catch (e) {
+    if (/cancel|abort/i.test((e && e.message) || '')) return;
+    if (aviso) aviso.textContent = 'Não deu para compartilhar agora. Tente de novo em instantes.';
+  }
+}
+
+// ═══════════ BLOQUEIO DO APP (código e digital) ═══════════
 // ═══════════ BLOQUEIO DO APP (código e digital) ═══════════
 // Trava local, para quem pega o celular já desbloqueado. Não é criptografia dos dados: o que
 // protege os registros no servidor continua sendo a senha da conta e as regras do Firestore.
