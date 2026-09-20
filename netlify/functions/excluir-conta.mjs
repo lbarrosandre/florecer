@@ -96,8 +96,10 @@ function fire(projeto, caminho) {
   return 'https://firestore.googleapis.com/v1/projects/' + projeto + '/databases/(default)/documents' + caminho;
 }
 
+// A precondição "existe" é o que torna a contagem verdadeira: sem ela o Firestore aceita apagar
+// documento inexistente e responde 200, inflando o número que vai no e-mail para a pessoa.
 async function apagarDoc(projeto, token, caminho) {
-  const r = await fetch(fire(projeto, caminho), {
+  const r = await fetch(fire(projeto, caminho) + '?currentDocument.exists=true', {
     method: 'DELETE',
     headers: { Authorization: 'Bearer ' + token },
   });
@@ -155,8 +157,9 @@ async function apagarDados(projeto, token, uid) {
   for (const col of PORCAMPO) {
     try {
       const caminhos = await buscarPorUid(projeto, token, col, uid);
-      for (const c of caminhos) await apagarDoc(projeto, token, c);
-      contagem[col] = caminhos.length;
+      let apagados = 0;
+      for (const c of caminhos) { if (await apagarDoc(projeto, token, c)) apagados++; }
+      if (apagados) contagem[col] = apagados;
     } catch (e) { falharam.push(col); }
   }
 
@@ -169,7 +172,7 @@ async function apagarDados(projeto, token, uid) {
       for (const r of await listarSub(projeto, token, p + '/reactions')) await apagarDoc(projeto, token, r);
       await apagarDoc(projeto, token, p);
     }
-    contagem.wall = posts.length;
+    if (posts.length) contagem.wall = posts.length;
   } catch (e) { falharam.push('wall'); }
 
   // E as reações dela em mensagens de outras pessoas: o id do documento é o uid, então basta
@@ -178,7 +181,7 @@ async function apagarDados(projeto, token, uid) {
     const todos = await listarCaminhos(projeto, token, 'wall');
     let soltas = 0;
     for (const p of todos) { if (await apagarDoc(projeto, token, p + '/reactions/' + uid)) soltas++; }
-    contagem.reacoes = soltas;
+    if (soltas) contagem.reacoes = soltas;
   } catch (e) { falharam.push('reactions'); }
 
   return { contagem, falharam };
