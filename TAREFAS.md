@@ -1,6 +1,6 @@
 # Florescer — Tarefas e Acompanhamento
 
-> Base: **Carta de Navegação v1.0** · ficha atualizada em 29/08/2026
+> Base: **Carta de Navegação v1.1** (artifact: https://claude.ai/artifact/c370d7b9-2e14-4f64-91c3-24a088fb1104) · ficha do Florescer atualizada em 20/09/2026
 > **Data alvo (v1 na Play Store): meados de novembro/2026** (antes 15/10 — revista em 10/09 com a entrada dos Blocos 1–4) · Última atualização deste doc: 10/09/2026
 > Tese de produto (5 diferenciais) + roadmap de profundidade na Carta de Navegação.
 

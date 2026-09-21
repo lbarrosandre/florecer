@@ -1,7 +1,9 @@
 # Florescer — Arquitetura
 
 > Decisões de base do projeto, tomadas no kickoff (29/08/2026) com apoio da
-> **Carta de Navegação**. Ver [TAREFAS.md](TAREFAS.md) para o plano de execução.
+> **Carta de Navegação** — o framework de projetos do André, que vive como artifact:
+> https://claude.ai/artifact/c370d7b9-2e14-4f64-91c3-24a088fb1104 (ficha do Florescer na
+> primeira seção). Ver [TAREFAS.md](TAREFAS.md) para o plano de execução.
 
 ## Visão geral
 
