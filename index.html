@@ -959,6 +959,17 @@ div.row{cursor:default}
     }
 
     // ═══════════ AUTH STATE ═══════════
+    // Nenhuma espera de rede pode ser infinita dentro do caminho de entrada: o SDK do Firestore
+    // com rede instável demora muito para desistir sozinho, e o app fica parado na tela inicial
+    // sem explicar nada a quem está esperando.
+    function comPrazo(promessa, ms, oQue) {
+      return Promise.race([
+        promessa,
+        new Promise((_, rejeita) => setTimeout(() => rejeita(new Error('demorou demais: ' + oQue)), ms)),
+      ]);
+    }
+    window.comPrazo = comPrazo;
+
     auth.onAuthStateChanged(async (user) => {
       enableButtons();
       if (user) {
@@ -971,9 +982,12 @@ div.row{cursor:default}
           provider: (user.providerData && user.providerData[0] && user.providerData[0].providerId) || 'password'
         };
         localStorage.setItem('fl_user', JSON.stringify(window.S.user));
-        // nome e foto salvos pelo próprio usuário ficam no doc users/{uid}
+
+        // Perfil da nuvem com prazo curto: ele decide se a pessoa vê o onboarding, então vale
+        // esperar um pouco — mas nunca mais que isso. Se a rede não responder, seguimos com o
+        // que está no aparelho.
         try {
-          const udoc = await db.collection('users').doc(user.uid).get();
+          const udoc = await comPrazo(db.collection('users').doc(user.uid).get(), 4000, 'perfil');
           if (udoc.exists) {
             const ud = udoc.data();
             if (ud.photo) window.S.user.photo = ud.photo;
@@ -983,11 +997,19 @@ div.row{cursor:default}
             if (ud.profile && window.applyCloudProfile) window.applyCloudProfile(ud.profile);
           }
         } catch (e) { console.log('users doc:', e && e.message); }
-        await syncFromCloud();
+
+        // A tela abre AGORA, com os dados que já estão no aparelho. O app é offline-first:
+        // prender a entrada até a nuvem responder era o que travava o app em rede ruim.
         const cover = document.getElementById('s-cover');
         if (cover && cover.classList.contains('active')) {
           window.goTo(window.needsOnboarding && window.needsOnboarding() ? 'onboard' : 'home');
         }
+        if (window.setCoverLoading) window.setCoverLoading(false);
+
+        // Daqui para baixo, tudo em segundo plano: se falhar ou demorar, o app continua de pé.
+        comPrazo(syncFromCloud(), 25000, 'sincronização')
+          .then(() => { if (window.redesenharTelaAtual) window.redesenharTelaAtual(); })
+          .catch((e) => console.log('Sync em segundo plano:', e && e.message));
         if (window.scheduleReminders) window.scheduleReminders();
         checkAdmin(user);
         touchMember(user);
@@ -1014,13 +1036,16 @@ div.row{cursor:default}
       if (!pass || pass.length < 6) return showCoverError('A senha precisa ter pelo menos 6 caracteres.');
       setCoverLoading(true);
       try {
-        const cred = await auth.createUserWithEmailAndPassword(email, pass);
-        await cred.user.updateProfile({ displayName: name });
-        await db.collection('users').doc(cred.user.uid).set({
+        const cred = await comPrazo(auth.createUserWithEmailAndPassword(email, pass), 25000, 'cadastro');
+        await comPrazo(cred.user.updateProfile({ displayName: name }), 10000, 'nome').catch(() => {});
+        // O perfil no banco não segura o cadastro: se o Firestore demorar, a conta já existe e
+        // o documento é criado na sincronização seguinte. Antes, uma gravação pendurada aqui
+        // deixava o botão travado em "entrando".
+        db.collection('users').doc(cred.user.uid).set({
           name, email, createdAt: new Date().toISOString(), isPremium: false
-        });
+        }).catch(() => {});
       } catch (e) {
-        showCoverError(firebaseError(e.code));
+        showCoverError(erroDeEntrada(e));
       } finally {
         setCoverLoading(false);
       }
@@ -1033,9 +1058,9 @@ div.row{cursor:default}
       if (!email || !pass) return showCoverError('Preencha e-mail e senha.');
       setCoverLoading(true);
       try {
-        await auth.signInWithEmailAndPassword(email, pass);
+        await comPrazo(auth.signInWithEmailAndPassword(email, pass), 25000, 'entrada');
       } catch (e) {
-        let msg = firebaseError(e.code);
+        let msg = erroDeEntrada(e);
         showCoverError(msg);
         if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password') {
           setTimeout(() => {
@@ -1351,6 +1376,15 @@ div.row{cursor:default}
       if (!uid) return;
       try { await db.collection('gratitude').add({ ...grat, uid }); } catch(e) { console.log(e); }
     };
+
+    // Quando a espera estoura o prazo, a pessoa precisa saber que o problema é a conexão —
+    // e não a senha dela. Sem isso ela fica tentando a mesma senha de novo.
+    function erroDeEntrada(e) {
+      if (/demorou demais/.test((e && e.message) || '')) {
+        return 'A conexão está lenta e não deu para concluir. Confira sua internet e tente de novo.';
+      }
+      return firebaseError(e && e.code);
+    }
 
     function firebaseError(code) {
       const msgs = {
@@ -2309,6 +2343,23 @@ function renderJornada(){
 }
 
 // ═══════════ NAVIGATION ═══════════
+// Como a entrada não espera mais a nuvem, os dados chegam com a tela já aberta: quando isso
+// acontece, redesenhamos a tela em que a pessoa está — sem tirá-la do lugar.
+function redesenharTelaAtual(){
+  const ativa = document.querySelector('.screen.active');
+  if (!ativa) return;
+  const tela = (ativa.id || '').replace(/^s-/, '');
+  try {
+    if (tela === 'home') renderHome();
+    else if (tela === 'history') renderHistory();
+    else if (tela === 'more') renderMore();
+    else if (tela === 'jornada') renderJornada();
+    else if (tela === 'care') renderCare();
+    else if (tela === 'tool') renderTool(1);
+  } catch (e) { console.log('redesenho adiado:', e && e.message); }
+}
+window.redesenharTelaAtual = redesenharTelaAtual;
+
 function goTo(screen) {
   // Bloquear acesso às telas internas sem autenticação
   const protectedScreens = ['home','log','breath','history','more','sos','jornada','care','tool','onboard'];
