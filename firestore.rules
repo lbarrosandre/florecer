@@ -178,6 +178,30 @@ service cloud.firestore {
       }
     }
 
+    // Palavras que as pessoas escreveram quando o vocabulário do app não bastou.
+    // O documento é anônimo de propósito: só a palavra, o tom e um contador — sem uid, sem data
+    // de registro, sem o texto em que foi usada. Entra como pendente e só aparece para as outras
+    // pessoas depois que o administrador aprova (mesma moderação do mural).
+    match /vocab/{palavra} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['label', 'q', 'n', 'status', 'updatedAt'])
+        && request.resource.data.status == 'pending'
+        && request.resource.data.label is string
+        && request.resource.data.label.size() >= 2
+        && request.resource.data.label.size() <= 22
+        && request.resource.data.q in ['pesadas', 'agitadas', 'calmas', 'vibrantes']
+        && request.resource.data.n == 1;
+      // Quem usa a palavra só pode somar 1 no contador — nunca mexer no texto nem no status.
+      // Repetir a soma é possível, e aqui isso é aceitável: o contador serve para ordenar a fila
+      // de moderação, e quem decide se a palavra entra é uma pessoa, não o número.
+      allow update: if isAdmin()
+        || (signedIn()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['n', 'updatedAt'])
+            && request.resource.data.n == resource.data.n + 1);
+      allow delete: if isAdmin();
+    }
+
     // Qualquer caminho não previsto acima é negado por padrão.
   }
 }

@@ -130,6 +130,21 @@ await permitido(E, 'Administrador lê o cadastro (sem conteúdo pessoal)', () =>
 await bloqueado(E, 'Administrador lê o diário da Ana', () => getDoc(doc(chefe, 'logs/log-ana')));
 await bloqueado(E, 'Administrador lê o pensamento da Ana', () => getDoc(doc(chefe, 'thoughts/pensamento-ana')));
 
+// ── G. Acervo de palavras do registro ────────────────────────────────────────
+const G = 'G. palavras sugeridas';
+await bloqueado(G, 'Ana cadastra uma palavra já aprovada', () => setDoc(doc(ana, 'vocab/p_teste1'), { label: 'Teste', q: 'calmas', n: 1, status: 'approved', updatedAt: 'x' }));
+await bloqueado(G, 'Ana cadastra uma palavra já com 50 usos', () => setDoc(doc(ana, 'vocab/p_teste2'), { label: 'Teste', q: 'calmas', n: 50, status: 'pending', updatedAt: 'x' }));
+await bloqueado(G, 'Ana cadastra um desabafo no lugar de uma palavra', () => setDoc(doc(ana, 'vocab/p_teste3'), { label: 'hoje foi o pior dia da minha vida inteira', q: 'pesadas', n: 1, status: 'pending', updatedAt: 'x' }));
+await bloqueado(G, 'Ana inventa um tom que não existe', () => setDoc(doc(ana, 'vocab/p_teste4'), { label: 'Teste', q: 'outro', n: 1, status: 'pending', updatedAt: 'x' }));
+await permitido(G, 'Ana sugere uma palavra (entra como pendente)', () => setDoc(doc(ana, 'vocab/p_acolhida'), { label: 'Acolhida', q: 'calmas', n: 1, status: 'pending', updatedAt: 'x' }));
+await permitido(G, 'Bruno usa a mesma palavra (soma 1)', () => updateDoc(doc(bruno, 'vocab/p_acolhida'), { n: 2, updatedAt: 'y' }));
+await bloqueado(G, 'Bruno soma 20 de uma vez', () => updateDoc(doc(bruno, 'vocab/p_acolhida'), { n: 22, updatedAt: 'y' }));
+await bloqueado(G, 'Bruno aprova a própria palavra', () => updateDoc(doc(bruno, 'vocab/p_acolhida'), { status: 'approved' }));
+await bloqueado(G, 'Bruno troca o texto da palavra', () => updateDoc(doc(bruno, 'vocab/p_acolhida'), { label: 'Outra coisa' }));
+await bloqueado(G, 'Bruno apaga a palavra', () => deleteDoc(doc(bruno, 'vocab/p_acolhida')));
+await bloqueado(G, 'Visitante sem conta lê o acervo', () => getDoc(doc(visitante, 'vocab/p_acolhida')));
+await permitido(G, 'Administrador aprova a palavra', () => updateDoc(doc(chefe, 'vocab/p_acolhida'), { status: 'approved', moderatedAt: 'z' }));
+
 // ── F. Superfície fora do previsto ───────────────────────────────────────────
 const F = 'F. caminho não previsto';
 await bloqueado(F, 'Ana cria uma coleção que não existe nas regras', () => setDoc(doc(ana, 'segredos/chave'), { x: 1 }));

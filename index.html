@@ -890,6 +890,12 @@ div.row{cursor:default}
 .cv-auth-h{font-size:19px;font-weight:300;color:var(--ink);margin:0 2px 12px}
 .cv-foot{text-align:center;font-size:11.5px;color:var(--faint);line-height:1.8;padding:18px 0 4px}
 .cv-foot .cover-link{font-size:11.5px}
+/* ── Palavras próprias no registro ─────────────────────────── */
+.adm-acts{display:flex;gap:6px;flex-shrink:0;align-items:center}
+.emo-chip.mais{border-style:dashed;color:#5d7169;background:transparent}
+.emo-nova{display:flex;gap:8px;margin-top:12px;align-items:center}
+.emo-nova .inp{flex:1;margin:0}
+.emo-nova .btn{width:auto;padding:0 16px;height:42px;margin:0;flex-shrink:0}
 /* ── Bloqueio do app (código e digital) ───────────────────── */
 .lockscr{position:fixed;inset:0;z-index:2000;background:#f4f7f5;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 24px;gap:12px}
 .lockscr .lk-mark{width:58px;height:58px;color:#2a7d63}
@@ -995,6 +1001,7 @@ div.row{cursor:default}
             localStorage.setItem('fl_user', JSON.stringify(window.S.user));
             if (ud.progress && window.applyCloudProgress) window.applyCloudProgress(ud.progress);
             if (ud.profile && window.applyCloudProfile) window.applyCloudProfile(ud.profile);
+            if (ud.vocab && window.aplicarVocabDaNuvem) window.aplicarVocabDaNuvem(ud.vocab);
           }
         } catch (e) { console.log('users doc:', e && e.message); }
 
@@ -1007,6 +1014,7 @@ div.row{cursor:default}
         if (window.setCoverLoading) window.setCoverLoading(false);
 
         // Daqui para baixo, tudo em segundo plano: se falhar ou demorar, o app continua de pé.
+        if (window.carregarVocabComum) window.carregarVocabComum();
         comPrazo(syncFromCloud(), 25000, 'sincronização')
           .then(() => { if (window.redesenharTelaAtual) window.redesenharTelaAtual(); })
           .catch((e) => console.log('Sync em segundo plano:', e && e.message));
@@ -1219,6 +1227,42 @@ div.row{cursor:default}
     }
     window.syncFromCloud = syncFromCloud;
 
+    // ── Palavras próprias ────────────────────────────────────
+    // As palavras da pessoa ficam no doc dela. A sugestão ao acervo comum é anônima: vai só a
+    // palavra e um contador, sem uid, sem data de registro, sem nada que ligue à pessoa — e só
+    // acontece se ela mantiver as estatísticas anônimas ligadas.
+    window.saveVocabCloud = async (vocab) => {
+      const uid = window.S.user && window.S.user.uid;
+      if (!uid) return;
+      try { await db.collection('users').doc(uid).set({ vocab }, { merge: true }); } catch (e) {}
+    };
+
+    window.sugerirPalavraCloud = async (chave, palavra, tom) => {
+      if (!window.anonStatsOn || !window.anonStatsOn()) return;
+      const ref = db.collection('vocab').doc(chave);
+      try {
+        // Só o contador sobe. Reenviar o documento inteiro faria uma palavra já aprovada
+        // voltar para "pendente" toda vez que alguém a usasse.
+        await ref.update({
+          n: firebase.firestore.FieldValue.increment(1),
+          updatedAt: new Date().toISOString(),
+        });
+      } catch (e) {
+        try {
+          await ref.set({ label: palavra, q: tom, n: 1, status: 'pending', updatedAt: new Date().toISOString() });
+        } catch (e2) {}
+      }
+    };
+
+    window.carregarVocabComum = async () => {
+      try {
+        const snap = await db.collection('vocab').where('status', '==', 'approved').limit(80).get();
+        const lista = snap.docs.map((d) => ({ k: d.id, label: d.data().label, q: d.data().q }));
+        window.VOCAB_COMUM = lista;
+        lista.forEach((p) => { if (window.registrarPalavraNoIndice) window.registrarPalavraNoIndice(p.k, p.label, p.q); });
+      } catch (e) { console.log('vocabulário comum adiado:', e && e.message); }
+    };
+
     window.saveProfileCloud = async (profile) => {
       const uid = window.S.user?.uid;
       if (!uid) return;
@@ -1334,10 +1378,17 @@ div.row{cursor:default}
       if (what === 'pending' || what === 'approved') {
         return list(await db.collection('wall').where('status', '==', what).orderBy('createdAt', 'desc').limit(200).get());
       }
+      if (what === 'vocab') return list(await db.collection('vocab').limit(300).get());
       return [];
     };
     window.adminModerate = async (id, status) => {
       await db.collection('wall').doc(id).update({ status, moderatedAt: new Date().toISOString() });
+    };
+    // Palavra aprovada entra na roda de todo mundo na próxima vez que o app carregar o acervo —
+    // sem versão nova na loja.
+    window.adminPalavra = async (id, status) => {
+      if (status === 'remove') { await db.collection('vocab').doc(id).delete(); return; }
+      await db.collection('vocab').doc(id).update({ status, moderatedAt: new Date().toISOString() });
     };
 
     window.saveThoughtCloud = async (t) => {
@@ -2514,12 +2565,89 @@ function togTag(el) {
 
 // ═══════════ EMOÇÕES ═══════════
 // Quatro quadrantes do modelo circumplexo de afeto (valência × energia).
+// Quanto mais precisa a palavra que a pessoa dá ao que sente, melhor ela consegue lidar com
+// aquilo — é o que a pesquisa chama de granularidade emocional. Por isso são 12 palavras por
+// tom, e não 6: as 6 primeiras aparecem sempre, o resto abre em "mais palavras", para a tela
+// continuar simples para quem só quer marcar "cansaço" e seguir a vida.
 const EMOTIONS = [
-  {q:'pesadas',   label:'Pesadas',   color:'#7E90B5', items:[['tristeza','Tristeza'],['solidao','Solidão'],['cansaco','Cansaço'],['desanimo','Desânimo'],['culpa','Culpa'],['vazio','Vazio']]},
-  {q:'agitadas',  label:'Agitadas',  color:'#CC876B', items:[['ansiedade','Ansiedade'],['sobrecarga','Sobrecarga'],['irritacao','Irritação'],['frustracao','Frustração'],['medo','Medo'],['inseguranca','Insegurança']]},
-  {q:'calmas',    label:'Calmas',    color:'#4F9E85', items:[['calma','Calma'],['alivio','Alívio'],['gratidao','Gratidão'],['paz','Paz'],['satisfacao','Satisfação'],['aconchego','Aconchego']]},
-  {q:'vibrantes', label:'Vibrantes', color:'#BE9A3E', items:[['alegria','Alegria'],['empolgacao','Empolgação'],['orgulho','Orgulho'],['confianca','Confiança'],['motivacao','Motivação'],['carinho','Carinho']]},
+  {q:'pesadas',   label:'Pesadas',   color:'#7E90B5', items:[['tristeza','Tristeza'],['solidao','Solidão'],['cansaco','Cansaço'],['desanimo','Desânimo'],['culpa','Culpa'],['vazio','Vazio'],['magoa','Mágoa'],['ressentimento','Ressentimento'],['vergonha','Vergonha'],['decepcao','Decepção'],['saudade','Saudade'],['apatia','Apatia']]},
+  {q:'agitadas',  label:'Agitadas',  color:'#CC876B', items:[['ansiedade','Ansiedade'],['sobrecarga','Sobrecarga'],['irritacao','Irritação'],['frustracao','Frustração'],['medo','Medo'],['inseguranca','Insegurança'],['raiva','Raiva'],['impaciencia','Impaciência'],['pressa','Pressa'],['tensao','Tensão'],['ciume','Ciúme'],['agonia','Agonia']]},
+  {q:'calmas',    label:'Calmas',    color:'#4F9E85', items:[['calma','Calma'],['alivio','Alívio'],['gratidao','Gratidão'],['paz','Paz'],['satisfacao','Satisfação'],['aconchego','Aconchego'],['leveza','Leveza'],['esperanca','Esperança'],['acolhimento','Acolhimento'],['seguranca','Segurança'],['foco','Foco'],['presenca','Presença']]},
+  {q:'vibrantes', label:'Vibrantes', color:'#BE9A3E', items:[['alegria','Alegria'],['empolgacao','Empolgação'],['orgulho','Orgulho'],['confianca','Confiança'],['motivacao','Motivação'],['carinho','Carinho'],['entusiasmo','Entusiasmo'],['ternura','Ternura'],['curiosidade','Curiosidade'],['prazer','Prazer'],['realizacao','Realização'],['conexao','Conexão']]},
 ];
+// ═══════════ PALAVRAS PRÓPRIAS ═══════════
+// O André pediu que o vocabulário fosse se adaptando — mas com o aprendizado vindo do conjunto
+// das pessoas, não uma lista infinita por conta. Então:
+//   1. a pessoa escreve a palavra que faltou e ela vira etiqueta dela (no máximo 12);
+//   2. se as estatísticas anônimas estiverem ligadas, a palavra é contada num acervo comum,
+//      sem nome, sem conta, sem texto de registro — só a palavra e quantas pessoas a usaram;
+//   3. o administrador aprova as mais pedidas e elas entram na roda de todo mundo, sem
+//      precisar de versão nova na loja.
+// A moderação é o que impede nome próprio, ofensa e desabafo inteiro virarem "emoção".
+const MAX_PALAVRAS_PROPRIAS = 12;
+var VOCAB = (function(){ try { return JSON.parse(localStorage.getItem('fl_vocab') || '{}'); } catch (e) { return {}; } })();
+var VOCAB_COMUM = [];
+
+function salvarVocab(){
+  try { localStorage.setItem('fl_vocab', JSON.stringify(VOCAB)); } catch (e) {}
+  if (window.saveVocabCloud) window.saveVocabCloud(VOCAB);
+}
+// Uma palavra, não um desabafo: até 22 letras, sem número, sem pontuação.
+function limparPalavra(txt){
+  const s = String(txt || '').trim().replace(/\s+/g, ' ');
+  if (!/^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ\s-]{1,21}$/.test(s)) return '';
+  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+}
+function chaveDaPalavra(palavra){
+  return 'p_' + palavra.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]+/g, '_');
+}
+// As palavras que a pessoa mais usa sobem; ao passar do limite, a menos usada sai.
+function palavrasDoTom(q){
+  const minhas = Object.keys(VOCAB).filter((k) => VOCAB[k] && VOCAB[k].q === q);
+  minhas.sort((a, b) => (VOCAB[b].n || 0) - (VOCAB[a].n || 0));
+  const comuns = VOCAB_COMUM.filter((p) => p.q === q && !VOCAB[p.k]).map((p) => [p.k, p.label]);
+  return minhas.map((k) => [k, VOCAB[k].label]).concat(comuns);
+}
+function usarPalavraPropria(q, texto){
+  const palavra = limparPalavra(texto);
+  if (!palavra) return {erro: 'Use uma palavra só, sem números.'};
+  const k = chaveDaPalavra(palavra);
+  if (EMO_INDEX[k] || EMOTIONS.some((g) => g.items.some(([kk]) => kk === k))) {
+    return {erro: 'Essa palavra já está na lista.'};
+  }
+  if (!VOCAB[k]) {
+    const minhas = Object.keys(VOCAB).filter((x) => VOCAB[x]);
+    if (minhas.length >= MAX_PALAVRAS_PROPRIAS) {
+      minhas.sort((a, b) => (VOCAB[a].n || 0) - (VOCAB[b].n || 0));
+      delete VOCAB[minhas[0]];
+    }
+    VOCAB[k] = {label: palavra, q: q, n: 0};
+    if (window.sugerirPalavraCloud) window.sugerirPalavraCloud(k, palavra, q);
+  }
+  VOCAB[k].n = (VOCAB[k].n || 0) + 1;
+  salvarVocab();
+  registrarPalavraNoIndice(k, palavra, q);
+  return {chave: k};
+}
+function registrarPalavraNoIndice(k, label, q){
+  const tom = EMOTIONS.find((g) => g.q === q);
+  EMO_INDEX[k] = {label: label, q: q, color: tom ? tom.color : '#7E90B5'};
+}
+window.registrarPalavraNoIndice = registrarPalavraNoIndice;
+
+// Quando a pessoa entra em outro aparelho, as palavras dela vêm junto.
+function aplicarVocabDaNuvem(daNuvem){
+  if (!daNuvem || typeof daNuvem !== 'object') return;
+  Object.keys(daNuvem).forEach((k) => {
+    const p = daNuvem[k];
+    if (!p || !p.label || !p.q) return;
+    if (!VOCAB[k] || (p.n || 0) > (VOCAB[k].n || 0)) VOCAB[k] = {label: p.label, q: p.q, n: p.n || 0};
+    registrarPalavraNoIndice(k, p.label, p.q);
+  });
+  try { localStorage.setItem('fl_vocab', JSON.stringify(VOCAB)); } catch (e) {}
+}
+window.aplicarVocabDaNuvem = aplicarVocabDaNuvem;
+
 const EMO_INDEX = {};
 EMOTIONS.forEach(g => g.items.forEach(([k,l]) => { EMO_INDEX[k] = {label:l, q:g.q, color:g.color}; }));
 window.EMO_INDEX = EMO_INDEX;
@@ -2530,19 +2658,45 @@ function renderEmoWheel(){
   if (!host) return;
   const f = S.logForm, sel = f.emotions || [], open = f.emoOpen || null;
   const g = EMOTIONS.find(x => x.q === open);
+  const todas = f.emoTodas || {};
+  const minhas = g ? palavrasDoTom(g.q) : [];
+  const lista = g ? (todas[g.q] ? g.items : g.items.slice(0, 6)) : [];
+  const chip = (k, l) => '<button type="button" class="emo-chip' + (sel.indexOf(k) >= 0 ? ' sel' : '')
+    + '" style="--q:' + g.color + '" onclick="togEmo(\'' + k + '\')">' + esc(l) + '</button>';
   host.innerHTML = '<div class="quads">' + EMOTIONS.map(q => {
-      const n = q.items.filter(([k]) => sel.indexOf(k) >= 0).length;
+      const n = q.items.concat(palavrasDoTom(q.q)).filter(([k]) => sel.indexOf(k) >= 0).length;
       return '<button type="button" class="quad' + (open === q.q ? ' open' : '') + (n ? ' has' : '') + '" style="--q:' + q.color + '" onclick="openQuad(\'' + q.q + '\')" aria-expanded="' + (open === q.q) + '">'
         + '<i></i><b>' + q.label + (n ? ' · ' + n : '') + '</b><small>' + q.items.slice(0, 3).map(x => x[1].toLowerCase()).join(', ') + '</small></button>';
     }).join('') + '</div>'
     + (g
       ? '<div class="log-lbl" style="margin-top:16px">' + g.label + ' · marque as que servem</div><div class="emo-chips">'
-        + g.items.map(([k, l]) => '<button type="button" class="emo-chip' + (sel.indexOf(k) >= 0 ? ' sel' : '') + '" style="--q:' + g.color + '" onclick="togEmo(\'' + k + '\')">' + l + '</button>').join('')
+        + lista.map(([k, l]) => chip(k, l)).join('')
+        + minhas.map(([k, l]) => chip(k, l)).join('')
+        + (todas[g.q] ? '' : '<button type="button" class="emo-chip mais" onclick="maisPalavras(\'' + g.q + '\')">+ mais palavras</button>')
         + '</div>'
+        + '<div class="emo-nova"><input class="inp" id="emo-nova-in" maxlength="22" autocomplete="off" placeholder="Faltou uma palavra? escreva aqui" onkeydown="if(event.key===\'Enter\'){event.preventDefault();addPalavra(\'' + g.q + '\')}">'
+        + '<button type="button" class="btn btn-soft" onclick="addPalavra(\'' + g.q + '\')">Usar</button></div>'
+        + '<div class="tr-warn" id="emo-nova-warn"></div>'
       : '<p class="log-sub" style="margin:14px 0 0">Toque em um tom para ver as palavras.</p>')
     + (sel.length ? '<div class="emo-count">Você marcou: ' + sel.map(emoLabel).join(' · ') + '</div>' : '');
 }
 function openQuad(q){ S.logForm.emoOpen = S.logForm.emoOpen === q ? null : q; renderEmoWheel(); }
+function maisPalavras(q){
+  S.logForm.emoTodas = S.logForm.emoTodas || {};
+  S.logForm.emoTodas[q] = true;
+  renderEmoWheel();
+}
+function addPalavra(q){
+  const campo = document.getElementById('emo-nova-in');
+  const aviso = document.getElementById('emo-nova-warn');
+  const r = usarPalavraPropria(q, campo && campo.value);
+  if (r.erro) { if (aviso) aviso.textContent = r.erro; return; }
+  const a = S.logForm.emotions || (S.logForm.emotions = []);
+  if (a.indexOf(r.chave) < 0) a.push(r.chave);
+  renderEmoWheel();
+  updateReflection();
+  toast('Palavra adicionada. Ela fica disponível nos próximos registros.');
+}
 function togEmo(k){
   const a = S.logForm.emotions || (S.logForm.emotions = []);
   const i = a.indexOf(k);
@@ -2991,6 +3145,13 @@ const ARTICLES = [
     'Não é preciso uma agenda rígida. Algumas âncoras já ajudam: acordar em horário parecido (inclusive no fim de semana), pegar luz natural cedo, fazer as refeições em horários próximos e ter um momento de movimento no dia.',
     'Em “Pequenos passos”, você pode escolher até 3 âncoras para a semana e ver como elas aparecem nos seus dias.'],
     src:'Base: estudos sobre ritmo circadiano e humor (como Lyall e colaboradores, 2018, com dados do UK Biobank) e terapias que trabalham a regularidade da rotina.'},
+  {id:'intimidade', emoji:'🤍', title:'Estresse, sono e intimidade', try:false, body:[
+    'Desejo e intimidade não são só "vontade": eles acompanham como está o resto da sua vida. Noites mal dormidas, semanas de estresse alto e cansaço acumulado reduzem o interesse por sexo em pessoas de qualquer gênero — e isso é fisiologia, não falta de amor nem defeito de ninguém.',
+    'Alguns remédios, inclusive antidepressivos, também mexem nisso. É um efeito conhecido, previsto em bula, e que costuma ter saída: ajuste de dose, troca de medicação, acompanhamento. Só quem prescreveu pode avaliar — e parar por conta própria costuma custar caro.',
+    'O caminho de volta raramente começa pelo sexo. Começa pelo sono, pelo descanso e pela sensação de segurança com a outra pessoa. Conversar sobre isso sem cobrança — "ando cansado, não é você" — costuma aliviar mais do que tentar forçar.',
+    'Se a falta de desejo, a dor ou o desconforto persistirem, ou se estiverem pesando na sua relação, vale procurar um profissional: ginecologista, urologista ou terapeuta com formação em sexualidade. É assunto de saúde como qualquer outro.',
+    '<b>O Florescer não registra nada sobre sua vida sexual.</b> Este texto está aqui porque o tema aparece na vida de quem cuida do bem-estar — não para virar mais um campo a preencher.'],
+    src:'Base: literatura sobre privação de sono, estresse crônico e função sexual; bulas e diretrizes sobre efeitos sexuais de antidepressivos. Texto a ser revisado por profissional (DP-C2).'},
   {id:'corpo', emoji:'🌡️', title:'Escutar o corpo sem se cobrar', try:'bodyscan', body:[
     'O corpo avisa antes de a gente perceber: cansaço que não passa, ombros tensos, fome esquecida, sono fora de hora, irritação por pouco. Notar esses sinais é um jeito de acompanhar como você está — sem nota e sem meta.',
     'Tem dias em que a energia está muito baixa. Nesses dias, adaptar é autocuidado, não fraqueza: trocar a corrida por uma caminhada leve, a caminhada por 5 minutos de alongamento, ou simplesmente descansar. Algum movimento é melhor que nenhum — e descanso também faz parte.',
@@ -3018,7 +3179,7 @@ const ARTICLES = [
 ];
 const ART_GROUPS = [
   ['Entender o que você sente', ['ansiedade', 'emocoes', 'pensamentos', 'armadilhas', 'ruminacao']],
-  ['Corpo e rotina', ['sono', 'rotina', 'alimentacao', 'movimento', 'corpo', 'respirar', 'conexao', 'ativacao']],
+  ['Corpo e rotina', ['sono', 'rotina', 'alimentacao', 'movimento', 'corpo', 'intimidade', 'respirar', 'conexao', 'ativacao']],
   ['Cuidar de si e buscar ajuda', ['autocompaixao', 'ajuda', 'psi']],
   ['Para quem apoia alguém', ['escutar', 'dizer', 'presenca']],
 ];
@@ -5657,17 +5818,18 @@ function admKpis(items){
 }
 function renderAdmin(body){
   if (!S.isAdmin) { body.innerHTML = '<div class="empty">Acesso restrito ao administrador.</div>'; return; }
-  const tabs = [['pessoas', 'Pessoas'], ['panorama', 'Panorama'], ['evolucao', 'Evolução'], ['mural', 'Mural']];
+  const tabs = [['pessoas', 'Pessoas'], ['panorama', 'Panorama'], ['evolucao', 'Evolução'], ['mural', 'Mural'], ['palavras', 'Palavras']];
   const pend = (ADMIN.data.pending || []).length;
-  const head = `<div class="top-tabs" style="margin-top:0">${tabs.map(([k, l]) => `<button class="top-tab ${ADMIN.tab === k ? 'active' : ''}" onclick="adminTab('${k}')">${l}${k === 'mural' && pend ? ' · ' + pend : ''}</button>`).join('')}</div>`;
-  const need = {pessoas: ['members'], panorama: ['stats', 'evolution'], evolucao: ['evolution'], mural: ['pending', 'approved']}[ADMIN.tab];
+  const pendPal = (ADMIN.data.vocab || []).filter(p => p.status !== 'approved').length;
+  const head = `<div class="top-tabs" style="margin-top:0">${tabs.map(([k, l]) => `<button class="top-tab ${ADMIN.tab === k ? 'active' : ''}" onclick="adminTab('${k}')">${l}${k === 'mural' && pend ? ' · ' + pend : ''}${k === 'palavras' && pendPal ? ' · ' + pendPal : ''}</button>`).join('')}</div>`;
+  const need = {pessoas: ['members'], panorama: ['stats', 'evolution'], evolucao: ['evolution'], mural: ['pending', 'approved'], palavras: ['vocab']}[ADMIN.tab];
   const missing = need.filter(k => !ADMIN.data[k]);
   if (missing.length) {
     body.innerHTML = head + '<div class="empty">Carregando…</div>';
     if (!ADMIN.loading) adminLoad(missing).then(() => { if (TOOL.kind === 'admin') renderTool(1); });
     return;
   }
-  const view = {pessoas: adminPessoas, panorama: adminPanorama, evolucao: adminEvolucao, mural: adminMural}[ADMIN.tab];
+  const view = {pessoas: adminPessoas, panorama: adminPanorama, evolucao: adminEvolucao, mural: adminMural, palavras: adminPalavras}[ADMIN.tab];
   body.innerHTML = head + view() + `<button class="btn-link" onclick="ADMIN.data={};renderTool(1)">Atualizar dados</button>`;
 }
 function adminPessoas(){
@@ -5683,6 +5845,40 @@ function adminPessoas(){
       <span class="r-t"><b>${esc(x.name || 'Sem nome')}</b><small>${esc(x.email || '')}</small><small>${x.careDays || 0} dias de cuidado · ${x.logs || 0} registros · ${x.platform === 'android' ? 'Android' : 'Web'}</small></span>
       <span class="r-meta">${when(x.lastSeen)}</span></div>`).join('') : '<div class="row"><span class="r-t"><small>Ninguém ainda.</small></span></div>'}</div>`;
 }
+// Palavras que as pessoas escreveram quando o vocabulário do app não bastou. Chegam sem nome,
+// sem conta e sem o registro em que foram usadas: só a palavra, o tom e quantas vezes foi usada.
+// Aprovar é o que faz a palavra entrar na roda de todo mundo — por isso passa por gente.
+function adminPalavras(){
+  const todas = ADMIN.data.vocab || [];
+  const tom = {pesadas: 'Pesadas', agitadas: 'Agitadas', calmas: 'Calmas', vibrantes: 'Vibrantes'};
+  const pend = todas.filter(p => p.status !== 'approved').sort((a, b) => (b.n || 0) - (a.n || 0));
+  const ok = todas.filter(p => p.status === 'approved').sort((a, b) => (b.n || 0) - (a.n || 0));
+  const linha = (p, aprovada) => `<div class="row"><span class="r-ic">${ico('pensamento')}</span>
+    <span class="r-t"><b>${esc(p.label || p.id)}</b><small>${tom[p.q] || p.q} · usada por ${p.n || 0} ${pl(p.n || 0, 'pessoa', 'pessoas')}</small></span>
+    <span class="adm-acts">${aprovada
+      ? `<button class="pbtn pbtn-x" onclick="palavraModerar('${p.id}','pending')">Retirar</button>`
+      : `<button class="pbtn" onclick="palavraModerar('${p.id}','approved')">Aprovar</button>
+         <button class="pbtn pbtn-x" onclick="palavraModerar('${p.id}','remove')">Descartar</button>`}</span></div>`;
+  return admKpis([[pend.length, 'esperando decisão'], [ok.length, 'no vocabulário'], [todas.reduce((s, p) => s + (p.n || 0), 0), 'usos somados']])
+    + `<p class="rep-foot" style="margin:0 2px 4px">Sem nome, sem conta e sem o texto do registro. Aprove só o que é de fato uma emoção — nome de pessoa, ofensa ou frase inteira devem ser descartados.</p>
+    <div class="section-lbl">Esperando decisão</div>
+    <div class="list">${pend.length ? pend.map(p => linha(p, false)).join('') : '<div class="row"><span class="r-t"><small>Nenhuma palavra nova.</small></span></div>'}</div>
+    <div class="section-lbl">No vocabulário</div>
+    <div class="list">${ok.length ? ok.map(p => linha(p, true)).join('') : '<div class="row"><span class="r-t"><small>Nenhuma aprovada ainda.</small></span></div>'}</div>`;
+}
+async function palavraModerar(id, status){
+  if (!window.adminPalavra) return;
+  if (status === 'remove' && !confirm('Descartar esta palavra? Ela volta a aparecer se outra pessoa escrever de novo.')) return;
+  try {
+    await window.adminPalavra(id, status);
+    ADMIN.data.vocab = null;
+    renderTool(1);
+    toast(status === 'approved' ? 'Palavra no vocabulário de todos.' : status === 'remove' ? 'Palavra descartada.' : 'Palavra retirada.');
+  } catch (e) {
+    toast('Não deu para salvar: ' + ((e && e.message) || 'erro'));
+  }
+}
+
 function adminPanorama(){
   const days = ADMIN.data.stats || [];
   const tot = {};
