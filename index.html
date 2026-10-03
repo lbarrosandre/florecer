@@ -1224,6 +1224,27 @@ div.row{cursor:default}
       } catch (e) {
         console.log('Sync adiado, mantendo dados locais:', e && e.message);
       }
+      // O que as frases da pessoa provocaram no mural. Bloco separado e silencioso: é o que
+      // alimenta os selos de apoio, e nenhum deles vale mais que o sync dos registros dela.
+      try {
+        const meus = await db.collection('wall').where('uid', '==', uid).limit(100).get();
+        let aprovados = 0, reacoes = 0, brotou = 0;
+        meus.docs.forEach((d) => {
+          const w = d.data() || {};
+          if (w.status === 'approved') aprovados++;
+          reacoes += (w.helped || 0) + (w.sprouted || 0);
+          brotou += (w.sprouted || 0);
+        });
+        const p = window.S.progress || {};
+        p.wallAprovados = aprovados;
+        p.wallReacoes = reacoes;
+        p.wallBrotou = brotou;
+        if (window.progressSave) window.progressSave();
+        if (window.checkBadges) window.checkBadges();
+      } catch (e) {
+        console.log('Retorno do mural adiado:', e && e.message);
+      }
+
       // Registros de pensamento em bloco separado: se as regras ainda não
       // liberarem a coleção, o resto do sync não é afetado.
       try {
@@ -2033,7 +2054,23 @@ const BADGES = [
   {id:'presenca',        emoji:'🕯️', nome:'Presença',         dica:'60 minutos de meditação no total.',      check:(p)=> (p.meditMinutes||0) >= 60},
   {id:'outro-olhar',     emoji:'🔍', nome:'Outro olhar',      dica:'Faça 3 registros de pensamento.',        check:()=> (S.thoughts||[]).length >= 3},
   {id:'curiosidade',     emoji:'📖', nome:'Curiosidade',      dica:'Leia 5 conteúdos em Cuidar.',            check:(p)=> (p.readArticles||[]).length >= 5},
+  // Apoiar: o selo vem do gesto, não da quantidade. Nada de ranking nem de comparação entre
+  // pessoas — num app de saúde mental, competir por apoio produz apoio de fachada. "Palavra no
+  // mural" só conta depois da aprovação: ninguém ganha selo por algo que nunca foi publicado.
+  {id:'palavra-no-mural', emoji:'🌾', nome:'Palavra no mural', dica:'Sua primeira frase foi publicada para outras pessoas.', check:(p)=> (p.wallAprovados||0) >= 1},
+  {id:'tocou-alguem',     emoji:'🤲', nome:'Tocou alguém',     dica:'Alguém se apoiou em uma frase sua.',                    check:(p)=> (p.wallReacoes||0) >= 1},
+  {id:'brotou-em-alguem', emoji:'🌿', nome:'Brotou em alguém', dica:'Uma frase sua fez alguém marcar "Brotou em mim".',      check:(p)=> (p.wallBrotou||0) >= 1},
+  {id:'mao-estendida',    emoji:'💚', nome:'Mão estendida',    dica:'Você apoiou 10 frases de outras pessoas.',              check:()=> apoiosDados() >= 10},
+  {id:'semente-plantada', emoji:'🌰', nome:'Semente plantada', dica:'Você convidou alguém para o Florescer.',                check:()=> (window.sementesPlantadas ? sementesPlantadas() : 0) >= 1},
 ];
+
+// Quantas frases de outras pessoas você apoiou. Denúncia não conta como apoio.
+function apoiosDados(){
+  try {
+    const r = (window.WALL && WALL.reacted) || {};
+    return Object.keys(r).filter((k) => r[k] && r[k] !== 'reports').length;
+  } catch (e) { return 0; }
+}
 
 function hasFullDay(){
   const by = {};
