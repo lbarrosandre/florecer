@@ -890,6 +890,17 @@ div.row{cursor:default}
 .cv-auth-h{font-size:19px;font-weight:300;color:var(--ink);margin:0 2px 12px}
 .cv-foot{text-align:center;font-size:11.5px;color:var(--faint);line-height:1.8;padding:18px 0 4px}
 .cv-foot .cover-link{font-size:11.5px}
+/* ── Campanha do mês ───────────────────────────────────────── */
+.camp{display:flex;gap:12px;align-items:flex-start;background:var(--camp-bg);border:1px solid var(--camp-bd);
+  border-left:3px solid var(--camp-c);border-radius:12px;padding:13px 14px;margin-top:14px}
+.camp-ic{width:26px;height:26px;color:var(--camp-c);flex-shrink:0;margin-top:1px}
+.camp-ic svg{width:100%;height:100%}
+.camp-t{display:block;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--camp-c)}
+.camp-s{display:block;font-size:13.5px;line-height:1.5;color:#3f5349;margin-top:3px;max-width:46ch}
+.camp-a{background:none;border:none;padding:6px 0 0;font:inherit;font-size:13px;font-weight:600;color:var(--camp-c);cursor:pointer}
+.camp-a:focus-visible{outline:2px solid var(--camp-c);outline-offset:3px;border-radius:4px}
+.camp-x{background:none;border:none;color:#8a9b93;font-size:19px;line-height:1;cursor:pointer;margin:-10px -8px auto auto;flex-shrink:0;min-width:44px;min-height:44px;display:grid;place-items:center}
+.camp-x:focus-visible{outline:2px solid var(--camp-c);outline-offset:2px;border-radius:4px}
 /* ── Palavras próprias no registro ─────────────────────────── */
 .adm-acts{display:flex;gap:6px;flex-shrink:0;align-items:center}
 .emo-chip.mais{border-style:dashed;color:#5d7169;background:transparent}
@@ -1704,6 +1715,7 @@ div.row{cursor:default}
         <h1 class="home-hello" id="home-hi">Olá</h1>
         <div id="home-help"></div>
         <div id="home-now"></div>
+        <div id="home-campanha"></div>
         <div id="home-pillars"></div>
         <div id="home-wall"></div>
         <div id="home-trail"></div>
@@ -2462,6 +2474,7 @@ function renderHome() {
       ${todayLogs.map(l => diaryEntry(l, true)).join('')}
     </div>`;
   }
+  renderHomeCampanha();
   renderHomePillars();
   renderHomeWall();
   renderHomeTrail();
@@ -5049,6 +5062,79 @@ function daysSinceLastLog(){
   const last = Math.max(...S.logs.map(l => +new Date(l.date)));
   return Math.floor((Date.now() - last) / 864e5);
 }
+// ═══════════ CAMPANHA DO MÊS ═══════════
+// Um selo discreto, abaixo do cartão do dia: nunca disputa com o registro, que é o que a pessoa
+// veio fazer. O Florescer não é serviço de saúde, então o texto fala do lado emocional do tema e
+// manda para a fonte oficial quando o assunto é exame ou doença — nunca orienta tratamento.
+// As cores são as oficiais das campanhas brasileiras: errar isso numa campanha de saúde custa
+// credibilidade (outubro é rosa, novembro é azul).
+const CAMPANHAS = {
+  1:  {nome: 'Janeiro Branco', cor: '#5d7d9a', bg: '#f1f5f8', bd: '#dde7ee', ic: 'flor',
+       s: 'O mês de falar de saúde mental sem rodeio. Um registro por dia já é um jeito de se escutar.',
+       acao: {tipo: 'tela', alvo: 'log', texto: 'Registrar agora'}},
+  2:  {nome: 'Fevereiro Roxo e Laranja', cor: '#7a5ea3', bg: '#f5f1fa', bd: '#e6dcf0', ic: 'coracao',
+       s: 'Conviver com uma doença crônica cansa também por dentro. Dias de pouca energia não são preguiça.',
+       acao: {tipo: 'leitura', alvo: 'corpo', texto: 'Escutar o corpo sem se cobrar'}},
+  3:  {nome: 'Março Lilás', cor: '#8c5a8e', bg: '#f8f1f8', bd: '#ecdcec', ic: 'escudo',
+       s: 'O exame preventivo salva vidas — e o medo de fazer é mais comum do que parece.',
+       acao: {tipo: 'link', alvo: 'https://www.gov.br/inca/pt-br/assuntos/cancer/tipos/colo-do-utero', texto: 'Informação oficial (INCA)'}},
+  4:  {nome: 'Abril Azul', cor: '#3f7cb0', bg: '#eff5fa', bd: '#dbe8f2', ic: 'conexao',
+       s: 'Mês da conscientização sobre o autismo. Entender o jeito do outro também é cuidado.',
+       acao: {tipo: 'leitura', alvo: 'escutar', texto: 'Como apoiar: escutar sem resolver'}},
+  5:  {nome: 'Maio Amarelo', cor: '#b08a1e', bg: '#fbf6e8', bd: '#f0e6c9', ic: 'olho',
+       s: 'Cansaço e pressa no trânsito custam caro. Chegar inteiro vale mais que chegar cedo.',
+       acao: {tipo: 'leitura', alvo: 'rotina', texto: 'Rotina regular, humor mais estável'}},
+  6:  {nome: 'Junho Vermelho', cor: '#b4503f', bg: '#fbf0ee', bd: '#f2dcd8', ic: 'coracao',
+       s: 'Doar sangue leva menos de uma hora e atravessa a vida de alguém que você nunca vai conhecer.',
+       acao: {tipo: 'link', alvo: 'https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/d/doacao-de-sangue', texto: 'Como doar (Ministério da Saúde)'}},
+  7:  {nome: 'Julho Amarelo', cor: '#b08a1e', bg: '#fbf6e8', bd: '#f0e6c9', ic: 'escudo',
+       s: 'Hepatites virais costumam ser silenciosas. Um teste rápido tira a dúvida.',
+       acao: {tipo: 'link', alvo: 'https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/h/hepatites-virais', texto: 'Informação oficial'}},
+  8:  {nome: 'Agosto Dourado', cor: '#a07b2a', bg: '#fbf6e8', bd: '#f0e6c9', ic: 'coracao',
+       s: 'Amamentar também pesa emocionalmente. Pedir ajuda no pós-parto é cuidado, não fraqueza.',
+       acao: {tipo: 'ajuda', texto: 'Preciso de ajuda agora'}},
+  9:  {nome: 'Setembro Amarelo', cor: '#9a7a12', bg: '#fbf6e5', bd: '#efe4bd', ic: 'coracao',
+       s: 'Falar sobre o que dói salva vidas. O CVV atende 24 horas, de graça e em sigilo, pelo 188.',
+       acao: {tipo: 'ajuda', texto: 'Falar com alguém agora'}},
+  10: {nome: 'Outubro Rosa', cor: '#b05581', bg: '#fbf0f5', bd: '#f2dce7', ic: 'flor',
+       s: 'Cuidar do corpo também é cuidar da mente. A espera por um resultado assusta — e você não precisa esperar sozinha.',
+       acao: {tipo: 'link', alvo: 'https://www.gov.br/inca/pt-br/assuntos/cancer/tipos/mama', texto: 'Informação oficial (INCA)'}},
+  11: {nome: 'Novembro Azul', cor: '#2f6ba3', bg: '#eef4fa', bd: '#d9e6f2', ic: 'escudo',
+       s: 'Homem também adoece e também sente medo. Ir ao médico não tira nada de ninguém.',
+       acao: {tipo: 'link', alvo: 'https://www.gov.br/inca/pt-br/assuntos/cancer/tipos/prostata', texto: 'Informação oficial (INCA)'}},
+  12: {nome: 'Dezembro Vermelho', cor: '#a8473f', bg: '#fbf0ee', bd: '#f2dcd8', ic: 'conexao',
+       s: 'Prevenção, teste e respeito. Viver com HIV hoje é possível, e o preconceito pesa mais que o vírus.',
+       acao: {tipo: 'link', alvo: 'https://www.gov.br/aids/pt-br', texto: 'Informação oficial'}},
+};
+
+function campanhaChave(d){ return 'fl_camp_' + d.getFullYear() + '_' + (d.getMonth() + 1); }
+function campanhaDispensada(d){ try { return localStorage.getItem(campanhaChave(d)) === '1'; } catch (e) { return false; } }
+function dispensarCampanha(){
+  try { localStorage.setItem(campanhaChave(new Date()), '1'); } catch (e) {}
+  renderHomeCampanha();
+}
+function renderHomeCampanha(){
+  const el = document.getElementById('home-campanha');
+  if (!el) return;
+  const hoje = new Date();
+  const c = CAMPANHAS[hoje.getMonth() + 1];
+  if (!c || campanhaDispensada(hoje)) { el.innerHTML = ''; return; }
+  const acoes = {
+    ajuda: 'openHelpSheet()',
+    tela: "goTo('" + (c.acao.alvo || 'home') + "')",
+    leitura: "runTool('art:" + (c.acao.alvo || '') + "')",
+    link: "openExternal('" + (c.acao.alvo || '') + "')",
+  };
+  el.innerHTML = '<section class="camp" style="--camp-c:' + c.cor + ';--camp-bg:' + c.bg + ';--camp-bd:' + c.bd + '"'
+    + ' aria-label="Campanha do mês: ' + esc(c.nome) + '">'
+    + '<span class="camp-ic" aria-hidden="true">' + ico(c.ic) + '</span>'
+    + '<div><b class="camp-t">' + esc(c.nome) + '</b>'
+    + '<span class="camp-s">' + esc(c.s) + '</span>'
+    + '<button type="button" class="camp-a" onclick="' + acoes[c.acao.tipo] + '">' + esc(c.acao.texto) + ' →</button></div>'
+    + '<button type="button" class="camp-x" onclick="dispensarCampanha()" aria-label="Dispensar este aviso até o mês que vem">×</button>'
+    + '</section>';
+}
+
 function renderHomeSeal(){
   const el = document.getElementById('home-seal');
   if (!el) return;
