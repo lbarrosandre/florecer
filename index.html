@@ -890,6 +890,7 @@ div.row{cursor:default}
 .cv-auth-h{font-size:19px;font-weight:300;color:var(--ink);margin:0 2px 12px}
 .cv-foot{text-align:center;font-size:11.5px;color:var(--faint);line-height:1.8;padding:18px 0 4px}
 .cv-foot .cover-link{font-size:11.5px}
+.entry-word{font-size:13.5px;color:#4a6358;font-style:italic;margin-top:3px}
 /* ── Campanha do mês ───────────────────────────────────────── */
 .camp{display:flex;gap:12px;align-items:flex-start;background:var(--camp-bg);border:1px solid var(--camp-bd);
   border-left:3px solid var(--camp-c);border-radius:12px;padding:13px 14px;margin-top:14px}
@@ -1013,6 +1014,7 @@ div.row{cursor:default}
             if (ud.progress && window.applyCloudProgress) window.applyCloudProgress(ud.progress);
             if (ud.profile && window.applyCloudProfile) window.applyCloudProfile(ud.profile);
             if (ud.vocab && window.aplicarVocabDaNuvem) window.aplicarVocabDaNuvem(ud.vocab);
+            if (ud.etiq && window.aplicarEtiqDaNuvem) window.aplicarEtiqDaNuvem(ud.etiq);
           }
         } catch (e) { console.log('users doc:', e && e.message); }
 
@@ -1267,6 +1269,14 @@ div.row{cursor:default}
       const uid = window.S.user && window.S.user.uid;
       if (!uid) return;
       try { await db.collection('users').doc(uid).set({ vocab }, { merge: true }); } catch (e) {}
+    };
+
+    // Etiquetas de "O que marcou" ficam só com a pessoa: "reunião com o chefe" não ajuda
+    // ninguém mais e pode identificar quem escreveu. Nada vai para acervo comum.
+    window.saveEtiqCloud = async (etiq) => {
+      const uid = window.S.user && window.S.user.uid;
+      if (!uid) return;
+      try { await db.collection('users').doc(uid).set({ etiq }, { merge: true }); } catch (e) {}
     };
 
     window.sugerirPalavraCloud = async (chave, palavra, tom) => {
@@ -1737,6 +1747,7 @@ div.row{cursor:default}
         <div id="home-help"></div>
         <div id="home-now"></div>
         <div id="home-campanha"></div>
+        <div id="home-sugestao"></div>
         <div id="home-pillars"></div>
         <div id="home-wall"></div>
         <div id="home-trail"></div>
@@ -1799,24 +1810,20 @@ div.row{cursor:default}
           <p class="log-sub">Tudo aqui é opcional.</p>
           <div class="log-block" style="margin-top:6px">
             <div class="log-lbl">O que marcou</div>
-            <div class="tags" id="tags-row">
-              <button type="button" class="tag" onclick="togTag(this)">Trabalho estressante</button>
-              <button type="button" class="tag" onclick="togTag(this)">Briga ou conflito</button>
-              <button type="button" class="tag" onclick="togTag(this)">Exercício físico</button>
-              <button type="button" class="tag" onclick="togTag(this)">Pouco sono</button>
-              <button type="button" class="tag" onclick="togTag(this)">Alimentação ruim</button>
-              <button type="button" class="tag" onclick="togTag(this)">Tempo com amigos</button>
-              <button type="button" class="tag" onclick="togTag(this)">Notícias ruins</button>
-              <button type="button" class="tag" onclick="togTag(this)">Solidão</button>
-              <button type="button" class="tag" onclick="togTag(this)">Meditação</button>
-              <button type="button" class="tag" onclick="togTag(this)">Natureza</button>
-              <button type="button" class="tag" onclick="togTag(this)">Família</button>
-              <button type="button" class="tag" onclick="togTag(this)">Lazer</button>
+            <div class="tags" id="tags-row"></div>
+            <div class="emo-nova" style="margin-top:10px">
+              <input class="inp" id="tag-nova-in" maxlength="24" autocomplete="off" placeholder="Marcou algo que não está na lista?" onkeydown="if(event.key==='Enter'){event.preventDefault();addEtiqueta()}">
+              <button type="button" class="btn btn-soft" onclick="addEtiqueta()">Usar</button>
             </div>
+            <div class="tr-warn" id="tag-nova-warn"></div>
           </div>
           <div class="log-block">
             <div class="log-lbl">Hoje eu…</div>
             <div id="log-pillars"></div>
+          </div>
+          <div class="log-block">
+            <div class="log-lbl">Se o dia tivesse uma palavra</div>
+            <input class="inp" id="log-word" maxlength="24" autocomplete="off" placeholder="Ex.: corrido, leve, denso, virada">
           </div>
           <div class="log-block">
             <div class="log-lbl">Algo bom de hoje?</div>
@@ -2512,6 +2519,7 @@ function renderHome() {
     </div>`;
   }
   renderHomeCampanha();
+  renderHomeSugestao();
   renderHomePillars();
   renderHomeWall();
   renderHomeTrail();
@@ -2538,6 +2546,7 @@ function resetLog() {
   const hint = document.getElementById('mood-hint');
   if (hint) hint.style.display = 'none';
   renderLogPillars();
+  renderTags();
   renderEmoWheel();
   updateReflection();
   renderLogStep();
@@ -2605,6 +2614,36 @@ function selSc(type, v, el) {
   const row = document.getElementById(type + '-row');
   row.querySelectorAll('.sc-btn').forEach(b => b.classList.toggle('sel', S.logForm[type] !== null && b.textContent === String(S.logForm[type])));
 }
+// As etiquetas de fábrica cobrem o que mais aparece; o resto da vida de cada pessoa não cabe
+// numa lista fixa. Por isso ela pode criar as suas (até 10, a menos usada sai), que ficam só
+// com ela — diferente das palavras de emoção, aqui não há acervo comum: "reunião com o chefe"
+// não diz nada para outra pessoa e pode identificar quem escreveu.
+const ETIQUETAS = [
+  'Trabalho estressante', 'Prazo apertado', 'Reunião difícil', 'Procrastinação',
+  'Briga ou conflito', 'Término ou distância', 'Família', 'Filhos',
+  'Pouco sono', 'Alimentação ruim', 'Dor no corpo', 'Exercício físico',
+  'Dinheiro', 'Estudo', 'Trânsito', 'Notícias ruins',
+  'Solidão', 'Tempo sozinho', 'Tempo com amigos', 'Natureza', 'Meditação', 'Lazer',
+];
+const MAX_ETIQUETAS_PROPRIAS = 10;
+var ETIQ = (function(){ try { return JSON.parse(localStorage.getItem('fl_etiq') || '{}'); } catch (e) { return {}; } })();
+
+function salvarEtiq(){
+  try { localStorage.setItem('fl_etiq', JSON.stringify(ETIQ)); } catch (e) {}
+  if (window.saveEtiqCloud) window.saveEtiqCloud(ETIQ);
+}
+function minhasEtiquetas(){
+  return Object.keys(ETIQ).sort((a, b) => (ETIQ[b] || 0) - (ETIQ[a] || 0));
+}
+function renderTags(){
+  const host = document.getElementById('tags-row');
+  if (!host) return;
+  const sel = S.logForm.triggers || [];
+  const todas = ETIQUETAS.concat(minhasEtiquetas().filter((e) => ETIQUETAS.indexOf(e) < 0));
+  host.innerHTML = todas.map((t) =>
+    '<button type="button" class="tag' + (sel.indexOf(t) >= 0 ? ' sel' : '') + '" onclick="togTag(this)">' + esc(t) + '</button>'
+  ).join('');
+}
 function togTag(el) {
   el.classList.toggle('sel');
   const t = el.textContent;
@@ -2612,6 +2651,33 @@ function togTag(el) {
   else S.logForm.triggers = S.logForm.triggers.filter(x => x !== t);
   updateReflection();
 }
+function addEtiqueta(){
+  const campo = document.getElementById('tag-nova-in');
+  const aviso = document.getElementById('tag-nova-warn');
+  const bruto = ((campo && campo.value) || '').trim().replace(/\s+/g, ' ');
+  if (bruto.length < 3) { if (aviso) aviso.textContent = 'Escreva ao menos 3 letras.'; return; }
+  const t = bruto.charAt(0).toUpperCase() + bruto.slice(1);
+  const jaExiste = ETIQUETAS.concat(minhasEtiquetas()).some((x) => x.toLowerCase() === t.toLowerCase());
+  if (!jaExiste) {
+    const minhas = minhasEtiquetas();
+    if (minhas.length >= MAX_ETIQUETAS_PROPRIAS) delete ETIQ[minhas[minhas.length - 1]];
+    ETIQ[t] = 0;
+  }
+  ETIQ[t] = (ETIQ[t] || 0) + 1;
+  salvarEtiq();
+  if ((S.logForm.triggers || []).indexOf(t) < 0) S.logForm.triggers.push(t);
+  if (campo) campo.value = '';
+  if (aviso) aviso.textContent = '';
+  renderTags();
+  updateReflection();
+}
+// Quando a pessoa entra em outro aparelho, as etiquetas dela vêm junto.
+function aplicarEtiqDaNuvem(daNuvem){
+  if (!daNuvem || typeof daNuvem !== 'object') return;
+  Object.keys(daNuvem).forEach((k) => { if (!ETIQ[k] || daNuvem[k] > ETIQ[k]) ETIQ[k] = daNuvem[k]; });
+  try { localStorage.setItem('fl_etiq', JSON.stringify(ETIQ)); } catch (e) {}
+}
+window.aplicarEtiqDaNuvem = aplicarEtiqDaNuvem;
 
 // ═══════════ EMOÇÕES ═══════════
 // Quatro quadrantes do modelo circumplexo de afeto (valência × energia).
@@ -2801,6 +2867,7 @@ function saveLog() {
     sleep: S.logForm.sleep || null,
     triggers: [...S.logForm.triggers],
     emotions: [...(S.logForm.emotions || [])],
+    word: (((document.getElementById('log-word') || {}).value) || '').trim().slice(0, 24),
     note: note,
     prompt: note.trim() ? (S.logForm.prompt || '') : '',
     time: S.logForm.time
@@ -3195,6 +3262,18 @@ const ARTICLES = [
     'Não é preciso uma agenda rígida. Algumas âncoras já ajudam: acordar em horário parecido (inclusive no fim de semana), pegar luz natural cedo, fazer as refeições em horários próximos e ter um momento de movimento no dia.',
     'Em “Pequenos passos”, você pode escolher até 3 âncoras para a semana e ver como elas aparecem nos seus dias.'],
     src:'Base: estudos sobre ritmo circadiano e humor (como Lyall e colaboradores, 2018, com dados do UK Biobank) e terapias que trabalham a regularidade da rotina.'},
+  {id:'esgotamento', emoji:'🕯️', title:'Quando o trabalho esgota', try:'plan', body:[
+    'Esgotamento no trabalho não é fraqueza nem falta de vontade. A Organização Mundial da Saúde o descreve como um fenômeno ligado ao trabalho — não uma doença — com três sinais que costumam vir juntos: cansaço que o fim de semana não resolve, distanciamento e irritação com o que antes fazia sentido, e a sensação de não dar conta do que você sempre deu.',
+    'Ele se instala devagar. Quem está dentro costuma ser o último a perceber, porque o cansaço vira rotina e a irritação vira "jeito de ser". Se as pessoas ao redor começaram a comentar, vale levar a sério.',
+    'O que ajuda não é heroísmo, é fronteira: um horário em que o trabalho acaba, pausas de verdade no meio do dia (não olhar o celular, pausa mesmo), sono protegido e uma coisa na semana que você faz só porque gosta. Em “Pequenos passos” dá para escolher uma dessas âncoras e acompanhar como ela aparece nos seus dias.',
+    'Nada disso substitui mudar o que precisa ser mudado no trabalho — e, quando o esgotamento já está pesando no corpo e no humor, conversar com um profissional ajuda a enxergar a saída com mais clareza.'],
+    src:'Base: CID-11 da Organização Mundial da Saúde, que classifica o burn-out como fenômeno ocupacional; literatura sobre recuperação e fronteiras entre trabalho e descanso. Texto a ser revisado por profissional (DP-C2).'},
+  {id:'procrastinacao', emoji:'⏳', title:'Procrastinar não é preguiça', try:'respirar', body:[
+    'A pesquisa sobre procrastinação aponta para algo diferente do que o senso comum diz: adiar costuma ser uma forma de fugir de uma emoção, não de fugir do trabalho. A tarefa que fica para depois quase sempre é a que gera tédio, medo de errar, insegurança ou raiva — e adiar alivia na hora, mesmo custando caro depois.',
+    'Por isso cobrança não resolve: ela aumenta justamente o desconforto que fez você adiar. Um estudo conhecido mostrou que estudantes que se perdoaram por ter procrastinado numa prova procrastinaram menos na seguinte. Perdoar-se funcionou melhor que se cobrar.',
+    'Três coisas ajudam na prática: perguntar “que emoção aparece quando penso nessa tarefa?”; combinar com você mesmo apenas os <b>5 primeiros minutos</b>, com permissão de parar depois; e reduzir o atrito — deixar o arquivo aberto, a roupa separada, o telefone em outro cômodo.',
+    'Se adiar virou regra e está custando seu sono, seu trabalho ou sua tranquilidade, vale conversar com um profissional: às vezes há ansiedade ou desatenção por trás, e isso tem tratamento.'],
+    src:'Base: pesquisas de Pychyl e Sirois sobre procrastinação como regulação de emoções, e o estudo de Wohl, Pychyl e Bennett (2010) sobre autoperdão. Texto a ser revisado por profissional (DP-C2).'},
   {id:'intimidade', emoji:'🤍', title:'Estresse, sono e intimidade', try:false, body:[
     'Desejo e intimidade não são só "vontade": eles acompanham como está o resto da sua vida. Noites mal dormidas, semanas de estresse alto e cansaço acumulado reduzem o interesse por sexo em pessoas de qualquer gênero — e isso é fisiologia, não falta de amor nem defeito de ninguém.',
     'Alguns remédios, inclusive antidepressivos, também mexem nisso. É um efeito conhecido, previsto em bula, e que costuma ter saída: ajuste de dose, troca de medicação, acompanhamento. Só quem prescreveu pode avaliar — e parar por conta própria costuma custar caro.',
@@ -3230,6 +3309,7 @@ const ARTICLES = [
 const ART_GROUPS = [
   ['Entender o que você sente', ['ansiedade', 'emocoes', 'pensamentos', 'armadilhas', 'ruminacao']],
   ['Corpo e rotina', ['sono', 'rotina', 'alimentacao', 'movimento', 'corpo', 'intimidade', 'respirar', 'conexao', 'ativacao']],
+  ['Trabalho e tarefas', ['esgotamento', 'procrastinacao']],
   ['Cuidar de si e buscar ajuda', ['autocompaixao', 'ajuda', 'psi']],
   ['Para quem apoia alguém', ['escutar', 'dizer', 'presenca']],
 ];
@@ -5144,6 +5224,49 @@ const CAMPANHAS = {
        acao: {tipo: 'link', alvo: 'https://www.gov.br/aids/pt-br', texto: 'Informação oficial'}},
 };
 
+// ═══════════ LEITURA SUGERIDA PELO QUE SE REPETE ═══════════
+// O app não diagnostica: ele nota que uma etiqueta vem se repetindo e oferece uma leitura, uma
+// vez só. Nada de alerta, nada de "você está em burnout" — isso seria diagnóstico, que é
+// justamente o que um app de bem-estar não pode fazer.
+const SUGESTOES = [
+  {id: 'esgotamento', etiquetas: ['Trabalho estressante', 'Prazo apertado', 'Reunião difícil'], minimo: 5,
+   texto: 'O trabalho tem aparecido bastante nos seus registros destes dias.'},
+  {id: 'procrastinacao', etiquetas: ['Procrastinação'], minimo: 4,
+   texto: 'Adiar tarefas apareceu algumas vezes por aqui.'},
+];
+function sugestaoDispensada(id){ try { return localStorage.getItem('fl_sug_' + id) === '1'; } catch (e) { return false; } }
+function dispensarSugestao(id){
+  try { localStorage.setItem('fl_sug_' + id, '1'); } catch (e) {}
+  renderHomeSugestao();
+}
+function abrirSugestao(id){
+  dispensarSugestao(id);
+  runTool('art:' + id);
+}
+function renderHomeSugestao(){
+  const el = document.getElementById('home-sugestao');
+  if (!el) return;
+  el.innerHTML = '';
+  const corte = Date.now() - 14 * 864e5;
+  const recentes = (S.logs || []).filter((l) => new Date(l.date).getTime() >= corte);
+  if (recentes.length < 5) return;
+  const lidos = (S.progress && S.progress.readArticles) || [];
+  for (const s of SUGESTOES) {
+    if (sugestaoDispensada(s.id) || lidos.indexOf(s.id) >= 0) continue;
+    const n = recentes.filter((l) => (l.triggers || []).some((t) => s.etiquetas.indexOf(t) >= 0)).length;
+    if (n < s.minimo) continue;
+    const art = ARTICLES.find((a) => a.id === s.id);
+    if (!art) continue;
+    el.innerHTML = '<section class="camp" style="--camp-c:#2a7d63;--camp-bg:#f1f7f4;--camp-bd:#dceae3" aria-label="Leitura sugerida">'
+      + '<span class="camp-ic" aria-hidden="true">' + ico('livro') + '</span>'
+      + '<div><b class="camp-t">Talvez ajude</b>'
+      + '<span class="camp-s">' + esc(s.texto) + ' Tem um texto de 1 minuto sobre isso.</span>'
+      + '<button type="button" class="camp-a" onclick="abrirSugestao(\'' + s.id + '\')">' + esc(art.title) + ' →</button></div>'
+      + '<button type="button" class="camp-x" onclick="dispensarSugestao(\'' + s.id + '\')" aria-label="Dispensar esta sugestão">×</button>'
+      + '</section>';
+    return;
+  }
+}
 function campanhaChave(d){ return 'fl_camp_' + d.getFullYear() + '_' + (d.getMonth() + 1); }
 function campanhaDispensada(d){ try { return localStorage.getItem(campanhaChave(d)) === '1'; } catch (e) { return false; } }
 function dispensarCampanha(){
@@ -5215,6 +5338,7 @@ function diaryEntry(l, compact){
   const extra = [typeof l.anxiety === 'number' ? 'ansiedade ' + l.anxiety : '', l.sleep ? 'sono ' + String(l.sleep).toLowerCase() : ''].filter(Boolean).join(' · ');
   const note = (l.note || '').trim();
   let more = '';
+  if (l.word) more += `<div class="entry-word">“${esc(l.word)}”</div>`;
   if (!compact && (l.triggers || []).length) more += `<div class="entry-meta">${esc(l.triggers.join(' · '))}</div>`;
   if (!compact && extra) more += `<div class="entry-meta">${esc(extra)}</div>`;
   if (note) {
