@@ -891,6 +891,15 @@ div.row{cursor:default}
 .cv-foot{text-align:center;font-size:11.5px;color:var(--faint);line-height:1.8;padding:18px 0 4px}
 .cv-foot .cover-link{font-size:11.5px}
 .entry-word{font-size:13.5px;color:#4a6358;font-style:italic;margin-top:3px}
+/* ── Consentimento de dado de saúde (LGPD) ─────────────────── */
+.cv-consent{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;line-height:1.55;color:#3f5349;
+  background:#f6faf8;border:1px solid #dfe9e4;border-radius:10px;padding:12px 13px;text-align:left;cursor:pointer}
+.cv-consent input{width:20px;height:20px;flex-shrink:0;margin:1px 0 0;accent-color:#2a7d63}
+.cv-consent b{color:#22322c}
+.consent-lista{margin:12px 0 4px;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.consent-lista li{display:flex;gap:9px;font-size:13.5px;line-height:1.5;color:#4a6358}
+.consent-lista li b{color:#22322c;font-weight:600}
+.consent-lista .ic-li{width:18px;height:18px;flex-shrink:0;color:#2a7d63;margin-top:2px}
 /* ── Campanha do mês ───────────────────────────────────────── */
 .camp{display:flex;gap:12px;align-items:flex-start;background:var(--camp-bg);border:1px solid var(--camp-bd);
   border-left:3px solid var(--camp-c);border-radius:12px;padding:13px 14px;margin-top:14px}
@@ -1015,6 +1024,7 @@ div.row{cursor:default}
             if (ud.profile && window.applyCloudProfile) window.applyCloudProfile(ud.profile);
             if (ud.vocab && window.aplicarVocabDaNuvem) window.aplicarVocabDaNuvem(ud.vocab);
             if (ud.etiq && window.aplicarEtiqDaNuvem) window.aplicarEtiqDaNuvem(ud.etiq);
+            if (ud.consent && ud.consent.saude && window.marcarConsentimento) window.marcarConsentimento();
           }
         } catch (e) { console.log('users doc:', e && e.message); }
 
@@ -1027,6 +1037,8 @@ div.row{cursor:default}
         if (window.setCoverLoading) window.setCoverLoading(false);
 
         // Daqui para baixo, tudo em segundo plano: se falhar ou demorar, o app continua de pé.
+        // Quem entrou pelo Google, ou criou conta antes desta regra, consente aqui.
+        if (!window.CONSENT_OK && window.abrirConsentimento) setTimeout(window.abrirConsentimento, 600);
         if (window.carregarVocabComum) window.carregarVocabComum();
         comPrazo(syncFromCloud(), 25000, 'sincronização')
           .then(() => { if (window.redesenharTelaAtual) window.redesenharTelaAtual(); })
@@ -1055,6 +1067,10 @@ div.row{cursor:default}
       if (!name) return showCoverError('Informe seu nome.');
       if (!email) return showCoverError('Informe seu e-mail.');
       if (!pass || pass.length < 6) return showCoverError('A senha precisa ter pelo menos 6 caracteres.');
+      const consentiu = document.getElementById('cover-consent');
+      if (!consentiu || !consentiu.checked) {
+        return showCoverError('Para criar a conta, marque a caixa de consentimento dos dados de saúde.');
+      }
       setCoverLoading(true);
       try {
         const cred = await comPrazo(auth.createUserWithEmailAndPassword(email, pass), 25000, 'cadastro');
@@ -1062,8 +1078,10 @@ div.row{cursor:default}
         // O perfil no banco não segura o cadastro: se o Firestore demorar, a conta já existe e
         // o documento é criado na sincronização seguinte. Antes, uma gravação pendurada aqui
         // deixava o botão travado em "entrando".
+        const consentimento = {saude: true, em: new Date().toISOString(), versao: '2026-10'};
+        if (window.marcarConsentimento) window.marcarConsentimento();
         db.collection('users').doc(cred.user.uid).set({
-          name, email, createdAt: new Date().toISOString(), isPremium: false
+          name, email, createdAt: new Date().toISOString(), isPremium: false, consent: consentimento
         }).catch(() => {});
       } catch (e) {
         showCoverError(erroDeEntrada(e));
@@ -1265,6 +1283,18 @@ div.row{cursor:default}
     // As palavras da pessoa ficam no doc dela. A sugestão ao acervo comum é anônima: vai só a
     // palavra e um contador, sem uid, sem data de registro, sem nada que ligue à pessoa — e só
     // acontece se ela mantiver as estatísticas anônimas ligadas.
+    // O consentimento fica na conta, com data e versão do texto: é o que prova, depois, que
+    // ele existiu e a que texto a pessoa disse sim.
+    window.salvarConsentimento = async (versao) => {
+      const uid = window.S.user && window.S.user.uid;
+      if (!uid) return;
+      try {
+        await db.collection('users').doc(uid).set({
+          consent: {saude: true, em: new Date().toISOString(), versao: versao},
+        }, { merge: true });
+      } catch (e) { console.log('consentimento adiado:', e && e.message); }
+    };
+
     window.saveVocabCloud = async (vocab) => {
       const uid = window.S.user && window.S.user.uid;
       if (!uid) return;
@@ -1713,7 +1743,11 @@ div.row{cursor:default}
             <button class="cover-link" onclick="doForgotPassword()">Esqueci minha senha</button>
           </div>
           <div id="cover-terms" style="display:none;margin-bottom:14px">
-            <div style="font-size:11.5px;color:var(--muted);line-height:1.6;text-align:center">Ao criar a conta, você concorda com os
+            <label class="cv-consent">
+              <input type="checkbox" id="cover-consent">
+              <span>Concordo que o Florescer guarde meus registros de humor, emoções e anotações — considerados <b>dados de saúde</b> — para me mostrar meus padrões. Só eu vejo o que escrevo, e posso retirar este consentimento excluindo minha conta.</span>
+            </label>
+            <div style="font-size:11.5px;color:var(--muted);line-height:1.6;text-align:center;margin-top:10px">Ao criar a conta, você concorda com os
             <button class="cover-link" onclick="openExternal(SITE_URL + '/termos/')">Termos de Uso</button> e a <button class="cover-link" onclick="openExternal(SITE_URL + '/privacidade/')">Política de Privacidade</button></div>
           </div>
 
@@ -5178,6 +5212,60 @@ function daysSinceLastLog(){
   if (!S.logs.length) return Infinity;
   const last = Math.max(...S.logs.map(l => +new Date(l.date)));
   return Math.floor((Date.now() - last) / 864e5);
+}
+// ═══════════ CONSENTIMENTO DE DADO DE SAÚDE (LGPD) ═══════════
+// Humor, emoções e anotações são dado pessoal sensível: a base legal é consentimento
+// específico e destacado, não uma frase solta de "ao criar a conta você concorda". Por isso a
+// caixa é própria, o texto diz o que é guardado e para quê, e a data fica registrada — sem o
+// registro, não há como provar que o consentimento existiu.
+const CONSENT_VERSAO = '2026-10';
+var CONSENT_OK = (function(){ try { return localStorage.getItem('fl_consent') === CONSENT_VERSAO; } catch (e) { return false; } })();
+
+function marcarConsentimento(){
+  CONSENT_OK = true;
+  try { localStorage.setItem('fl_consent', CONSENT_VERSAO); } catch (e) {}
+}
+function textoConsentimento(){
+  const item = (ic, txt) => '<li><span class="ic-li">' + ico(ic) + '</span><span>' + txt + '</span></li>';
+  return '<ul class="consent-lista">'
+    + item('diario', '<b>O que guardamos:</b> seus registros de humor, emoções, sono, hábitos e o que você escreve.')
+    + item('olho', '<b>Para quê:</b> mostrar seus padrões ao longo do tempo e sugerir ferramentas. Nada é usado para propaganda nem vendido.')
+    + item('cadeado', '<b>Quem vê:</b> só você. Nem quem administra o app lê o que você registra — o painel mostra apenas números somados.')
+    + item('x', '<b>Como retirar:</b> excluindo sua conta em Você › Conta, a qualquer momento. Tudo é apagado.')
+    + '</ul>';
+}
+// Quem já tinha conta antes desta regra precisa consentir também: o consentimento sustenta o
+// tratamento dos dados que já estão lá, não só dos próximos.
+function abrirConsentimento(){
+  if (document.getElementById('consent-sheet')) return;
+  closeHelpSheet();
+  const ov = document.createElement('div');
+  ov.className = 'empathy-overlay';
+  ov.id = 'consent-sheet';
+  ov.innerHTML = '<div class="empathy-sheet help-sheet" role="dialog" aria-modal="true" aria-label="Consentimento">'
+    + '<div class="hs-title">Antes de continuar</div>'
+    + '<div class="hs-sub">O Florescer guarda o que você registra, e a lei brasileira trata isso como <b>dado de saúde</b>. Para seguir, precisamos do seu consentimento — e você pode retirá-lo quando quiser.</div>'
+    + textoConsentimento()
+    + '<label class="cv-consent" style="margin-top:14px"><input type="checkbox" id="consent-ok">'
+    + '<span>Li e concordo que o Florescer guarde meus dados de saúde para o uso descrito acima.</span></label>'
+    + '<div class="tr-warn" id="consent-warn"></div>'
+    + '<button class="btn btn-p" onclick="aceitarConsentimento()">Concordar e continuar</button>'
+    + '<button class="btn-link hs-more" onclick="recusarConsentimento()">Agora não — sair da conta</button></div>';
+  document.getElementById('app').appendChild(ov);
+}
+async function aceitarConsentimento(){
+  const caixa = document.getElementById('consent-ok'), aviso = document.getElementById('consent-warn');
+  if (!caixa || !caixa.checked) { if (aviso) aviso.textContent = 'Marque a caixa para continuar.'; return; }
+  marcarConsentimento();
+  if (window.salvarConsentimento) window.salvarConsentimento(CONSENT_VERSAO);
+  const ov = document.getElementById('consent-sheet');
+  if (ov) ov.remove();
+  toast('Obrigado. Você pode retirar isso a qualquer momento em Você › Conta.');
+}
+function recusarConsentimento(){
+  const ov = document.getElementById('consent-sheet');
+  if (ov) ov.remove();
+  if (window.doLogout) doLogout(true);
 }
 // ═══════════ CAMPANHA DO MÊS ═══════════
 // Um selo discreto, abaixo do cartão do dia: nunca disputa com o registro, que é o que a pessoa
