@@ -1,0 +1,64 @@
+FICHA DA LOJA — Florescer
+Texto de referência, sem promessa de resultado clínico. Compare com o que está publicado no
+Play Console e ajuste lá se divergir. Rodar depois: node scripts/varre-promessas.mjs
+
+=== NOME DO APP (até 30 caracteres) ===
+Florescer: diário emocional
+
+=== DESCRIÇÃO CURTA (até 80 caracteres) ===
+Registre como você está em 1 minuto e entenda seus padrões, no seu ritmo.
+
+=== DESCRIÇÃO COMPLETA (até 4000 caracteres) ===
+Um diário para entender o que você sente.
+
+O Florescer é um espaço para registrar como foi o seu dia — humor, emoções, sono, o que pesou
+e o que fez bem — em cerca de um minuto. Com o tempo, ele mostra o que se repete: quais dias
+foram melhores, o que costuma aparecer junto do cansaço, como o sono conversa com o humor.
+
+COMO FUNCIONA
+• Registro em 4 passos, e só o humor é obrigatório. O resto é opcional, sempre.
+• 48 palavras para nomear o que você sente — e você pode criar as suas.
+• Relatórios de semana e mês, com um PDF que dá para levar à terapia.
+• Diário com tudo o que você escreveu, dia a dia.
+
+PARA OS DIAS DIFÍCEIS
+• Respiração guiada e exercício de aterramento.
+• Registro de pensamento em 7 passos, inspirado na terapia cognitivo-comportamental.
+• Leituras de 1 minuto sobre ansiedade, sono, rotina, autocompaixão e esgotamento — cada uma
+  com a base que a fundamenta.
+• Botão "Preciso de ajuda" sempre à mão, com as suas pessoas de confiança e o CVV (188).
+
+NO SEU RITMO
+• No máximo um lembrete por dia, opcional, e ele não aparece se você já registrou.
+• Dia sem registro não vira falha: aqui a contagem é de "dias de cuidado", e voltar também conta.
+• Hábitos pequenos, do seu jeito, com lembrete no horário que você escolher.
+
+VOCÊ NÃO ESTÁ SOZINHO
+Murais anônimos e moderados, onde pessoas dividem frases que ajudaram e histórias de como o
+movimento mudou a rotina delas. Sem nomes, sem curtida que vira competição.
+
+SUA PRIVACIDADE
+• O que você escreve é só seu. Nem quem administra o app lê seus registros.
+• Dá para proteger o app com um código de 6 dígitos ou a digital do celular.
+• Você exclui sua conta e todos os dados pelo próprio app, quando quiser.
+• Sem anúncios. Seus dados não são vendidos nem compartilhados.
+
+IMPORTANTE
+O Florescer é um apoio ao autocuidado no dia a dia e NÃO substitui acompanhamento profissional.
+Ele não faz diagnóstico, não indica tratamento e não é um serviço de saúde. Se você está
+passando por um momento de crise, ligue para o CVV: 188 (24 horas, gratuito e sigiloso). Em
+emergência, SAMU 192.
+
+=== O QUE NUNCA ESCREVER NA FICHA ===
+- "comprovado", "cientificamente comprovado", "clinicamente testado"
+- "trata", "cura", "elimina a ansiedade", "reduz a depressão"
+- "terapia digital", "seu psicólogo de bolso", "substitui a terapia"
+- "garantimos", "você vai melhorar"
+Essas expressões colocam o app na categoria médica da Play Store — que exige conta de empresa —
+e prometem o que nenhum app pode garantir. Foi o tipo de texto que derrubou a primeira
+submissão (ver Carta de Navegação, seção 05).
+
+=== CATEGORIA E PÚBLICO ===
+Categoria: Saúde e fitness (nunca Medicina)
+Classificação: conteúdo adequado a partir dos 12 anos, com aviso de temas sensíveis
+Países: Brasil · Idioma: português (Brasil)
