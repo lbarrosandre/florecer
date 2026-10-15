@@ -1,0 +1,15 @@
+# Atalhos curtos do Florescer — cabem em bio, story, QR code e conversa.
+# O destino muda aqui, sem pedir para ninguém atualizar link em lugar nenhum.
+#
+# /app      → a loja (hoje aponta para a página de links, porque o app está em análise
+#             e o link direto da Play responde 404 até a publicação sair)
+# /baixar   → o mesmo, para quem digita em português
+# /links    → página da bio (já existe como pasta, aqui só o atalho sem barra)
+
+/app       /links/     302
+/baixar    /links/     302
+/convite   /convite/   301
+
+# QUANDO O APP FOR PUBLICADO, troque as duas primeiras linhas por:
+# /app     https://play.google.com/store/apps/details?id=br.com.florescer.app   302
+# /baixar  https://play.google.com/store/apps/details?id=br.com.florescer.app   302
