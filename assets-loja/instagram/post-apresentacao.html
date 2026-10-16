@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Florescer — post de apresentação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@200;300;400;500&display=swap">
+<style>
+  /* Carrossel de apresentação do Florescer — 1080×1350 (4:5, o formato que ocupa mais tela
+     no feed). Estilo: minimalismo claro com um acento verde, o mesmo do app, para que quem
+     vier do Instagram reconheça a tela quando abrir o aplicativo.
+     Abrir com ?n=1..4 e fotografar cada lâmina. */
+  :root{
+    --bg:#F4F7F5; --surface:#FFFFFF; --ink:#1E2A26; --muted:#56645E; --faint:#8A968F;
+    --leaf:#2F7A64; --leaf-dark:#1F5A4A; --leaf-soft:#E6F1EC; --gold:#B5953F; --line:#DFE8E3;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{width:1080px;height:1350px;background:var(--bg);color:var(--ink);
+    font-family:"Lexend",system-ui,sans-serif;font-weight:300;overflow:hidden}
+  .lamina{display:none;width:1080px;height:1350px;padding:96px 86px;position:relative}
+  body[data-n="1"] .l1,body[data-n="2"] .l2,body[data-n="3"] .l3,body[data-n="4"] .l4{display:flex;flex-direction:column}
+
+  /* marca d'água de folha, bem suave, para a peça não ficar chapada */
+  .folha{position:absolute;right:-120px;bottom:-140px;width:620px;height:620px;opacity:.07;color:var(--leaf)}
+  .folha svg{width:100%;height:100%}
+
+  .topo{display:flex;align-items:center;gap:18px;margin-bottom:auto}
+  .topo img{width:68px;height:68px}
+  .topo span{font-size:30px;letter-spacing:.12em;color:var(--leaf-dark);text-transform:lowercase}
+
+  .rodape{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:20px;
+    border-top:1px solid var(--line);padding-top:26px;font-size:24px;color:var(--faint)}
+  .rodape b{color:var(--leaf);font-weight:500}
+
+  /* ── 1. capa ── */
+  .l1 h1{font-size:88px;line-height:1.08;font-weight:200;letter-spacing:-.025em;max-width:16ch;margin-bottom:34px}
+  .l1 h1 em{font-style:normal;font-weight:400;color:var(--leaf)}
+  .l1 p{font-size:34px;line-height:1.5;color:var(--muted);max-width:26ch}
+  .l1 .selo{display:inline-flex;align-items:center;gap:12px;background:var(--leaf-soft);
+    color:var(--leaf-dark);font-size:24px;padding:14px 24px;border-radius:999px;margin-bottom:40px;width:fit-content}
+  .l1 .selo i{width:10px;height:10px;border-radius:50%;background:var(--leaf);display:block}
+
+  /* ── 2 e 3. listas ── */
+  .titulo{font-size:58px;font-weight:300;letter-spacing:-.02em;line-height:1.15;margin-bottom:14px;max-width:20ch}
+  .sub{font-size:28px;color:var(--muted);margin-bottom:52px;max-width:30ch;line-height:1.45}
+  .itens{display:flex;flex-direction:column;gap:26px}
+  .item{display:flex;gap:26px;align-items:flex-start;background:var(--surface);
+    border:1px solid var(--line);border-radius:22px;padding:30px 32px}
+  .item .ic{width:54px;height:54px;flex-shrink:0;color:var(--leaf)}
+  .item .ic svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;
+    stroke-linecap:round;stroke-linejoin:round}
+  .item b{display:block;font-size:31px;font-weight:500;margin-bottom:7px;letter-spacing:-.01em}
+  .item span{font-size:25px;color:var(--muted);line-height:1.5;display:block}
+
+  /* lista de recusas: o acento é dourado, para separar do que o app faz */
+  .l3 .item .ic{color:var(--gold)}
+  .l3 .item{background:#FBF8F0;border-color:#EFE4CC}
+
+  /* ── 4. convite ── */
+  .l4{align-items:center;text-align:center;justify-content:center}
+  .l4 .marca-grande{width:150px;height:150px;margin-bottom:40px}
+  .l4 h2{font-size:72px;font-weight:200;line-height:1.12;letter-spacing:-.02em;margin-bottom:28px;max-width:15ch}
+  .l4 p{font-size:32px;color:var(--muted);line-height:1.5;max-width:24ch;margin-bottom:52px}
+  .l4 .botao{background:var(--leaf);color:#fff;font-size:34px;font-weight:400;
+    padding:28px 54px;border-radius:20px;letter-spacing:.01em}
+  .l4 .endereco{margin-top:34px;font-size:27px;color:var(--leaf-dark);letter-spacing:.02em}
+  .l4 .aviso{position:absolute;left:86px;right:86px;bottom:64px;font-size:21px;color:var(--faint);line-height:1.5}
+</style>
+</head>
+<body data-n="1">
+
+<!-- 1 · CAPA -->
+<section class="lamina l1">
+  <div class="topo"><img src="../../site/logo-mark.png" alt=""><span>florescer</span></div>
+  <div class="selo"><i></i> Agora na Google Play</div>
+  <h1>Entender o que você sente começa por <em>nomear</em>.</h1>
+  <p>Um diário emocional para o dia a dia. Leva um minuto. É grátis.</p>
+  <div class="rodape"><span>Diário emocional · Android</span><b>@florescer.app</b></div>
+  <div class="folha"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20v-7.5c-.2-3.6-2.6-5.9-6.4-5.9.1 3.7 2.6 5.9 6.4 5.9m0-2c.3-3.1 2.4-5.1 5.8-5.1-.2 3.2-2.4 5.1-5.8 5.1"/></svg></div>
+</section>
+
+<!-- 2 · O QUE O APP FAZ -->
+<section class="lamina l2">
+  <div class="topo"><img src="../../site/logo-mark.png" alt=""><span>florescer</span></div>
+  <h2 class="titulo">O que você encontra</h2>
+  <p class="sub">Quatro coisas simples, no seu ritmo.</p>
+  <div class="itens">
+    <div class="item">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M6.5 3.5h10.5a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5H6.5z"/><path d="M9.5 3.5v17"/><path d="M12.5 8h3.5M12.5 11h2.5"/></svg></div>
+      <div><b>Registro de 1 minuto</b><span>Como foi o dia, o que você sentiu, o que pesou.</span></div>
+    </div>
+    <div class="item">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 19.5h16"/><path d="M5.5 15l4-4.2 3.2 3 5.8-6"/></svg></div>
+      <div><b>Seus padrões, ao longo do tempo</b><span>Como sono, rotina e humor conversam entre si.</span></div>
+    </div>
+    <div class="item">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M3.5 9.5h10a2.8 2.8 0 1 0-2.8-2.8"/><path d="M3.5 14h13.5a2.8 2.8 0 1 1-2.8 2.8"/></svg></div>
+      <div><b>Ferramentas para os dias difíceis</b><span>Respirar, se aterrar, organizar o pensamento.</span></div>
+    </div>
+    <div class="item">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 5.5h10.5v7H9l-5 3.5z"/><path d="M14.5 9.5H20v7.5l-3.5-2.5h-5.5v-2"/></svg></div>
+      <div><b>Um mural anônimo</b><span>Frases de quem também está tentando.</span></div>
+    </div>
+  </div>
+  <div class="rodape"><span>Grátis · sem anúncios</span><b>@florescer.app</b></div>
+</section>
+
+<!-- 3 · O QUE NÃO FAZEMOS -->
+<section class="lamina l3">
+  <div class="topo"><img src="../../site/logo-mark.png" alt=""><span>florescer</span></div>
+  <h2 class="titulo">O que a gente se recusa a fazer</h2>
+  <p class="sub">Num app sobre o que você sente, isso importa mais que recurso.</p>
+  <div class="itens">
+    <div class="item">
+      <div class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg></div>
+      <div><b>Ler o que você escreve</b><span>Nem quem fez o app tem acesso. Só números somados.</span></div>
+    </div>
+    <div class="item">
+      <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M6 18 18 6"/></svg></div>
+      <div><b>Vender ou compartilhar seus dados</b><span>Sem anúncios, sem rastreador, sem troca com ninguém.</span></div>
+    </div>
+    <div class="item">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 19.5s-7-4.2-7-9.4A3.9 3.9 0 0 1 12 7.8a3.9 3.9 0 0 1 7 2.3c0 5.2-7 9.4-7 9.4z"/></svg></div>
+      <div><b>Cobrar de você por um dia difícil</b><span>Sem meta, sem sequência perdida, sem culpa.</span></div>
+    </div>
+    <div class="item">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M6.5 4v4.5a3.5 3.5 0 0 0 7 0V4"/><path d="M10 12v2.5a4.5 4.5 0 0 0 9 0v-2"/><circle cx="19" cy="10.5" r="2"/></svg></div>
+      <div><b>Fingir que substitui terapia</b><span>É apoio para o dia a dia. Profissional é outra coisa.</span></div>
+    </div>
+  </div>
+  <div class="rodape"><span>Privacidade como recurso</span><b>@florescer.app</b></div>
+</section>
+
+<!-- 4 · CONVITE -->
+<section class="lamina l4">
+  <img class="marca-grande" src="../../site/logo-mark.png" alt="">
+  <h2>Comece hoje, com um minuto.</h2>
+  <p>Baixe grátis na Google Play e registre como você está agora.</p>
+  <div class="botao">Link na bio</div>
+  <div class="endereco">app-florescer.netlify.app/app</div>
+  <p class="aviso">O Florescer é um apoio ao autocuidado e não substitui acompanhamento profissional.
+    Em crise, ligue 188 (CVV) — 24 h, gratuito e sigiloso.</p>
+</section>
+
+<script>
+  // ?n=2 mostra a segunda lâmina. Uma por vez, para fotografar na medida exata.
+  var n = new URLSearchParams(location.search).get('n') || '1';
+  document.body.setAttribute('data-n', n);
+</script>
+</body>
+</html>
